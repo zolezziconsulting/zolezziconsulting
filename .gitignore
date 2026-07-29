@@ -1,0 +1,10 @@
+# Caché de despliegue de Wrangler / Cloudflare Pages
+.wrangler/
+
+# Configuración local de herramientas
+.claude/
+
+# Basura del sistema
+Thumbs.db
+desktop.ini
+.DS_Store
