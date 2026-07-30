@@ -93,9 +93,15 @@ jerarquía la da el tamaño, nunca el grosor.
 
 ## Restricciones que no se ven en el código
 
-- **El correo no aparece en ninguna parte del sitio**: ni `mailto`, ni pie, ni JSON-LD, ni
-  mensajes de error. El destino vive solo en la cuenta de Formspree. El contacto visible es
-  el formulario y WhatsApp.
+- **Correo público: `zolezziconsulting@gmail.com`.** Aparece como `mailto:` en la sección
+  Contacto y en el pie, y en el JSON-LD (`email` de la organización y del `contactPoint`).
+  Hasta el 2026-07-29 no se publicaba ninguno; si vuelve a retirarse, hay que quitarlo de
+  esos cuatro sitios.
+- **El destino del formulario NO se configura aquí.** Formspree entrega al correo dado de
+  alta en la cuenta del endpoint `xbdnwvyd`; no existe ningún campo del HTML que lo cambie
+  —lo retiraron justamente para que nadie pueda redirigir un formulario ajeno—. Para
+  cambiarlo hay que entrar en formspree.io. Que el `mailto:` de la página apunte a una
+  dirección no implica que el formulario entregue ahí.
 - **No hay sección de tecnologías ni muro de logos.** Es una decisión de posicionamiento: la
   práctica *Technology* ya presenta la tecnología como capacidad al servicio de la
   estrategia. Una firma de consultoría no enseña sus herramientas.
