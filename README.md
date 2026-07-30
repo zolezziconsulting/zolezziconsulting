@@ -1,6 +1,6 @@
 # ZOLEZZI Consulting
 
-**Revenue Strategy & Execution** · Strategy · Marketing · Technology
+**Consultoría estratégica** · Strategy · Marketing · Technology
 
 Sitio single-page. HTML, CSS y JavaScript sin dependencias ni build. Se despliega
 subiendo la carpeta tal cual.
@@ -8,8 +8,8 @@ subiendo la carpeta tal cual.
 ## Estructura
 
 ```
-index.html            Toda la página: hero, problema, enfoque + diagrama,
-                      capacidades, metodología, resultados, FAQ, CTA,
+index.html            Toda la página: hero, desafíos (9 tarjetas), cómo lo
+                      resolvemos, capacidades, metodología, FAQ, CTA,
                       contacto y pie
 assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
@@ -35,7 +35,7 @@ Abrir `http://localhost:5173`. No uses `file://`: las rutas son absolutas y no c
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=8`.
+vieja. Va por `v=10`.
 
 ## Desplegar
 
@@ -57,36 +57,53 @@ de staging y allí:
 
 ## Sistema de diseño
 
-Concepto **«Monolito»**: claro dominante, bloques negros a sangre como ritmo, Inter
-monumental y una atmósfera cálida animada de fondo.
+**La paleta sale del Brand Book**, muestreada de los píxeles de sus páginas, no aproximada
+a ojo. Blanco dominante —en el book el 44-48% de cada página es blanco puro— y **ningún
+fondo con degradado en ninguna parte**.
 
-Los bloques oscuros (`.sec--dark`, `.cta`, `.ftr`) **no redefinen componentes**: reasignan
-los tokens de color en su propio ámbito y todo lo de dentro se invierte solo. Cualquier
-componente nuevo debe usar tokens, nunca colores literales, o romperá esa inversión.
+Los bloques de azul pleno (`.sec--dark`, `.cta`, `.ftr`) **no redefinen componentes**:
+reasignan los tokens de color en su propio ámbito y todo lo de dentro se invierte solo.
+Cualquier componente nuevo debe usar tokens, nunca colores literales, o romperá esa
+inversión.
 
-| Token       | Claro     | Oscuro    | Uso                            |
-|-------------|-----------|-----------|--------------------------------|
-| `--canvas`  | `#fafaf8` | `#0b0b0c` | Lienzo                         |
-| `--ink`     | `#0b0b0c` | `#fafaf8` | Texto principal                |
-| `--ink-2`   | `#56565b` | `#a2a2a7` | Texto secundario               |
-| `--ink-3`   | `#6f6f75` | `#7a7a80` | Etiquetas y metadatos          |
-| `--rule`    | `#e3e3de` | 15% ink   | Filetes de 1px                 |
-| `--maxw`    | `1340px`  |           | Ancho del **contenido**        |
-| `--shell`   | `--maxw` + márgenes | | `max-width` de los contenedores |
+| Token        | Claro     | Azul pleno | Uso                            |
+|--------------|-----------|------------|--------------------------------|
+| `--canvas`   | `#ffffff` | `#0a2cdf`  | Lienzo (el pie usa `#111d9a`)  |
+| `--canvas-2` | `#f4f7fe` | 8% blanco  | Tarjetas y bandas              |
+| `--ink`      | `#1b1d21` | `#ffffff`  | Texto principal                |
+| `--ink-2`    | `#4b5162` | `#c8d3fb`  | Texto secundario               |
+| `--ink-3`    | `#636b7d` | `#a9baf7`  | Etiquetas y metadatos          |
+| `--rule`     | `#dde6fa` | 22% blanco | Filetes de 1px                 |
+| `--accent`   | `#0a2cdf` | `#ffffff`  | **Tinta estructural**          |
 
-La gama cálida vive en `--warm-1..5` como tripletes RGB, para poder darles alfa con
-`rgb(var(--warm-3) / .26)`:
+La rampa de marca vive en `--blue-1..5` como tripletes RGB:
+`#111d9a` · `#0c24c6` · `#0a2cdf` · `#1a46d2` · `#dee7fb`
 
-`#b3200a` · `#ff3b0f` · `#ff6a00` · `#ffa51f` · `#ffc531`
+**La tinta no es negro puro:** `#1b1d21`, con sesgo azulado, tal como está en el book.
 
-**Regla del color:** nunca como texto ni como relleno, solo como campo difuso. El ámbar
-sobre el lienzo claro da 1.5:1 de contraste; usado como tinta sería ilegible. Por eso la
-identidad de cada práctica y de cada capacidad del diagrama es un halo, no un color de
-letra.
+Contraste medido, todo por encima de AA: `--ink` 16.9:1 · `--ink-2` 7.9:1 · `--ink-3` 5.3:1
+(**4.98:1 sobre `--canvas-2`, que es el peor caso** — `#6e7689` daba 4.24 y hubo que
+oscurecerlo) · `--accent` 8.6:1 · blanco sobre azul pleno 8.6:1 · blanco sobre el pie 12.6:1.
 
-Dos capas fijas al viewport (`body::before/::after`) cubren las secciones claras y un campo
-más denso (`.aura`) vive dentro del hero. Las duraciones de las derivas no son múltiplos
-entre sí: al desfasarse, la composición nunca se repite.
+### La onda
+
+El dispositivo gráfico del book —un haz de líneas finas paralelas que ondulan— sustituye a
+los degradados que había antes. Aparece en el hero, en la sección de enfoque, en el CTA y en
+el pie.
+
+Se dibuja con **una sola trayectoria** (`#wv` en el sprite) repetida 48 veces por `<use>`,
+cada copia desplazada y con la amplitud algo mayor: eso reproduce el morfeo del book sin 48
+trayectorias distintas y pesa unos pocos cientos de bytes. Detalles que importan:
+
+- `vector-effect: non-scaling-stroke` en `.wave use`. Sin él, el escalado vertical de cada
+  copia engordaría el trazo y el haz perdería la finura que lo define.
+- El desvanecido de los extremos es **máscara de opacidad sobre el trazo**, no un degradado
+  de color: el fondo sigue siendo blanco puro.
+- `pointer-events: none`. La onda cubre secciones enteras en absoluto; sin esto se comería
+  los clics, que es exactamente el fallo que ya ocurrió una vez con el cajón.
+
+Los únicos `linear-gradient` que quedan en la hoja son esa máscara y la flecha del `select`.
+**Ningún elemento renderizado tiene un fondo con degradado.**
 
 Tipografía: **Inter** para todo, variable y autoalojada. Sin peticiones a Google Fonts. La
 jerarquía la da el tamaño, nunca el grosor.
@@ -105,6 +122,13 @@ jerarquía la da el tamaño, nunca el grosor.
 - **No hay sección de tecnologías ni muro de logos.** Es una decisión de posicionamiento: la
   práctica *Technology* ya presenta la tecnología como capacidad al servicio de la
   estrategia. Una firma de consultoría no enseña sus herramientas.
+- **Jerarquía del posicionamiento: la estrategia manda.** Marketing y Technology se presentan
+  como capacidades de *ejecución*, no como oferta principal. El eje es
+  diagnóstico → estrategia → ejecución. Aun así se conserva una línea en `.flow__note`
+  aclarando que un mandato puede acotarse solo a ejecución: sin ella la web negaría que se
+  pueda contratar solo marketing, y eso contradice el modelo de negocio real.
+- **Las webs viven en Marketing, no en Technology.** Corporate Websites, Landing Pages y
+  E-commerce son captación comercial. Technology es automatización, datos e integraciones.
 - **El `<h2>` de sección tope en `2.875rem`** porque es lo que cabe en la columna pegajosa
   sin que la palabra más larga se salga. Para agrandarlo hay que ensanchar antes
   `.sec__head`.

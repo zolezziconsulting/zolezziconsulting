@@ -1,12 +1,12 @@
 {
   "name": "ZOLEZZI Consulting",
   "short_name": "ZOLEZZI",
-  "description": "Revenue Strategy & Execution. Consultoría de estrategia y ejecución para empresas medianas que necesitan crecer.",
+  "description": "Consultoría estratégica. Ayudamos a empresas a resolver sus desafíos de negocio mediante estrategia, marketing y tecnología.",
   "lang": "es",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fafaf8",
-  "theme_color": "#fdf2e9",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }

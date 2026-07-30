@@ -24,7 +24,7 @@
   var bar = document.getElementById('hdr-bar');
   // Raíles que se llenan con el scroll: la metodología y el diagrama
   // del enfoque comparten el mismo mecanismo (--p sobre el contenedor).
-  var rails = [document.getElementById('proc'), document.getElementById('flow')].filter(Boolean);
+  var rails = [document.getElementById('proc')].filter(Boolean);
   var darks = document.querySelectorAll('.sec--dark, .cta, .ftr');
   var ticking = false;
 
@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__entry, .flow__i');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
