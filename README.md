@@ -15,7 +15,7 @@ assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
                       pestañas, acordeón y formulario
 assets/fonts/         Inter (variable, subset latin, autoalojada)
-assets/img/           og.jpg (1200×630) y apple-touch-icon.png
+assets/img/           og-v2.jpg (1200×630) y apple-touch-icon.png
 favicon.svg  robots.txt  sitemap.xml  site.webmanifest  _headers
 ```
 
@@ -29,6 +29,14 @@ npx --yes serve . -l 5173
 ```
 
 Abrir `http://localhost:5173`. No uses `file://`: las rutas son absolutas y no cargarían.
+
+## Al cambiar la imagen Open Graph: RENOMBRARLA
+
+`_headers` marca `/assets/img/*` como `immutable` durante un año y la etiqueta `og:image` no
+admite `?v=`. Sobrescribir el archivo **no sirve**: ni el CDN ni —lo importante— LinkedIn,
+WhatsApp y Facebook la refrescan, porque cachean la vista previa por URL. Hay que **cambiar
+el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referencias de `index.html`:
+`og:image`, `twitter:image` y el `logo` e `image` del JSON-LD.
 
 ## Al tocar CSS o JS: subir `?v=`
 
