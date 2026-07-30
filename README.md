@@ -98,7 +98,7 @@ jerarquía la da el tamaño, nunca el grosor.
   Hasta el 2026-07-29 no se publicaba ninguno; si vuelve a retirarse, hay que quitarlo de
   esos cuatro sitios.
 - **El destino del formulario NO se configura aquí.** Formspree entrega al correo dado de
-  alta en la cuenta del endpoint `xbdnwvyd`; no existe ningún campo del HTML que lo cambie
+  alta en la cuenta del endpoint `mdaqjygn`; no existe ningún campo del HTML que lo cambie
   —lo retiraron justamente para que nadie pueda redirigir un formulario ajeno—. Para
   cambiarlo hay que entrar en formspree.io. Que el `mailto:` de la página apunte a una
   dirección no implica que el formulario entregue ahí.
@@ -109,7 +109,7 @@ jerarquía la da el tamaño, nunca el grosor.
   sin que la palabra más larga se salga. Para agrandarlo hay que ensanchar antes
   `.sec__head`.
 - El formulario envía por **Formspree** (`fetch` con POST nativo de respaldo). Endpoint
-  conectado y verificado: `https://formspree.io/f/xbdnwvyd`. El campo `_gotcha` es un
+  conectado y verificado: `https://formspree.io/f/mdaqjygn`. El campo `_gotcha` es un
   honeypot antispam; no tocarlo.
 - El número de WhatsApp vive en la constante `WA_NUM` de `main.js` y se inyecta en los
   enlaces `[data-wa]`. También aparece en el JSON-LD.
