@@ -39,21 +39,28 @@ vieja. Va por `v=10`.
 
 ## Desplegar
 
-**Cloudflare Pages**, proyecto `zolezzi-digital`, rama de producción `main`:
+**El dominio de producción es `https://zolezziconsulting.com`** y se sirve desde este
+repositorio de GitHub (`zolezziconsulting/zolezziconsulting`). Un `git push` a `main` publica.
+
+```bash
+git push
+```
+
+El dominio `zolezzi.digital` que aparecía antes en canonical, Open Graph, JSON-LD, `robots.txt`
+y `sitemap.xml` **nunca llegó a existir** —el DNS no resolvía—, así que el canonical mandaba a
+Google a un dominio muerto y las vistas previas al compartir salían sin imagen. Corregido el
+2026-07-30. Si algún día cambia el dominio, hay que tocarlo en esos tres archivos a la vez.
+
+Existe además un proyecto antiguo de Cloudflare Pages, `zolezzi-digital`, servido por Direct
+Upload en `zolezzi-digital.pages.dev`. **Ese sí es independiente de GitHub** y sigue mostrando
+una versión vieja; no confundirlo con producción. Para publicar ahí haría falta:
 
 ```bash
 npx wrangler pages deploy <carpeta> --project-name zolezzi-digital --branch main
 ```
 
-El despliegue **no sale de esta carpeta directamente**. Antes hay que copiar a una carpeta
-de staging y allí:
-
-1. **Borrar `README.md`.** Un Direct Upload sirve público todo lo que subas, este archivo
-   incluido.
-2. **Reescribir el dominio.** El código local apunta a `https://zolezzi.digital/`, que
-   todavía no está comprado. En el staging hay que sustituirlo por
-   `https://zolezzi-digital.pages.dev` en `index.html` (canonical, Open Graph, Twitter,
-   JSON-LD), `robots.txt` y `sitemap.xml`.
+y borrar antes el `README.md` de la carpeta, porque un Direct Upload sirve público todo lo
+que subas.
 
 ## Sistema de diseño
 
