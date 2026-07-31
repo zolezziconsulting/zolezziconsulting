@@ -79,58 +79,84 @@ que subas.
 > que siguen en la gama anterior (`#0a2cdf`, `#111d9a`). Este es el punto de divergencia; si
 > algún día se rehace el manual, hay que partir de aquí.
 
-Blanco dominante y **ningún fondo de sección con degradado**. Los degradados solo se permiten
-en elementos pequeños —botón, icono, relleno de gráfico—, nunca como lavado de fondo.
+**Los colores viven en `assets/css/tokens.css`**, única fuente de verdad. Se enlaza con
+`<link>` **antes** de styles.css y **nunca con `@import`**: sin bundler, un `@import` obliga
+a descargar y parsear styles.css antes de siquiera pedir el otro archivo, y eso bloquea el
+render en serie.
 
-Los bloques de azul pleno (`.sec--dark`, `.cta`, `.ftr`) **no redefinen componentes**:
-reasignan los tokens de color en su propio ámbito y todo lo de dentro se invierte solo.
-Cualquier componente nuevo debe usar tokens, nunca colores literales, o romperá esa
-inversión.
+`styles.css` no usa esos nombres directamente: mantiene una **capa de alias** en su `:root`
+(`--canvas: var(--bg-base)`, `--rule: var(--borde)`…). Así los ~200 usos repartidos por la
+hoja no tuvieron que renombrarse. Si añades un token, decláralo en tokens.css y mapéalo ahí.
 
-| Token        | Claro     | Marino pleno | Uso                          |
-|--------------|-----------|--------------|------------------------------|
-| `--canvas`   | `#ffffff` | `#0b2a5b`    | Lienzo                       |
-| `--canvas-2` | `#f5f8fc` | 6% blanco    | Tarjetas y bandas            |
-| `--ink`      | `#101418` | `#ffffff`    | Texto principal              |
-| `--ink-2`    | `#474e5a` | `#b9c8de`    | Texto secundario             |
-| `--ink-3`    | `#626a78` | `#93a5c0`    | Etiquetas y metadatos        |
-| `--rule`     | `#dfe6f0` | 20% blanco   | Filetes de 1px               |
-| `--accent`   | `#1668d9` | `#7dc4f7`    | **Tinta estructural**        |
+| Token | Valor | Uso |
+|---|---|---|
+| `--bg-base` | `#F1F5F7` | Fondo de página. **Nunca blanco puro** |
+| `--bg-surface` | `#FFFFFF` | Solo tarjetas |
+| `--bg-tint` | `#E8F4F6` | Secciones alternas |
+| `--bg-dark` · `--bg-dark-alt` | `#0A1720` · `#12242F` | Secciones oscuras y sus tarjetas |
+| `--ink` · `--ink-soft` · `--ink-invert` | `#0C1A22` · `#47606D` · `#EAF4F6` | Tinta |
+| `--turquesa` · `--celeste` | `#10B5B0` · `#3BB8E8` | Rellenos, iconos, gráficos |
+| `--teal-deep` | `#0B6E7F` | **Texto y enlaces sobre claro** |
+| `--acento` | `#7DE3DE` | Detalles sobre oscuro |
+| `--borde` | `#D7E3E8` | Filetes |
+| `--gradiente` | 100deg, celeste → turquesa | **Solo dos destinos** |
 
-Identidad: `--navy #0b2a5b` · `--blue #1668d9` · `--sky #37a6f0` · `--teal #17c3c3`.
+Ritmo de fondos: hero, tecnología, CTA y pie en oscuro; consultoría y contacto en blanco;
+metodología en tint; el resto hereda `--bg-base`.
 
-**Celeste y turquesa NO pueden portar significado por sí solos.** Dan 2.67:1 y 2.18:1 sobre
-blanco, por debajo incluso del 3:1 que la WCAG exige a un elemento gráfico. Por eso existen
-`--sky-ink #1583cc` (4.07:1) y `--teal-ink #0e9797` (3.57:1): el tono claro vale para relleno
-amplio y decoración; **cualquier trazo o marca que el usuario tenga que distinguir usa la
-variante «-ink»**, y si una serie de gráfico usa el tono claro, su significado va además en
-la etiqueta.
+### Reglas de color que no se pueden romper
 
-Contraste medido: `--ink` 18.5:1 · `--ink-2` 8.4:1 · `--ink-3` 5.5:1 (5.1:1 sobre
-`--canvas-2`) · `--blue` 5.2:1 (4.9:1 sobre tarjeta) · blanco sobre marino 14.0:1.
+- **Turquesa y celeste están prohibidos como texto sobre fondo claro.** Dan 2.26–2.54:1 y
+  2.03–2.28:1, por debajo incluso del 3:1 que la WCAG exige a un elemento gráfico. Sobre
+  claro, toda tinta de marca va en `--teal-deep` (5.27–5.91:1).
+- **Sobre turquesa, la tinta va OSCURA.** Blanco sobre turquesa da 2.54:1; con `--bg-dark`
+  queda en 7.14:1. Aplica a la pill de desafíos, a los nodos del radial y a cualquier
+  elemento futuro con relleno de marca.
+- **El botón con `--gradiente` usa `--btn-fg: var(--bg-dark)`, no `var(--ink)`.** Dentro del
+  hero el ámbito oscuro reasigna `--ink` a `--ink-invert` y el texto salía claro sobre el
+  gradiente: 2.28:1. `--bg-dark` no se voltea nunca.
+- **`--gradiente` solo en dos sitios:** la línea destacada del H1 (`.hl`) y el botón CTA
+  principal (`.btn--grad`).
+- `.hl` usa `background-clip: text` dentro de `@supports`, **con el respaldo declarado
+  primero**: sin él, `color: transparent` dejaría el titular invisible donde no se soporte.
+- Sobre oscuro, los tonos intermedios se **derivan** de `--ink-invert` con `color-mix` y
+  respaldo estático delante. No son colores nuevos.
+
+**Contraste: 37 pares de texto/fondo de todas las secciones medidos, todos por encima de AA.**
+El más ajustado es la pill de desafíos, 5.27:1. Al medir hay que **componer el alfa**: los
+fondos translúcidos (`.geo__cite` al 7 %) dan falsos negativos si se leen como opacos.
+
+### Visuales de servicio
+
+Seis, todos en SVG y CSS, sin librerías: embudo (`.fnl`), radial de Go-to-Market (`.rad`),
+las dos superficies de SEO/GEO (`.geo`), panel de campaña (`.dash`), mockups de web
+(`.mock`) y flujo de sistemas (`.flw`). Todos con `role="img"` y `<title>`.
+
+En el radial, los nodos se posicionan por **`left`/`top` en porcentaje, no por
+`transform: translate()`**: los porcentajes de `translate` se refieren al tamaño del propio
+elemento, así que un nodo con texto más largo quedaría más lejos del centro. Por debajo de
+760 px el radial se convierte en lista apilada — a 390 px un nodo se salía y dos se montaban
+sobre el centro.
+
+### Movimiento
+
+Los visuales envuelven su animación en `@media (prefers-reduced-motion: no-preference)`.
+**El resto de la hoja usa la convención inversa** —un bloque `reduce` al final que lo
+neutraliza todo—. Conviven por historia. Ese bloque `reduce` da además el **estado final** de
+cada visual, porque `transition-duration: .01ms` hace las transiciones instantáneas, no
+inexistentes: un elemento que arranca en `opacity: 0` seguiría dependiendo del observador.
+
+Prohibido: parallax, texto letra por letra, autoplay y cualquier animación de más de 600 ms.
 
 ### La onda
 
-El dispositivo gráfico del book —un haz de líneas finas paralelas que ondulan— sustituye a
-los degradados que había antes. Aparece en el hero, en la sección de enfoque, en el CTA y en
-el pie.
+Haz de líneas del Brand Book anterior. Sigue en marketing, CTA y pie; **se retiró del hero**,
+donde ahora hay un halo radial de `--acento` al 8 %. Una sola trayectoria (`#wv`) repetida 48
+veces por `<use>`. `vector-effect: non-scaling-stroke` es imprescindible o el escalado engorda
+el trazo; `pointer-events: none` también, porque cubre secciones enteras.
 
-Se dibuja con **una sola trayectoria** (`#wv` en el sprite) repetida 48 veces por `<use>`,
-cada copia desplazada y con la amplitud algo mayor: eso reproduce el morfeo del book sin 48
-trayectorias distintas y pesa unos pocos cientos de bytes. Detalles que importan:
-
-- `vector-effect: non-scaling-stroke` en `.wave use`. Sin él, el escalado vertical de cada
-  copia engordaría el trazo y el haz perdería la finura que lo define.
-- El desvanecido de los extremos es **máscara de opacidad sobre el trazo**, no un degradado
-  de color: el fondo sigue siendo blanco puro.
-- `pointer-events: none`. La onda cubre secciones enteras en absoluto; sin esto se comería
-  los clics, que es exactamente el fallo que ya ocurrió una vez con el cajón.
-
-Los únicos `linear-gradient` que quedan en la hoja son esa máscara y la flecha del `select`.
-**Ningún elemento renderizado tiene un fondo con degradado.**
-
-Tipografía: **Inter** para todo, variable y autoalojada. Sin peticiones a Google Fonts. La
-jerarquía la da el tamaño, nunca el grosor.
+Tipografía: **Inter**, variable y autoalojada. Sin peticiones a Google Fonts. La jerarquía la
+da el tamaño, nunca el grosor.
 
 ## Restricciones que no se ven en el código
 
