@@ -371,107 +371,94 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    quedaría de una línea por celda y parecería roto. */
 .feat__l--one { columns: 1; margin-top: .5rem; }
 
-/* ── Cadena de piezas ───────────────────────────────────────────
-   Siete piezas encadenadas. El guion que las une es un ::after, no un
-   carácter, para que no lo lea el lector de pantalla ni sobre en el
-   último elemento.
+/* ── Visual 2 · Radial de Go-to-Market ──────────────────────────
+   Los nodos se colocan por left/top en porcentaje, NO por
+   transform: translate(): los porcentajes de translate se refieren al
+   tamaño del propio elemento, no al del contenedor, y los nodos
+   habrían quedado a distancias distintas según lo largo de su texto.
+
+   Con left/top en % y el SVG en viewBox 0 0 100 100 con
+   preserveAspectRatio="none", las coordenadas de las líneas y las de
+   los nodos son el mismo sistema y encajan a cualquier tamaño.
    ──────────────────────────────────────────────────────────────── */
-.chain {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .625rem 0;
-  margin-top: 1.25rem;
-}
-.chain__i {
+.rad {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .625rem 1rem;
-  margin-right: 1.75rem;
-  background: var(--canvas-2);
-  border: 1px solid var(--rule);
-  border-radius: 2rem;
-  font-size: .875rem;
-  font-weight: 500;
-  letter-spacing: -.01em;
-  transition: border-color .4s var(--ease), background-color .4s var(--ease);
+  width: min(100%, 30rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
 }
-.chain__i:hover { border-color: var(--blue); background: var(--canvas); }
-.chain__i:not(:last-child)::after {
-  content: '';
+.rad__web { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rad__web line { stroke: var(--borde); stroke-width: .4; }
+
+.rad__core {
   position: absolute;
-  right: -1.375rem;
-  width: 1rem; height: 1px;
-  background: var(--rule);
-}
-.chain__n {
-  font-size: .625rem;
-  letter-spacing: .1em;
-  color: var(--sky-ink);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Visuales de servicio ───────────────────────────────────────
-   No hay sistema de componentes —esto es HTML plano sin build—, así
-   que «ServiceVisual» es un contrato de clases: .svis envuelve, y un
-   modificador por visual. Todos comparten el mismo aire y la misma
-   nota inferior.
-
-   REGLA DE ANIMACIÓN, distinta al resto de la hoja: aquí el
-   movimiento se activa dentro de @media (prefers-reduced-motion:
-   no-preference). Sin esa preferencia, el visual se ve completo y
-   quieto. El resto del archivo aún usa la convención inversa; queda
-   pendiente unificarlo.
-   ──────────────────────────────────────────────────────────────── */
-.svis { margin-top: 1.25rem; }
-
-/* ── Visual 1 · Embudo comercial ───────────────────────────────── */
-.fnl {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-  gap: clamp(1.25rem, 3vw, 2.5rem);
-  align-items: center;
-}
-.fnl__svg { width: 100%; height: auto; display: block; }
-.fnl__b { fill: url(#fnl-g); }
-
-.fnl__rows { display: flex; flex-direction: column; }
-.fnl__r {
-  display: flex;
-  align-items: baseline;
-  gap: .75rem;
-  padding: .5rem 0;
-  border-bottom: 1px solid var(--rule);
-}
-.fnl__rows > :last-child { border-bottom: 0; }
-.fnl__n {
-  min-width: 3.5ch;
-  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  text-align: center;
+  font-size: clamp(.75rem, 1.5vw, .875rem);
   font-weight: 500;
-  letter-spacing: -.03em;
-  color: var(--teal-deep);
-  font-variant-numeric: tabular-nums;
+  line-height: 1.35;
+  color: var(--ink);
+  transition: color .3s var(--ease);
 }
-.fnl__l { font-size: .875rem; color: var(--ink-2); }
+.rad.is-live .rad__core { color: var(--teal-deep); }
+
+.rad__n {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%) scale(var(--s, 1));
+  padding: .4rem .7rem;
+  max-width: 8.5rem;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  box-shadow: inset 0 0 0 1px var(--borde);
+  color: var(--ink-2);
+  font-size: .6875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform .3s var(--ease-o),
+    background-color .3s var(--ease),
+    color .3s var(--ease),
+    box-shadow .3s var(--ease);
+}
+/* Tinta oscura sobre el turquesa: el blanco ahí da 2.54:1. */
+.rad__n:hover,
+.rad__n:focus-visible {
+  --s: 1.08;
+  background: var(--turquesa);
+  box-shadow: inset 0 0 0 1px var(--turquesa);
+  color: var(--bg-dark);
+}
+
+/* Texto solo para lectores de pantalla. La descripción viaja aquí
+   dentro del botón, así que no depende del intercambio visual del
+   centro ni de un aria-live que estaría cantando en cada hover. */
+.vh {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  /* El relleno baja de arriba abajo: inset(100% …) recorta la banda
-     entera desde arriba y la transición la va descubriendo. */
-  .fnl__b {
-    clip-path: inset(100% 0 0 0);
-    transition: clip-path .75s var(--ease-o) calc(var(--i) * 120ms);
-  }
-  .fnl.is-in .fnl__b { clip-path: inset(0 0 0 0); }
-
-  .fnl__r {
+  .rad__n {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translate(-50%, -50%) scale(.9);
     transition:
-      opacity .5s var(--ease-o) calc(var(--i) * 120ms + 180ms),
-      transform .5s var(--ease-o) calc(var(--i) * 120ms + 180ms);
+      opacity .45s var(--ease-o) calc(var(--i) * 70ms),
+      transform .45s var(--ease-o) calc(var(--i) * 70ms),
+      background-color .3s var(--ease),
+      color .3s var(--ease),
+      box-shadow .3s var(--ease);
   }
-  .fnl.is-in .fnl__r { opacity: 1; transform: none; }
+  .rad.is-in .rad__n { opacity: 1; transform: translate(-50%, -50%) scale(var(--s, 1)); }
 }
 
 /* ── Línea de tiempo del proceso ────────────────────────────────
@@ -1872,6 +1859,57 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   /* El embudo apilado: la silueta arriba, los datos debajo. A dos
      columnas en móvil el SVG queda en 150px y no se lee nada. */
   .fnl { grid-template-columns: 1fr; }
+
+  /* El radial NO cabe en móvil: medido a 390px, un nodo se salía del
+     contenedor y dos se montaban sobre el centro. Aquí se convierte en
+     lista apilada, con la descripción ya visible —que en escritorio
+     solo la oye el lector de pantalla—. La telaraña sobra. */
+  .rad { aspect-ratio: auto; width: 100%; }
+  .rad__web { display: none; }
+  .rad__core {
+    position: static;
+    transform: none;
+    width: auto;
+    text-align: left;
+    padding-bottom: .625rem;
+    margin-bottom: .25rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: .625rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+  }
+  /* .rad.is-in .rad__n del bloque no-preference tiene más
+     especificidad (0,2,1) y volvía a imponer el translate del radial.
+     Hay que anularlo con el mismo selector, no solo con .rad__n. */
+  .rad.is-in .rad__n,
+  .rad__n {
+    position: static;
+    transform: none;
+    display: block;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+    border-radius: .5rem;
+    padding: .75rem .875rem;
+    margin-bottom: .5rem;
+    font-size: .875rem;
+    color: var(--ink);
+  }
+  .rad__d {
+    position: static;
+    width: auto; height: auto;
+    margin: .25rem 0 0;
+    clip-path: none;
+    white-space: normal;
+    display: block;
+    font-size: .8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .rad__n:hover .rad__d,
+  .rad__n:focus-visible .rad__d { color: var(--bg-dark); }
   .grid4  { grid-template-columns: 1fr; }
   .mocks  { grid-template-columns: 1fr; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }

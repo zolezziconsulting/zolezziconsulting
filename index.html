@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=15">
-<link rel="stylesheet" href="/assets/css/styles.css?v=15">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=16">
+<link rel="stylesheet" href="/assets/css/styles.css?v=16">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=15" defer></script>
+<script src="/assets/js/main.js?v=16" defer></script>
 
 <script type="application/ld+json">
 {
@@ -566,16 +566,63 @@
             </div>
           </div>
 
+          <!-- Visual 2 · Siete piezas que alimentan un centro. «Plan
+               comercial» pasó al núcleo, así que entra «Indicadores y
+               atribución» —ya está entre los entregables— para llegar
+               a siete nodos.
+
+               Cada nodo es un <button>: en táctil no hay hover y con
+               teclado tampoco, así que la interacción va por hover,
+               focus y toque. La descripción también viaja oculta
+               dentro del botón, para que el lector de pantalla no
+               dependa del intercambio visual del centro. -->
           <h4 class="svc__k svc__k--wide">Las siete piezas</h4>
-          <ol class="chain">
-            <li class="chain__i rv"><span class="chain__n">01</span>Propuesta de valor</li>
-            <li class="chain__i rv" style="--d:.06s"><span class="chain__n">02</span>Segmentación</li>
-            <li class="chain__i rv" style="--d:.12s"><span class="chain__n">03</span>Posicionamiento</li>
-            <li class="chain__i rv" style="--d:.18s"><span class="chain__n">04</span>Go-to-Market</li>
-            <li class="chain__i rv" style="--d:.24s"><span class="chain__n">05</span>Pricing</li>
-            <li class="chain__i rv" style="--d:.30s"><span class="chain__n">06</span>Customer Journey</li>
-            <li class="chain__i rv" style="--d:.36s"><span class="chain__n">07</span>Plan comercial</li>
-          </ol>
+          <div class="svis svis--radial">
+            <div class="rad" id="rad-gtm">
+              <svg class="rad__web" viewBox="0 0 100 100" preserveAspectRatio="none"
+                   role="img" aria-labelledby="rad-t">
+                <title id="rad-t">Siete piezas del marketing estratégico conectadas a un
+                plan comercial central.</title>
+                <line x1="50" y1="37" x2="50" y2="18"/>
+                <line x1="60.2" y1="41.9" x2="75.0" y2="30.0"/>
+                <line x1="62.7" y1="52.9" x2="81.2" y2="57.1"/>
+                <line x1="55.6" y1="61.7" x2="63.9" y2="78.8"/>
+                <line x1="44.4" y1="61.7" x2="36.1" y2="78.8"/>
+                <line x1="37.3" y1="52.9" x2="18.8" y2="57.1"/>
+                <line x1="39.8" y1="41.9" x2="25.0" y2="30.0"/>
+              </svg>
+
+              <p class="rad__core" id="rad-core" data-base="Plan comercial">Plan comercial</p>
+
+              <button class="rad__n" type="button" style="--x:50%;  --y:15%;  --i:0"
+                data-d="Por qué alguien debería elegirle a usted y no al de al lado."
+                >Propuesta de valor<span class="rad__d vh"> Por qué alguien debería elegirle a usted y no al de al lado.</span></button>
+
+              <button class="rad__n" type="button" style="--x:77.4%;--y:28.2%;--i:1"
+                data-d="A qué grupos de clientes vale la pena dirigirse, y en qué orden."
+                >Segmentación<span class="rad__d vh"> A qué grupos de clientes vale la pena dirigirse, y en qué orden.</span></button>
+
+              <button class="rad__n" type="button" style="--x:84.1%;--y:57.8%;--i:2"
+                data-d="El lugar que la marca ocupa en la cabeza del cliente."
+                >Posicionamiento<span class="rad__d vh"> El lugar que la marca ocupa en la cabeza del cliente.</span></button>
+
+              <button class="rad__n" type="button" style="--x:65.2%;--y:81.5%;--i:3"
+                data-d="Con qué modelo de entrada se aborda un mercado o un producto nuevo."
+                >Go-to-Market<span class="rad__d vh"> Con qué modelo de entrada se aborda un mercado o un producto nuevo.</span></button>
+
+              <button class="rad__n" type="button" style="--x:34.8%;--y:81.5%;--i:4"
+                data-d="Cuánto valor se está dejando sobre la mesa y qué estructura lo recupera."
+                >Pricing<span class="rad__d vh"> Cuánto valor se está dejando sobre la mesa y qué estructura lo recupera.</span></button>
+
+              <button class="rad__n" type="button" style="--x:15.9%;--y:57.8%;--i:5"
+                data-d="Dónde se gana y dónde se pierde al cliente, etapa por etapa."
+                >Customer Journey<span class="rad__d vh"> Dónde se gana y dónde se pierde al cliente, etapa por etapa.</span></button>
+
+              <button class="rad__n" type="button" style="--x:22.6%;--y:28.2%;--i:6"
+                data-d="Qué se mide, con qué modelo de atribución y contra qué objetivo."
+                >Indicadores y atribución<span class="rad__d vh"> Qué se mide, con qué modelo de atribución y contra qué objetivo.</span></button>
+            </div>
+          </div>
 
           <div class="feat__meta">
             <div><b>Duración</b>6 a 14 semanas</div>

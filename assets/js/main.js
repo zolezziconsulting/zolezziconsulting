@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl, .rad');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -136,6 +136,35 @@
     Array.prototype.forEach.call(revealables, function (el) { io.observe(el); });
   } else {
     Array.prototype.forEach.call(revealables, function (el) { el.classList.add('is-in'); });
+  }
+
+  /* ── Radial de Go-to-Market ──────────────────────────────────
+     El centro muestra la descripción de la pieza señalada. Es un
+     realce visual: la descripción ya viaja dentro de cada botón en un
+     span oculto, así que un lector de pantalla no depende de esto y
+     no hace falta aria-live —que estaría cantando en cada hover—. */
+  var rad = document.getElementById('rad-gtm');
+  if (rad) {
+    var core = document.getElementById('rad-core');
+    var base = core.getAttribute('data-base');
+
+    var show = function (texto) {
+      core.textContent = texto || base;
+      rad.classList.toggle('is-live', !!texto);
+    };
+
+    Array.prototype.forEach.call(rad.querySelectorAll('.rad__n'), function (b) {
+      var d = b.getAttribute('data-d');
+      b.addEventListener('pointerenter', function () { show(d); });
+      b.addEventListener('focus', function () { show(d); });
+      b.addEventListener('pointerleave', function () { show(null); });
+      b.addEventListener('blur', function () { show(null); });
+      // En táctil no hay hover: el toque fija la descripción.
+      b.addEventListener('click', function () { show(d); });
+    });
+
+    // Un toque fuera devuelve el centro a su estado base.
+    rad.addEventListener('pointerleave', function () { show(null); });
   }
 
   /* ── Contadores ──────────────────────────────────────────────
