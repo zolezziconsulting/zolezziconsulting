@@ -1,0 +1,57 @@
+/* ================================================================
+   ZOLEZZI Consulting — Tokens de color
+   ----------------------------------------------------------------
+   ÚNICA fuente de verdad del color. Ningún componente debe declarar
+   un color literal: si hace falta uno nuevo, se añade aquí.
+
+   Se enlaza con <link> antes de styles.css, NO con @import: sin
+   bundler, un @import obliga al navegador a descargar y parsear
+   styles.css antes de siquiera pedir este archivo, y eso bloquea el
+   render en serie. Con dos <link> bajan en paralelo.
+
+   styles.css mapea sus nombres internos (--canvas, --rule…) contra
+   estos, de modo que los componentes no tuvieron que tocarse.
+   ================================================================ */
+:root {
+  /* ── Fondos ──────────────────────────────────────────────────
+     El fondo de página NUNCA es blanco puro; el blanco queda
+     reservado a las tarjetas. Es lo que quita el brillo excesivo. */
+  --bg-base:     #F1F5F7;
+  --bg-surface:  #FFFFFF;
+  --bg-tint:     #E8F4F6;
+  --bg-dark:     #0A1720;
+  --bg-dark-alt: #12242F;
+
+  /* ── Tinta ───────────────────────────────────────────────── */
+  --ink:        #0C1A22;
+  --ink-soft:   #47606D;
+  --ink-invert: #EAF4F6;
+
+  /* ── Marca ───────────────────────────────────────────────────
+     PROHIBIDO como texto sobre fondo claro:
+       --turquesa  2.26–2.54 : 1
+       --celeste   2.03–2.28 : 1
+     Ambos quedan por debajo incluso del 3:1 que la WCAG exige a un
+     elemento gráfico portador de significado. Sobre claro, el texto
+     y los enlaces de marca usan --teal-deep (5.27–5.91 : 1).
+     Sobre oscuro sí son legibles: turquesa 6.26–7.14, celeste
+     6.98–7.96, acento 10.55–12.03. */
+  --turquesa:  #10B5B0;
+  --celeste:   #3BB8E8;
+  --teal-deep: #0B6E7F;
+  --acento:    #7DE3DE;
+
+  --borde: #D7E3E8;
+
+  /* Solo dos destinos: las cursivas de los titulares y el botón CTA
+     principal. En ningún otro sitio. */
+  --gradiente: linear-gradient(100deg, #3BB8E8, #10B5B0);
+
+  /* Tripletes RGB de los mismos valores, para poder darles alfa:
+     rgb(var(--c-turquesa) / .18). No son colores nuevos. */
+  --c-dark:     10 23 32;
+  --c-turquesa: 16 181 176;
+  --c-celeste:  59 184 232;
+  --c-teal:     11 110 127;
+  --c-acento:   125 227 222;
+}

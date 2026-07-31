@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ZOLEZZI Consulting | Ayudamos a las empresas a vender más</title>
 <meta name="description" content="Ayudamos a las empresas de Latinoamérica a vender más mediante estrategia comercial, marketing digital y tecnología. Consultoría comercial, go-to-market, SEO, publicidad digital, diseño web, automatización e IA.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#0A1720">
 <link rel="canonical" href="https://zolezziconsulting.com/">
 
 <meta property="og:type" content="website">
@@ -32,9 +32,12 @@
 <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- ?v= rompe la caché immutable de _headers, que si no serviría CSS/JS viejos durante un año.
      Subir el número en cada cambio de styles.css o main.js. -->
-<link rel="stylesheet" href="/assets/css/styles.css?v=11">
+<!-- tokens.css va con <link> y no con @import: sin bundler, un @import
+     serializa la descarga y bloquea el render. Así bajan en paralelo. -->
+<link rel="stylesheet" href="/assets/css/tokens.css?v=12">
+<link rel="stylesheet" href="/assets/css/styles.css?v=12">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=11" defer></script>
+<script src="/assets/js/main.js?v=12" defer></script>
 
 <script type="application/ld+json">
 {
@@ -369,7 +372,7 @@
   </section>
 
   <!-- ── 03 · Consultoría ───────────────────────────────────── -->
-  <section class="sec" id="consultoria" aria-labelledby="t-consultoria">
+  <section class="sec sec--surface" id="consultoria" aria-labelledby="t-consultoria">
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
         <p class="eyebrow rv"><span class="eyebrow__n">02</span> — Consultoría</p>
@@ -532,7 +535,7 @@
   </section>
 
   <!-- ── 04 · Marketing digital ─────────────────────────────── -->
-  <section class="sec sec--dark" id="marketing" aria-labelledby="t-marketing">
+  <section class="sec" id="marketing" aria-labelledby="t-marketing">
     <svg class="wave wave--foot" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true"><use href="#i-wave"/></svg>
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
@@ -664,7 +667,7 @@
   </section>
 
   <!-- ── 05 · Tecnología ────────────────────────────────────── -->
-  <section class="sec" id="tecnologia" aria-labelledby="t-tecnologia">
+  <section class="sec sec--dark" id="tecnologia" aria-labelledby="t-tecnologia">
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
         <p class="eyebrow rv"><span class="eyebrow__n">04</span> — Tecnología</p>
@@ -745,7 +748,7 @@
   </section>
 
   <!-- ── 06 · Metodología ───────────────────────────────────── -->
-  <section class="sec" id="metodologia" aria-labelledby="t-metodologia">
+  <section class="sec sec--tint" id="metodologia" aria-labelledby="t-metodologia">
     <div class="sec__grid">
       <div class="sec__head">
         <p class="eyebrow rv"><span class="eyebrow__n">04</span> — Metodología</p>
@@ -927,7 +930,7 @@
   </section>
 
   <!-- ── 08 · Contacto ──────────────────────────────────────── -->
-  <section class="sec" id="contacto" aria-labelledby="t-contacto">
+  <section class="sec sec--surface" id="contacto" aria-labelledby="t-contacto">
     <div class="sec__grid">
       <div class="sec__head">
         <p class="eyebrow rv"><span class="eyebrow__n">06</span> — Contacto</p>
