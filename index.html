@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=13">
-<link rel="stylesheet" href="/assets/css/styles.css?v=13">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=14">
+<link rel="stylesheet" href="/assets/css/styles.css?v=14">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=13" defer></script>
+<script src="/assets/js/main.js?v=14" defer></script>
 
 <script type="application/ld+json">
 {
@@ -312,61 +312,59 @@
         </h2>
         <p class="sec__note rv" style="--d:.3s">
           Un mandato no empieza por un servicio, empieza por una decisión pendiente.
-          Estos son los puntos de partida más frecuentes.
+          Identifique el suyo y le muestro exactamente cómo lo resolvemos.
         </p>
       </div>
 
       <div class="sec__body">
+        <!-- Cada tarjeta es un enlace al servicio que resuelve ese
+             desafío: la sección funciona como enrutador, no como
+             catálogo de problemas. Las anclas apuntan al servicio
+             exacto, no al principio de la sección. -->
         <div class="chal">
-          <article class="chal__i rv">
+          <a class="chal__i rv" href="#consultoria-comercial">
             <h3 class="chal__t">Incrementar ingresos</h3>
             <p class="chal__d">Dónde está el margen que no se está capturando y qué
             iniciativas lo liberan primero.</p>
-          </article>
+            <span class="chal__tag">Consultoría comercial</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.05s">
+          <a class="chal__i rv" style="--d:.05s" href="#consultoria-comercial">
             <h3 class="chal__t">Crecer el negocio</h3>
             <p class="chal__d">Qué palanca sostiene el próximo tramo de crecimiento cuando
             la actual ha tocado techo.</p>
-          </article>
+            <span class="chal__tag">Consultoría comercial</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.10s">
-            <h3 class="chal__t">Reducir costos</h3>
-            <p class="chal__d">Qué gasto es estructural y cuál es consecuencia de un proceso
-            que nadie ha rediseñado.</p>
-          </article>
-
-          <article class="chal__i rv" style="--d:.15s">
+          <a class="chal__i rv" style="--d:.10s" href="#consultoria-marketing">
             <h3 class="chal__t">Ingresar a un nuevo mercado</h3>
             <p class="chal__d">Si la oportunidad resiste el análisis y con qué modelo de
             entrada se aborda.</p>
-          </article>
+            <span class="chal__tag">Go-to-Market</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.20s">
+          <a class="chal__i rv" style="--d:.15s" href="#consultoria-marketing">
             <h3 class="chal__t">Lanzar un nuevo producto</h3>
             <p class="chal__d">Qué demanda real existe, a qué precio y por qué canal se
             captura.</p>
-          </article>
+            <span class="chal__tag">Go-to-Market</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.25s">
+          <a class="chal__i rv" style="--d:.20s" href="#consultoria-marketing">
             <h3 class="chal__t">Definir la estrategia de pricing</h3>
             <p class="chal__d">Cuánto valor se está dejando sobre la mesa y qué estructura
             de precios lo recupera.</p>
-          </article>
+            <span class="chal__tag">Go-to-Market</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.30s">
-            <h3 class="chal__t">Responder a una amenaza competitiva</h3>
-            <p class="chal__d">Qué ha cambiado en el mercado y qué respuesta protege la
-            posición sin erosionar el margen.</p>
-          </article>
+          <a class="chal__i rv" style="--d:.25s" href="#tec-ia">
+            <h3 class="chal__t">Automatizar lo que frena la venta</h3>
+            <p class="chal__d">Qué parte del proceso comercial depende de personas donde
+            debería depender de un sistema.</p>
+            <span class="chal__tag">Soluciones digitales e IA</span>
+          </a>
 
-          <article class="chal__i rv" style="--d:.35s">
-            <h3 class="chal__t">Optimizar procesos</h3>
-            <p class="chal__d">Qué operación depende de personas donde debería depender de
-            un sistema.</p>
-          </article>
-
-          <a class="chal__i chal__i--cta rv" style="--d:.40s" data-wa target="_blank" rel="noopener" href="#">
+          <a class="chal__i chal__i--cta rv" style="--d:.30s" data-wa target="_blank" rel="noopener" href="#">
             <h3 class="chal__t">¿No encuentra su desafío aquí?</h3>
             <p class="chal__d">Escríbanos y conversemos sobre el reto específico de su
             empresa.</p>
@@ -689,7 +687,7 @@
 
       <div class="sec__body">
         <div class="grid4">
-          <article class="tcard rv">
+          <article class="tcard rv" id="tec-ia">
             <div class="feat__ico" aria-hidden="true"><svg><use href="#i-ai"/></svg></div>
             <h3 class="tcard__t">Soluciones digitales e IA</h3>
             <p class="tcard__d">Automatizamos lo que hoy consume horas y conectamos los
@@ -757,7 +755,7 @@
   <section class="sec sec--tint" id="metodologia" aria-labelledby="t-metodologia">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">04</span> — Metodología</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">05</span> — Metodología</p>
         <h2 class="h2 mask" id="t-metodologia">
           <span class="ln"><i>Cómo</i></span>
           <span class="ln"><i class="dim">trabajamos.</i></span>
@@ -836,7 +834,7 @@
   <section class="sec" id="faq" aria-labelledby="t-faq">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">05</span> — Preguntas frecuentes</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">06</span> — Preguntas frecuentes</p>
         <h2 class="h2 mask" id="t-faq">
           <span class="ln"><i>Antes de</i></span>
           <span class="ln"><i class="dim">escribirnos.</i></span>
@@ -939,7 +937,7 @@
   <section class="sec sec--surface" id="contacto" aria-labelledby="t-contacto">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">06</span> — Contacto</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">07</span> — Contacto</p>
         <h2 class="h2 mask" id="t-contacto">
           <span class="ln"><i>Cuéntenos</i></span>
           <span class="ln"><i class="dim">el contexto.</i></span>
@@ -1045,7 +1043,6 @@
           <ul>
             <li><a href="#desafios">Desafíos</a></li>
             <li><a href="#metodologia">Metodología</a></li>
-            <li><a href="#desafios">Desafíos</a></li>
             <li><a href="#faq">Preguntas frecuentes</a></li>
           </ul>
         </div>
