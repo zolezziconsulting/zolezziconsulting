@@ -54,7 +54,9 @@
       return clamp((vh * 0.6 - r.top) / r.height).toFixed(4);
     });
 
-    hdr.classList.toggle('is-scrolled', y > 8);
+    // 80px: por debajo de eso la cabecera sigue transparente sobre el
+    // hero, que es lo que da la sensación de que flota.
+    hdr.classList.toggle('is-scrolled', y > 80);
     hdr.classList.toggle('is-inv', inv);
     bar.style.setProperty('--p', scrollable > 0 ? clamp(y / scrollable).toFixed(4) : '0');
     rails.forEach(function (el, i) { el.style.setProperty('--p', fills[i]); });
