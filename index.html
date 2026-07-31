@@ -668,6 +668,53 @@
               <li>Datos estructurados</li>
               <li>Visibilidad en respuestas de IA</li>
             </ul>
+            <!-- Visual 3 · Las dos superficies. Izquierda: resultado
+                 clásico. Derecha: caja de respuesta de IA con la cita
+                 a la marca. Todo son cajas y filetes, no texto real:
+                 lo que se lee es la FORMA de cada superficie. -->
+            <div class="svis svis--geo">
+              <p class="geo__claim">Dos superficies distintas. <span class="dim">Trabajamos las dos.</span></p>
+              <div class="geo">
+                <figure class="geo__p">
+                  <figcaption class="geo__k">Buscador clásico</figcaption>
+                  <div class="geo__box">
+                    <div class="geo__res geo__res--top">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                      <span class="geo__ln geo__ln--s"></span>
+                    </div>
+                    <div class="geo__res">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                    </div>
+                    <div class="geo__res">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                    </div>
+                  </div>
+                </figure>
+
+                <figure class="geo__p">
+                  <figcaption class="geo__k">Respuesta con IA</figcaption>
+                  <div class="geo__box geo__box--ai">
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln geo__ln--s"></span>
+                    <p class="geo__cite">
+                      <span class="geo__mark">Según ZOLEZZI Consulting</span>, el modelo
+                      comercial se rediseña antes de invertir en canales.
+                    </p>
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln geo__ln--s"></span>
+                  </div>
+                </figure>
+              </div>
+              <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
+            </div>
+
             <ul class="tools" aria-label="Herramientas de trabajo">
               <li>Ahrefs</li><li>Semrush</li><li>Search Console</li>
               <li>Analytics 4</li><li>Looker Studio</li><li>Business Profile</li>
@@ -692,15 +739,40 @@
               <li>Google Ads</li><li>Meta Ads</li><li>TikTok Ads</li>
             </ul>
 
-            <!-- Panel de indicadores. Las cifras son de lectura, no
-                 resultados: van rotuladas como ilustrativas. -->
-            <div class="kpis">
-              <div class="kpi"><span class="kpi__v" data-count="4.2" data-dec="1" data-suf="×">0×</span><span class="kpi__k">ROAS</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="2.8" data-dec="1" data-suf="%">0%</span><span class="kpi__k">CTR</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="1.35" data-dec="2" data-pre="S/ ">0</span><span class="kpi__k">CPC</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="312">0</span><span class="kpi__k">Conversiones</span></div>
+            <!-- Visual 4 · Los contadores que ya existían, ahora
+                 dentro de un panel de campaña: barra de ventana, fila
+                 de métricas y sparkline. Las cifras siguen siendo de
+                 lectura, no resultados. -->
+            <div class="svis svis--panel">
+              <div class="dash" id="dash-ads">
+                <div class="dash__bar" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                  <em class="dash__ttl">Campañas · últimos 30 días</em>
+                </div>
+
+                <div class="kpis">
+                  <div class="kpi"><span class="kpi__v" data-count="4.2" data-dec="1" data-suf="×">0×</span><span class="kpi__k">ROAS</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="2.8" data-dec="1" data-suf="%">0%</span><span class="kpi__k">CTR</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="1.35" data-dec="2" data-pre="S/ ">0</span><span class="kpi__k">CPC</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="312">0</span><span class="kpi__k">Conversiones</span></div>
+                </div>
+
+                <svg class="dash__spark" viewBox="0 0 400 90" preserveAspectRatio="none"
+                     role="img" aria-labelledby="spark-t">
+                  <title id="spark-t">Curva de conversiones en tendencia ascendente a lo
+                  largo del periodo.</title>
+                  <defs>
+                    <linearGradient id="spark-g" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="var(--celeste)"/>
+                      <stop offset="1" stop-color="var(--turquesa)"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="dash__line" pathLength="1"
+                        d="M0 76 L44 70 L89 72 L133 58 L178 61 L222 46 L267 38 L311 40 L356 22 L400 14"/>
+                </svg>
+              </div>
+              <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
             </div>
-            <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
           </div>
         </article>
 
@@ -797,6 +869,23 @@
               <li>Integraciones de CRM</li>
               <li>APIs e integración de datos</li>
             </ul>
+
+            <!-- Visual 6 · Un dato entrando por el formulario y
+                 recorriendo el sistema. El punto luminoso viaja por la
+                 misma trayectoria que dibuja las líneas. -->
+            <div class="svis svis--flujo">
+              <svg class="flw" viewBox="0 0 420 60" role="img" aria-labelledby="flw-t">
+                <title id="flw-t">Un dato recorre cuatro sistemas conectados: formulario,
+                CRM, WhatsApp y panel de indicadores.</title>
+                <line class="flw__l" x1="52"  y1="30" x2="140" y2="30"/>
+                <line class="flw__l" x1="176" y1="30" x2="244" y2="30"/>
+                <line class="flw__l" x1="280" y1="30" x2="368" y2="30"/>
+                <circle class="flw__dot" r="3.5" cx="0" cy="30"/>
+              </svg>
+              <ol class="flw__ns">
+                <li>Formulario</li><li>CRM</li><li>WhatsApp</li><li>Dashboard</li>
+              </ol>
+            </div>
           </article>
 
           <article class="tcard rv" style="--d:.06s">

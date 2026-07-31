@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl, .rad');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl, .rad, .dash');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {

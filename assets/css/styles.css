@@ -461,6 +461,141 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   .rad.is-in .rad__n { opacity: 1; transform: translate(-50%, -50%) scale(var(--s, 1)); }
 }
 
+/* ── Visual 3 · SEO & GEO ───────────────────────────────────────
+   Dos superficies enfrentadas. Ni una línea de texto real: lo que se
+   compara es la FORMA de cada resultado, así que todo son barras.
+   La única frase legible es la cita de marca, que es el punto.
+   ──────────────────────────────────────────────────────────────── */
+.geo__claim {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  margin-bottom: 1rem;
+}
+.geo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.6vw, 1.25rem);
+}
+.geo__p { margin: 0; }
+.geo__k {
+  font-size: .625rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .5rem;
+}
+.geo__box {
+  padding: clamp(.875rem, 1.8vw, 1.25rem);
+  background: var(--bg-surface);
+  border: 1px solid var(--borde);
+  border-radius: .5rem;
+  min-height: 11rem;
+}
+.geo__box--ai { border-color: rgb(var(--c-turquesa) / .45); }
+
+.geo__res { padding: .5rem 0; }
+.geo__res + .geo__res { border-top: 1px solid var(--rule-2); }
+.geo__url, .geo__ttl, .geo__ln {
+  display: block;
+  border-radius: 2px;
+  background: rgb(var(--c-dark) / .12);
+}
+.geo__url { width: 38%; height: 5px; margin-bottom: .4rem; }
+.geo__ttl { width: 72%; height: 9px; margin-bottom: .4rem; background: rgb(var(--c-dark) / .3); }
+.geo__ln  { width: 92%; height: 5px; margin-bottom: .3rem; }
+.geo__ln--s { width: 64%; }
+/* El primero destaca: es la posición que se disputa en SEO clásico. */
+.geo__res--top .geo__ttl { background: var(--celeste); }
+.geo__res--top .geo__url { background: rgb(var(--c-celeste) / .5); }
+
+.geo__cite {
+  margin: .625rem 0;
+  padding: .625rem .75rem;
+  border-left: 2px solid var(--turquesa);
+  background: rgb(var(--c-turquesa) / .07);
+  font-size: .75rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.geo__mark { color: var(--teal-deep); font-weight: 500; }
+
+/* ── Visual 4 · Panel de campaña ────────────────────────────────
+   Los contadores viven dentro de una ventana: el marco es lo que los
+   convierte en «panel» y no en cuatro cifras sueltas.
+   ──────────────────────────────────────────────────────────────── */
+.dash {
+  border: 1px solid var(--borde);
+  border-radius: .625rem;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+.dash__bar {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .625rem .875rem;
+  background: var(--bg-tint);
+  border-bottom: 1px solid var(--borde);
+}
+.dash__bar > span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--c-dark) / .18);
+}
+.dash__ttl {
+  margin-left: .625rem;
+  font-size: .625rem;
+  font-style: normal;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.dash .kpis { margin-top: 0; border: 0; border-bottom: 1px solid var(--borde); }
+.dash__spark { display: block; width: 100%; height: clamp(4rem, 9vw, 5.5rem); }
+.dash__line {
+  fill: none;
+  stroke: url(#spark-g);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── Visual 6 · Flujo de sistemas ───────────────────────────────── */
+.flw { display: block; width: 100%; height: auto; }
+.flw__l { stroke: var(--borde); stroke-width: 1.5; }
+.flw__dot { fill: var(--turquesa); opacity: 0; }
+.flw__ns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5rem;
+  margin-top: .375rem;
+  text-align: center;
+  font-size: .6875rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* La sparkline se dibuja de izquierda a derecha. pathLength="1" en
+     el marcado permite animarla sin conocer su longitud real. */
+  .dash__line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.4s var(--ease-o) .3s;
+  }
+  .dash.is-in .dash__line { stroke-dashoffset: 0; }
+
+  /* El punto recorre el flujo en bucle de 3s. Solo se mueve cx, que
+     el navegador compone sin recalcular estilo. */
+  .flw__dot { animation: flw-run 3s linear infinite; }
+  @keyframes flw-run {
+    0%        { cx: 52px;  opacity: 0; }
+    6%        { opacity: 1; }
+    94%       { opacity: 1; }
+    100%      { cx: 368px; opacity: 0; }
+  }
+}
+
 /* ── Línea de tiempo del proceso ────────────────────────────────
    Seis etapas en horizontal. El conector se dibuja de izquierda a
    derecha con stroke-dashoffset conforme la sección entra en pantalla,
@@ -676,6 +811,10 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   gap: clamp(.75rem, 1.5vw, 1.25rem);
   margin-top: 1.75rem;
 }
+/* La perspectiva vive en el contenedor, no en la tarjeta: si se pone
+   en el propio elemento que rota, el punto de fuga se mueve con él y
+   el giro se ve plano. */
+.mocks { perspective: 1000px; }
 .mock { margin: 0; }
 .mock__img {
   width: 100%;
@@ -684,9 +823,21 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   border: 1px solid var(--rule);
   border-radius: .5rem;
   overflow: hidden;
-  transition: transform .5s var(--ease-o), border-color .5s var(--ease);
+  box-shadow: 0 1px 2px rgb(var(--c-dark) / .04);
+  transition:
+    transform .45s var(--ease-o),
+    border-color .45s var(--ease),
+    box-shadow .45s var(--ease);
 }
-.mock:hover .mock__img { transform: translateY(-4px); border-color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .mock:hover .mock__img,
+  .mock:focus-within .mock__img {
+    transform: perspective(1000px) rotateY(-4deg) translateY(-4px);
+    box-shadow: -12px 14px 32px rgb(var(--c-dark) / .12);
+  }
+}
+.mock:hover .mock__img,
+.mock:focus-within .mock__img { border-color: var(--turquesa); }
 .mock figcaption {
   margin-top: .75rem;
   font-size: .8125rem;
@@ -1912,6 +2063,10 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .rad__n:focus-visible .rad__d { color: var(--bg-dark); }
   .grid4  { grid-template-columns: 1fr; }
   .mocks  { grid-template-columns: 1fr; }
+  /* Las dos superficies del visual SEO se apilan: a 170px de ancho
+     cada caja, las barras no comunican nada. */
+  .geo    { grid-template-columns: 1fr; }
+  .flw__ns { font-size: .625rem; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat__l { columns: 1; }
 
