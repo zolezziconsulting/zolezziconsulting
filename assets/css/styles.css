@@ -1103,7 +1103,34 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
     border-color .4s var(--ease),
     background-color .4s var(--ease);
 }
-.chal__i:hover { background: var(--canvas); border-color: var(--accent); }
+.chal__i:hover { background: var(--canvas); border-color: var(--turquesa); }
+
+/* Etiqueta del servicio que resuelve el desafío. Es lo que convierte
+   la sección en enrutador: la tarjeta dice el problema, la pill dice
+   a dónde lleva. margin-top:auto la ancla al pie aunque los textos
+   tengan distinta longitud. */
+.chal__tag {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: .3rem .625rem;
+  border-radius: 999px;
+  background: var(--bg-tint);
+  color: var(--teal-deep);
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  transition: background-color .3s var(--ease), color .3s var(--ease);
+}
+/* Tinta OSCURA sobre el turquesa, no blanca: el blanco ahí da 2.54:1
+   y no pasa AA. Con --bg-dark queda en 7.14:1 y se conserva el mismo
+   golpe de color. */
+.chal__i:hover .chal__tag {
+  background: var(--turquesa);
+  color: var(--bg-dark);
+}
+/* La tarjeta de contacto no lleva pill; su flecha ya hace de remate. */
+.chal__i--cta:hover .chal__tag { background: var(--bg-tint); }
 
 .chal__t {
   font-size: clamp(1.0625rem, 1.55vw, 1.3125rem);
