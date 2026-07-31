@@ -371,45 +371,229 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    quedaría de una línea por celda y parecería roto. */
 .feat__l--one { columns: 1; margin-top: .5rem; }
 
-/* ── Cadena de piezas ───────────────────────────────────────────
-   Siete piezas encadenadas. El guion que las une es un ::after, no un
-   carácter, para que no lo lea el lector de pantalla ni sobre en el
-   último elemento.
+/* ── Visual 2 · Radial de Go-to-Market ──────────────────────────
+   Los nodos se colocan por left/top en porcentaje, NO por
+   transform: translate(): los porcentajes de translate se refieren al
+   tamaño del propio elemento, no al del contenedor, y los nodos
+   habrían quedado a distancias distintas según lo largo de su texto.
+
+   Con left/top en % y el SVG en viewBox 0 0 100 100 con
+   preserveAspectRatio="none", las coordenadas de las líneas y las de
+   los nodos son el mismo sistema y encajan a cualquier tamaño.
    ──────────────────────────────────────────────────────────────── */
-.chain {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .625rem 0;
-  margin-top: 1.25rem;
-}
-.chain__i {
+.rad {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .625rem 1rem;
-  margin-right: 1.75rem;
-  background: var(--canvas-2);
-  border: 1px solid var(--rule);
-  border-radius: 2rem;
-  font-size: .875rem;
-  font-weight: 500;
-  letter-spacing: -.01em;
-  transition: border-color .4s var(--ease), background-color .4s var(--ease);
+  width: min(100%, 30rem);
+  margin-inline: auto;
+  aspect-ratio: 1;
 }
-.chain__i:hover { border-color: var(--blue); background: var(--canvas); }
-.chain__i:not(:last-child)::after {
-  content: '';
+.rad__web { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rad__web line { stroke: var(--borde); stroke-width: .4; }
+
+.rad__core {
   position: absolute;
-  right: -1.375rem;
-  width: 1rem; height: 1px;
-  background: var(--rule);
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 42%;
+  text-align: center;
+  font-size: clamp(.75rem, 1.5vw, .875rem);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+  transition: color .3s var(--ease);
 }
-.chain__n {
+.rad.is-live .rad__core { color: var(--teal-deep); }
+
+.rad__n {
+  position: absolute;
+  left: var(--x); top: var(--y);
+  transform: translate(-50%, -50%) scale(var(--s, 1));
+  padding: .4rem .7rem;
+  max-width: 8.5rem;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  box-shadow: inset 0 0 0 1px var(--borde);
+  color: var(--ink-2);
+  font-size: .6875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform .3s var(--ease-o),
+    background-color .3s var(--ease),
+    color .3s var(--ease),
+    box-shadow .3s var(--ease);
+}
+/* Tinta oscura sobre el turquesa: el blanco ahí da 2.54:1. */
+.rad__n:hover,
+.rad__n:focus-visible {
+  --s: 1.08;
+  background: var(--turquesa);
+  box-shadow: inset 0 0 0 1px var(--turquesa);
+  color: var(--bg-dark);
+}
+
+/* Texto solo para lectores de pantalla. La descripción viaja aquí
+   dentro del botón, así que no depende del intercambio visual del
+   centro ni de un aria-live que estaría cantando en cada hover. */
+.vh {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rad__n {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.9);
+    transition:
+      opacity .45s var(--ease-o) calc(var(--i) * 70ms),
+      transform .45s var(--ease-o) calc(var(--i) * 70ms),
+      background-color .3s var(--ease),
+      color .3s var(--ease),
+      box-shadow .3s var(--ease);
+  }
+  .rad.is-in .rad__n { opacity: 1; transform: translate(-50%, -50%) scale(var(--s, 1)); }
+}
+
+/* ── Visual 3 · SEO & GEO ───────────────────────────────────────
+   Dos superficies enfrentadas. Ni una línea de texto real: lo que se
+   compara es la FORMA de cada resultado, así que todo son barras.
+   La única frase legible es la cita de marca, que es el punto.
+   ──────────────────────────────────────────────────────────────── */
+.geo__claim {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  margin-bottom: 1rem;
+}
+.geo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.6vw, 1.25rem);
+}
+.geo__p { margin: 0; }
+.geo__k {
   font-size: .625rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .5rem;
+}
+.geo__box {
+  padding: clamp(.875rem, 1.8vw, 1.25rem);
+  background: var(--bg-surface);
+  border: 1px solid var(--borde);
+  border-radius: .5rem;
+  min-height: 11rem;
+}
+.geo__box--ai { border-color: rgb(var(--c-turquesa) / .45); }
+
+.geo__res { padding: .5rem 0; }
+.geo__res + .geo__res { border-top: 1px solid var(--rule-2); }
+.geo__url, .geo__ttl, .geo__ln {
+  display: block;
+  border-radius: 2px;
+  background: rgb(var(--c-dark) / .12);
+}
+.geo__url { width: 38%; height: 5px; margin-bottom: .4rem; }
+.geo__ttl { width: 72%; height: 9px; margin-bottom: .4rem; background: rgb(var(--c-dark) / .3); }
+.geo__ln  { width: 92%; height: 5px; margin-bottom: .3rem; }
+.geo__ln--s { width: 64%; }
+/* El primero destaca: es la posición que se disputa en SEO clásico. */
+.geo__res--top .geo__ttl { background: var(--celeste); }
+.geo__res--top .geo__url { background: rgb(var(--c-celeste) / .5); }
+
+.geo__cite {
+  margin: .625rem 0;
+  padding: .625rem .75rem;
+  border-left: 2px solid var(--turquesa);
+  background: rgb(var(--c-turquesa) / .07);
+  font-size: .75rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.geo__mark { color: var(--teal-deep); font-weight: 500; }
+
+/* ── Visual 4 · Panel de campaña ────────────────────────────────
+   Los contadores viven dentro de una ventana: el marco es lo que los
+   convierte en «panel» y no en cuatro cifras sueltas.
+   ──────────────────────────────────────────────────────────────── */
+.dash {
+  border: 1px solid var(--borde);
+  border-radius: .625rem;
+  overflow: hidden;
+  background: var(--bg-surface);
+}
+.dash__bar {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+  padding: .625rem .875rem;
+  background: var(--bg-tint);
+  border-bottom: 1px solid var(--borde);
+}
+.dash__bar > span {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgb(var(--c-dark) / .18);
+}
+.dash__ttl {
+  margin-left: .625rem;
+  font-size: .625rem;
+  font-style: normal;
   letter-spacing: .1em;
-  color: var(--sky-ink);
-  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.dash .kpis { margin-top: 0; border: 0; border-bottom: 1px solid var(--borde); }
+.dash__spark { display: block; width: 100%; height: clamp(4rem, 9vw, 5.5rem); }
+.dash__line {
+  fill: none;
+  stroke: url(#spark-g);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── Visual 6 · Flujo de sistemas ───────────────────────────────── */
+.flw { display: block; width: 100%; height: auto; }
+.flw__l { stroke: var(--borde); stroke-width: 1.5; }
+.flw__dot { fill: var(--turquesa); opacity: 0; }
+.flw__ns {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .5rem;
+  margin-top: .375rem;
+  text-align: center;
+  font-size: .6875rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* La sparkline se dibuja de izquierda a derecha. pathLength="1" en
+     el marcado permite animarla sin conocer su longitud real. */
+  .dash__line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.4s var(--ease-o) .3s;
+  }
+  .dash.is-in .dash__line { stroke-dashoffset: 0; }
+
+  /* El punto recorre el flujo en bucle de 3s. Solo se mueve cx, que
+     el navegador compone sin recalcular estilo. */
+  .flw__dot { animation: flw-run 3s linear infinite; }
+  @keyframes flw-run {
+    0%        { cx: 52px;  opacity: 0; }
+    6%        { opacity: 1; }
+    94%       { opacity: 1; }
+    100%      { cx: 368px; opacity: 0; }
+  }
 }
 
 /* ── Línea de tiempo del proceso ────────────────────────────────
@@ -627,6 +811,10 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   gap: clamp(.75rem, 1.5vw, 1.25rem);
   margin-top: 1.75rem;
 }
+/* La perspectiva vive en el contenedor, no en la tarjeta: si se pone
+   en el propio elemento que rota, el punto de fuga se mueve con él y
+   el giro se ve plano. */
+.mocks { perspective: 1000px; }
 .mock { margin: 0; }
 .mock__img {
   width: 100%;
@@ -635,9 +823,21 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   border: 1px solid var(--rule);
   border-radius: .5rem;
   overflow: hidden;
-  transition: transform .5s var(--ease-o), border-color .5s var(--ease);
+  box-shadow: 0 1px 2px rgb(var(--c-dark) / .04);
+  transition:
+    transform .45s var(--ease-o),
+    border-color .45s var(--ease),
+    box-shadow .45s var(--ease);
 }
-.mock:hover .mock__img { transform: translateY(-4px); border-color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .mock:hover .mock__img,
+  .mock:focus-within .mock__img {
+    transform: perspective(1000px) rotateY(-4deg) translateY(-4px);
+    box-shadow: -12px 14px 32px rgb(var(--c-dark) / .12);
+  }
+}
+.mock:hover .mock__img,
+.mock:focus-within .mock__img { border-color: var(--turquesa); }
 .mock figcaption {
   margin-top: .75rem;
   font-size: .8125rem;
@@ -1807,8 +2007,66 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
   .svc__cols { grid-template-columns: 1fr; }
   .svc__head { grid-template-columns: 1fr; }
+  /* El embudo apilado: la silueta arriba, los datos debajo. A dos
+     columnas en móvil el SVG queda en 150px y no se lee nada. */
+  .fnl { grid-template-columns: 1fr; }
+
+  /* El radial NO cabe en móvil: medido a 390px, un nodo se salía del
+     contenedor y dos se montaban sobre el centro. Aquí se convierte en
+     lista apilada, con la descripción ya visible —que en escritorio
+     solo la oye el lector de pantalla—. La telaraña sobra. */
+  .rad { aspect-ratio: auto; width: 100%; }
+  .rad__web { display: none; }
+  .rad__core {
+    position: static;
+    transform: none;
+    width: auto;
+    text-align: left;
+    padding-bottom: .625rem;
+    margin-bottom: .25rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: .625rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--teal-deep);
+  }
+  /* .rad.is-in .rad__n del bloque no-preference tiene más
+     especificidad (0,2,1) y volvía a imponer el translate del radial.
+     Hay que anularlo con el mismo selector, no solo con .rad__n. */
+  .rad.is-in .rad__n,
+  .rad__n {
+    position: static;
+    transform: none;
+    display: block;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+    border-radius: .5rem;
+    padding: .75rem .875rem;
+    margin-bottom: .5rem;
+    font-size: .875rem;
+    color: var(--ink);
+  }
+  .rad__d {
+    position: static;
+    width: auto; height: auto;
+    margin: .25rem 0 0;
+    clip-path: none;
+    white-space: normal;
+    display: block;
+    font-size: .8125rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .rad__n:hover .rad__d,
+  .rad__n:focus-visible .rad__d { color: var(--bg-dark); }
   .grid4  { grid-template-columns: 1fr; }
   .mocks  { grid-template-columns: 1fr; }
+  /* Las dos superficies del visual SEO se apilan: a 170px de ancho
+     cada caja, las barras no comunican nada. */
+  .geo    { grid-template-columns: 1fr; }
+  .flw__ns { font-size: .625rem; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat__l { columns: 1; }
 

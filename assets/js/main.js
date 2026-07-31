@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl, .rad, .dash');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -138,6 +138,35 @@
     Array.prototype.forEach.call(revealables, function (el) { el.classList.add('is-in'); });
   }
 
+  /* ── Radial de Go-to-Market ──────────────────────────────────
+     El centro muestra la descripción de la pieza señalada. Es un
+     realce visual: la descripción ya viaja dentro de cada botón en un
+     span oculto, así que un lector de pantalla no depende de esto y
+     no hace falta aria-live —que estaría cantando en cada hover—. */
+  var rad = document.getElementById('rad-gtm');
+  if (rad) {
+    var core = document.getElementById('rad-core');
+    var base = core.getAttribute('data-base');
+
+    var show = function (texto) {
+      core.textContent = texto || base;
+      rad.classList.toggle('is-live', !!texto);
+    };
+
+    Array.prototype.forEach.call(rad.querySelectorAll('.rad__n'), function (b) {
+      var d = b.getAttribute('data-d');
+      b.addEventListener('pointerenter', function () { show(d); });
+      b.addEventListener('focus', function () { show(d); });
+      b.addEventListener('pointerleave', function () { show(null); });
+      b.addEventListener('blur', function () { show(null); });
+      // En táctil no hay hover: el toque fija la descripción.
+      b.addEventListener('click', function () { show(d); });
+    });
+
+    // Un toque fuera devuelve el centro a su estado base.
+    rad.addEventListener('pointerleave', function () { show(null); });
+  }
+
   /* ── Contadores ──────────────────────────────────────────────
      Animan una sola vez, al entrar en pantalla. Con movimiento
      reducido saltan directamente al valor final: un número que sube
@@ -149,7 +178,14 @@
     var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
     var pre = el.getAttribute('data-pre') || '';
     var suf = el.getAttribute('data-suf') || '';
-    var write = function (v) { el.textContent = pre + v.toFixed(dec) + suf; };
+    // Formato peruano: coma para millares y punto para decimales, que
+    // es justo al revés que en España. Sin esto, 1240 salía «1240».
+    var write = function (v) {
+      el.textContent = pre + v.toLocaleString('es-PE', {
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec
+      }) + suf;
+    };
 
     if (reduce) return write(end);
 

@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=14">
-<link rel="stylesheet" href="/assets/css/styles.css?v=14">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=16">
+<link rel="stylesheet" href="/assets/css/styles.css?v=16">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=14" defer></script>
+<script src="/assets/js/main.js?v=16" defer></script>
 
 <script type="application/ld+json">
 {
@@ -429,6 +429,56 @@
             </div>
           </div>
 
+          <!-- Visual 1 · El embudo es el objeto del trabajo, así que va
+               antes del proceso: primero qué se rediseña, después cómo.
+               La silueta la lleva el SVG; los datos, la lista de al
+               lado, que sí es accesible. -->
+          <h4 class="svc__k svc__k--wide">Qué se rediseña</h4>
+          <div class="svis svis--embudo">
+            <div class="fnl" id="fnl-com">
+              <svg class="fnl__svg" viewBox="0 0 480 300" preserveAspectRatio="none"
+                   role="img" aria-labelledby="fnl-t">
+                <title id="fnl-t">Embudo comercial de cinco etapas. Cada etapa se estrecha
+                respecto de la anterior: prospectos, contactados, reunión, propuesta y cierre.</title>
+                <defs>
+                  <linearGradient id="fnl-g" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="var(--celeste)"/>
+                    <stop offset="1" stop-color="var(--turquesa)"/>
+                  </linearGradient>
+                </defs>
+                <path class="fnl__b" style="--i:0" d="M0 0H480L440 56H40Z"/>
+                <path class="fnl__b" style="--i:1" d="M40 60H440L400 116H80Z"/>
+                <path class="fnl__b" style="--i:2" d="M80 120H400L360 176H120Z"/>
+                <path class="fnl__b" style="--i:3" d="M120 180H360L320 236H160Z"/>
+                <path class="fnl__b" style="--i:4" d="M160 240H320L288 296H192Z"/>
+              </svg>
+
+              <ol class="fnl__rows">
+                <li class="fnl__r" style="--i:0">
+                  <span class="fnl__n" data-count="1240">0</span>
+                  <span class="fnl__l">Prospectos</span>
+                </li>
+                <li class="fnl__r" style="--i:1">
+                  <span class="fnl__n" data-count="496">0</span>
+                  <span class="fnl__l">Contactados</span>
+                </li>
+                <li class="fnl__r" style="--i:2">
+                  <span class="fnl__n" data-count="174">0</span>
+                  <span class="fnl__l">Reunión</span>
+                </li>
+                <li class="fnl__r" style="--i:3">
+                  <span class="fnl__n" data-count="68">0</span>
+                  <span class="fnl__l">Propuesta</span>
+                </li>
+                <li class="fnl__r" style="--i:4">
+                  <span class="fnl__n" data-count="21">0</span>
+                  <span class="fnl__l">Cierre</span>
+                </li>
+              </ol>
+            </div>
+            <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
+          </div>
+
           <h4 class="svc__k svc__k--wide">Cómo se ejecuta</h4>
           <div class="tl" id="tl-com">
             <svg class="tl__line" viewBox="0 0 1000 2" preserveAspectRatio="none" aria-hidden="true">
@@ -516,16 +566,63 @@
             </div>
           </div>
 
+          <!-- Visual 2 · Siete piezas que alimentan un centro. «Plan
+               comercial» pasó al núcleo, así que entra «Indicadores y
+               atribución» —ya está entre los entregables— para llegar
+               a siete nodos.
+
+               Cada nodo es un <button>: en táctil no hay hover y con
+               teclado tampoco, así que la interacción va por hover,
+               focus y toque. La descripción también viaja oculta
+               dentro del botón, para que el lector de pantalla no
+               dependa del intercambio visual del centro. -->
           <h4 class="svc__k svc__k--wide">Las siete piezas</h4>
-          <ol class="chain">
-            <li class="chain__i rv"><span class="chain__n">01</span>Propuesta de valor</li>
-            <li class="chain__i rv" style="--d:.06s"><span class="chain__n">02</span>Segmentación</li>
-            <li class="chain__i rv" style="--d:.12s"><span class="chain__n">03</span>Posicionamiento</li>
-            <li class="chain__i rv" style="--d:.18s"><span class="chain__n">04</span>Go-to-Market</li>
-            <li class="chain__i rv" style="--d:.24s"><span class="chain__n">05</span>Pricing</li>
-            <li class="chain__i rv" style="--d:.30s"><span class="chain__n">06</span>Customer Journey</li>
-            <li class="chain__i rv" style="--d:.36s"><span class="chain__n">07</span>Plan comercial</li>
-          </ol>
+          <div class="svis svis--radial">
+            <div class="rad" id="rad-gtm">
+              <svg class="rad__web" viewBox="0 0 100 100" preserveAspectRatio="none"
+                   role="img" aria-labelledby="rad-t">
+                <title id="rad-t">Siete piezas del marketing estratégico conectadas a un
+                plan comercial central.</title>
+                <line x1="50" y1="37" x2="50" y2="18"/>
+                <line x1="60.2" y1="41.9" x2="75.0" y2="30.0"/>
+                <line x1="62.7" y1="52.9" x2="81.2" y2="57.1"/>
+                <line x1="55.6" y1="61.7" x2="63.9" y2="78.8"/>
+                <line x1="44.4" y1="61.7" x2="36.1" y2="78.8"/>
+                <line x1="37.3" y1="52.9" x2="18.8" y2="57.1"/>
+                <line x1="39.8" y1="41.9" x2="25.0" y2="30.0"/>
+              </svg>
+
+              <p class="rad__core" id="rad-core" data-base="Plan comercial">Plan comercial</p>
+
+              <button class="rad__n" type="button" style="--x:50%;  --y:15%;  --i:0"
+                data-d="Por qué alguien debería elegirle a usted y no al de al lado."
+                >Propuesta de valor<span class="rad__d vh"> Por qué alguien debería elegirle a usted y no al de al lado.</span></button>
+
+              <button class="rad__n" type="button" style="--x:77.4%;--y:28.2%;--i:1"
+                data-d="A qué grupos de clientes vale la pena dirigirse, y en qué orden."
+                >Segmentación<span class="rad__d vh"> A qué grupos de clientes vale la pena dirigirse, y en qué orden.</span></button>
+
+              <button class="rad__n" type="button" style="--x:84.1%;--y:57.8%;--i:2"
+                data-d="El lugar que la marca ocupa en la cabeza del cliente."
+                >Posicionamiento<span class="rad__d vh"> El lugar que la marca ocupa en la cabeza del cliente.</span></button>
+
+              <button class="rad__n" type="button" style="--x:65.2%;--y:81.5%;--i:3"
+                data-d="Con qué modelo de entrada se aborda un mercado o un producto nuevo."
+                >Go-to-Market<span class="rad__d vh"> Con qué modelo de entrada se aborda un mercado o un producto nuevo.</span></button>
+
+              <button class="rad__n" type="button" style="--x:34.8%;--y:81.5%;--i:4"
+                data-d="Cuánto valor se está dejando sobre la mesa y qué estructura lo recupera."
+                >Pricing<span class="rad__d vh"> Cuánto valor se está dejando sobre la mesa y qué estructura lo recupera.</span></button>
+
+              <button class="rad__n" type="button" style="--x:15.9%;--y:57.8%;--i:5"
+                data-d="Dónde se gana y dónde se pierde al cliente, etapa por etapa."
+                >Customer Journey<span class="rad__d vh"> Dónde se gana y dónde se pierde al cliente, etapa por etapa.</span></button>
+
+              <button class="rad__n" type="button" style="--x:22.6%;--y:28.2%;--i:6"
+                data-d="Qué se mide, con qué modelo de atribución y contra qué objetivo."
+                >Indicadores y atribución<span class="rad__d vh"> Qué se mide, con qué modelo de atribución y contra qué objetivo.</span></button>
+            </div>
+          </div>
 
           <div class="feat__meta">
             <div><b>Duración</b>6 a 14 semanas</div>
@@ -571,6 +668,53 @@
               <li>Datos estructurados</li>
               <li>Visibilidad en respuestas de IA</li>
             </ul>
+            <!-- Visual 3 · Las dos superficies. Izquierda: resultado
+                 clásico. Derecha: caja de respuesta de IA con la cita
+                 a la marca. Todo son cajas y filetes, no texto real:
+                 lo que se lee es la FORMA de cada superficie. -->
+            <div class="svis svis--geo">
+              <p class="geo__claim">Dos superficies distintas. <span class="dim">Trabajamos las dos.</span></p>
+              <div class="geo">
+                <figure class="geo__p">
+                  <figcaption class="geo__k">Buscador clásico</figcaption>
+                  <div class="geo__box">
+                    <div class="geo__res geo__res--top">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                      <span class="geo__ln geo__ln--s"></span>
+                    </div>
+                    <div class="geo__res">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                    </div>
+                    <div class="geo__res">
+                      <span class="geo__url"></span>
+                      <span class="geo__ttl"></span>
+                      <span class="geo__ln"></span>
+                    </div>
+                  </div>
+                </figure>
+
+                <figure class="geo__p">
+                  <figcaption class="geo__k">Respuesta con IA</figcaption>
+                  <div class="geo__box geo__box--ai">
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln geo__ln--s"></span>
+                    <p class="geo__cite">
+                      <span class="geo__mark">Según ZOLEZZI Consulting</span>, el modelo
+                      comercial se rediseña antes de invertir en canales.
+                    </p>
+                    <span class="geo__ln"></span>
+                    <span class="geo__ln geo__ln--s"></span>
+                  </div>
+                </figure>
+              </div>
+              <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
+            </div>
+
             <ul class="tools" aria-label="Herramientas de trabajo">
               <li>Ahrefs</li><li>Semrush</li><li>Search Console</li>
               <li>Analytics 4</li><li>Looker Studio</li><li>Business Profile</li>
@@ -595,15 +739,40 @@
               <li>Google Ads</li><li>Meta Ads</li><li>TikTok Ads</li>
             </ul>
 
-            <!-- Panel de indicadores. Las cifras son de lectura, no
-                 resultados: van rotuladas como ilustrativas. -->
-            <div class="kpis">
-              <div class="kpi"><span class="kpi__v" data-count="4.2" data-dec="1" data-suf="×">0×</span><span class="kpi__k">ROAS</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="2.8" data-dec="1" data-suf="%">0%</span><span class="kpi__k">CTR</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="1.35" data-dec="2" data-pre="S/ ">0</span><span class="kpi__k">CPC</span></div>
-              <div class="kpi"><span class="kpi__v" data-count="312">0</span><span class="kpi__k">Conversiones</span></div>
+            <!-- Visual 4 · Los contadores que ya existían, ahora
+                 dentro de un panel de campaña: barra de ventana, fila
+                 de métricas y sparkline. Las cifras siguen siendo de
+                 lectura, no resultados. -->
+            <div class="svis svis--panel">
+              <div class="dash" id="dash-ads">
+                <div class="dash__bar" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                  <em class="dash__ttl">Campañas · últimos 30 días</em>
+                </div>
+
+                <div class="kpis">
+                  <div class="kpi"><span class="kpi__v" data-count="4.2" data-dec="1" data-suf="×">0×</span><span class="kpi__k">ROAS</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="2.8" data-dec="1" data-suf="%">0%</span><span class="kpi__k">CTR</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="1.35" data-dec="2" data-pre="S/ ">0</span><span class="kpi__k">CPC</span></div>
+                  <div class="kpi"><span class="kpi__v" data-count="312">0</span><span class="kpi__k">Conversiones</span></div>
+                </div>
+
+                <svg class="dash__spark" viewBox="0 0 400 90" preserveAspectRatio="none"
+                     role="img" aria-labelledby="spark-t">
+                  <title id="spark-t">Curva de conversiones en tendencia ascendente a lo
+                  largo del periodo.</title>
+                  <defs>
+                    <linearGradient id="spark-g" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="var(--celeste)"/>
+                      <stop offset="1" stop-color="var(--turquesa)"/>
+                    </linearGradient>
+                  </defs>
+                  <path class="dash__line" pathLength="1"
+                        d="M0 76 L44 70 L89 72 L133 58 L178 61 L222 46 L267 38 L311 40 L356 22 L400 14"/>
+                </svg>
+              </div>
+              <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
             </div>
-            <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
           </div>
         </article>
 
@@ -700,6 +869,23 @@
               <li>Integraciones de CRM</li>
               <li>APIs e integración de datos</li>
             </ul>
+
+            <!-- Visual 6 · Un dato entrando por el formulario y
+                 recorriendo el sistema. El punto luminoso viaja por la
+                 misma trayectoria que dibuja las líneas. -->
+            <div class="svis svis--flujo">
+              <svg class="flw" viewBox="0 0 420 60" role="img" aria-labelledby="flw-t">
+                <title id="flw-t">Un dato recorre cuatro sistemas conectados: formulario,
+                CRM, WhatsApp y panel de indicadores.</title>
+                <line class="flw__l" x1="52"  y1="30" x2="140" y2="30"/>
+                <line class="flw__l" x1="176" y1="30" x2="244" y2="30"/>
+                <line class="flw__l" x1="280" y1="30" x2="368" y2="30"/>
+                <circle class="flw__dot" r="3.5" cx="0" cy="30"/>
+              </svg>
+              <ol class="flw__ns">
+                <li>Formulario</li><li>CRM</li><li>WhatsApp</li><li>Dashboard</li>
+              </ol>
+            </div>
           </article>
 
           <article class="tcard rv" style="--d:.06s">
