@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ZOLEZZI Consulting | Ayudamos a las empresas a vender más</title>
-<meta name="description" content="Ayudamos a las empresas de Latinoamérica a vender más mediante estrategia comercial, marketing digital y tecnología. Consultoría comercial, go-to-market, SEO, publicidad digital, diseño web, automatización e IA.">
+<title>ZOLEZZI Consulting | Estrategia comercial, demanda y tecnología</title>
+<meta name="description" content="Estrategia comercial, generación de demanda y tecnología bajo un solo responsable. Lo habitual es contratar tres proveedores que se culpan entre sí; aquí una sola firma diseña cómo va a vender y responde por el resultado.">
 <meta name="theme-color" content="#0A1720">
 <link rel="canonical" href="https://zolezziconsulting.com/">
 
@@ -12,17 +12,17 @@
 <meta property="og:site_name" content="ZOLEZZI Consulting">
 <meta property="og:locale" content="es_PE">
 <meta property="og:url" content="https://zolezziconsulting.com/">
-<meta property="og:title" content="ZOLEZZI Consulting | Ayudamos a las empresas a vender más">
-<meta property="og:description" content="Diseñamos el modelo comercial, generamos la demanda y construimos la tecnología que sostiene el crecimiento. Bajo una sola responsabilidad.">
+<meta property="og:title" content="ZOLEZZI Consulting | Estrategia comercial, demanda y tecnología">
+<meta property="og:description" content="Lo habitual es contratar tres proveedores que se culpan entre sí. Aquí una sola firma diseña cómo va a vender, genera la demanda y construye el sistema que la sostiene.">
 <meta property="og:image" content="https://zolezziconsulting.com/assets/img/og-v2.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="ZOLEZZI Consulting — Ayudamos a las empresas a vender más">
+<meta property="og:image:alt" content="ZOLEZZI Consulting — Estrategia comercial, demanda y tecnología">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ZOLEZZI Consulting | Ayudamos a las empresas a vender más">
-<meta name="twitter:description" content="Diseñamos el modelo comercial, generamos la demanda y construimos la tecnología que sostiene el crecimiento. Bajo una sola responsabilidad.">
+<meta name="twitter:title" content="ZOLEZZI Consulting | Estrategia comercial, demanda y tecnología">
+<meta name="twitter:description" content="Lo habitual es contratar tres proveedores que se culpan entre sí. Aquí una sola firma diseña cómo va a vender, genera la demanda y construye el sistema que la sostiene.">
 <meta name="twitter:image" content="https://zolezziconsulting.com/assets/img/og-v2.jpg">
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=12">
-<link rel="stylesheet" href="/assets/css/styles.css?v=12">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=13">
+<link rel="stylesheet" href="/assets/css/styles.css?v=13">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=12" defer></script>
+<script src="/assets/js/main.js?v=13" defer></script>
 
 <script type="application/ld+json">
 {
@@ -261,36 +261,42 @@
 
   <!-- ── 01 · Hero ──────────────────────────────────────────── -->
   <section class="hero" id="inicio">
-    <!-- El haz de la onda del Brand Book, apoyado bajo el titular.
-         Sustituye al campo de degradados que había antes. -->
-    <svg class="wave wave--hero" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true"><use href="#i-wave"/></svg>
+    <!-- Halo radial detrás del titular. No es --gradiente: es un campo
+         suave de --acento al 8%, sin bordes duros. Sustituye al haz de
+         la onda, que competía por el mismo sitio. -->
+    <div class="hero__glow" aria-hidden="true"></div>
 
     <div class="hero__in">
       <p class="eyebrow rv">Estrategia comercial · Marketing digital · Tecnología</p>
 
       <h1 class="hero__title mask">
-        <span class="ln"><i>Ayudamos a</i></span>
-        <span class="ln"><i>las empresas</i></span>
-        <span class="ln"><i class="hl">a vender más.</i></span>
+        <span class="ln"><i>Estrategia comercial,</i></span>
+        <span class="ln"><i>demanda y tecnología.</i></span>
+        <span class="ln"><i class="hl">Un solo responsable.</i></span>
       </h1>
 
       <p class="hero__lead rv" style="--d:.45s">
-        Diseñamos el modelo comercial, generamos la demanda y construimos la tecnología
-        que sostiene el crecimiento. Bajo una sola responsabilidad.
+        Lo habitual es contratar tres proveedores que se culpan entre sí.
+        <span class="dim">Aquí una sola firma diseña cómo va a vender, genera la demanda y
+        construye el sistema que la sostiene. No termina en un informe: termina con la
+        empresa vendiendo más.</span>
       </p>
 
       <p class="hero__geo rv" style="--d:.52s">Para empresas de Latinoamérica.</p>
 
       <div class="hero__cta rv" style="--d:.58s">
-        <a class="btn" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn--grad" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
         <a class="btn btn--ghost" href="#consultoria"><span>Ver cómo trabajamos</span></a>
       </div>
     </div>
 
     <ul class="hero__meta">
-      <li class="rv" style="--d:.70s"><span>Mandato</span>Aumentar las ventas</li>
-      <li class="rv" style="--d:.76s"><span>Inicio</span>Siempre un diagnóstico</li>
-      <li class="rv" style="--d:.82s"><span>Alcance</span>Diseño e implementación</li>
+      <!-- TODO: sustituir por la cifra real. -->
+      <li class="rv" style="--d:.70s"><span>Experiencia</span>[TODO] años</li>
+      <!-- TODO: sustituir por la cifra real. -->
+      <li class="rv" style="--d:.76s"><span>Empresas atendidas</span>[TODO]</li>
+      <!-- TODO: sustituir por los sectores reales. -->
+      <li class="rv" style="--d:.82s"><span>Sectores</span>[TODO]</li>
       <li class="rv" style="--d:.88s"><span>Interlocución</span>Directa con dirección</li>
     </ul>
   </section>
