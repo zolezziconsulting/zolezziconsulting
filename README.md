@@ -8,9 +8,10 @@ subiendo la carpeta tal cual.
 ## Estructura
 
 ```
-index.html            Toda la página: hero, desafíos (9 tarjetas), cómo lo
-                      resolvemos, capacidades, metodología, FAQ, CTA,
-                      contacto y pie
+index.html            Hero, desafíos, consultoría (comercial + marketing
+                      estratégico), marketing digital (SEO/GEO, publicidad,
+                      diseño web), tecnología (4 servicios), metodología,
+                      FAQ, CTA, contacto y pie
 assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
                       pestañas, acordeón y formulario
@@ -43,7 +44,7 @@ el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referenci
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=10`.
+vieja. Va por `v=11`.
 
 ## Desplegar
 
@@ -72,33 +73,41 @@ que subas.
 
 ## Sistema de diseño
 
-**La paleta sale del Brand Book**, muestreada de los píxeles de sus páginas, no aproximada
-a ojo. Blanco dominante —en el book el 44-48% de cada página es blanco puro— y **ningún
-fondo con degradado en ninguna parte**.
+> ⚠ **La web se separó del Brand Book el 2026-07-30, a petición expresa.** El manual no
+> contempla celeste ni turquesa, y la nueva identidad los necesita para las series de gráfico
+> y la iconografía. Consecuencia asumida: **la web ya no casa con el book ni con el Instagram**,
+> que siguen en la gama anterior (`#0a2cdf`, `#111d9a`). Este es el punto de divergencia; si
+> algún día se rehace el manual, hay que partir de aquí.
+
+Blanco dominante y **ningún fondo de sección con degradado**. Los degradados solo se permiten
+en elementos pequeños —botón, icono, relleno de gráfico—, nunca como lavado de fondo.
 
 Los bloques de azul pleno (`.sec--dark`, `.cta`, `.ftr`) **no redefinen componentes**:
 reasignan los tokens de color en su propio ámbito y todo lo de dentro se invierte solo.
 Cualquier componente nuevo debe usar tokens, nunca colores literales, o romperá esa
 inversión.
 
-| Token        | Claro     | Azul pleno | Uso                            |
-|--------------|-----------|------------|--------------------------------|
-| `--canvas`   | `#ffffff` | `#0a2cdf`  | Lienzo (el pie usa `#111d9a`)  |
-| `--canvas-2` | `#f4f7fe` | 8% blanco  | Tarjetas y bandas              |
-| `--ink`      | `#1b1d21` | `#ffffff`  | Texto principal                |
-| `--ink-2`    | `#4b5162` | `#c8d3fb`  | Texto secundario               |
-| `--ink-3`    | `#636b7d` | `#a9baf7`  | Etiquetas y metadatos          |
-| `--rule`     | `#dde6fa` | 22% blanco | Filetes de 1px                 |
-| `--accent`   | `#0a2cdf` | `#ffffff`  | **Tinta estructural**          |
+| Token        | Claro     | Marino pleno | Uso                          |
+|--------------|-----------|--------------|------------------------------|
+| `--canvas`   | `#ffffff` | `#0b2a5b`    | Lienzo                       |
+| `--canvas-2` | `#f5f8fc` | 6% blanco    | Tarjetas y bandas            |
+| `--ink`      | `#101418` | `#ffffff`    | Texto principal              |
+| `--ink-2`    | `#474e5a` | `#b9c8de`    | Texto secundario             |
+| `--ink-3`    | `#626a78` | `#93a5c0`    | Etiquetas y metadatos        |
+| `--rule`     | `#dfe6f0` | 20% blanco   | Filetes de 1px               |
+| `--accent`   | `#1668d9` | `#7dc4f7`    | **Tinta estructural**        |
 
-La rampa de marca vive en `--blue-1..5` como tripletes RGB:
-`#111d9a` · `#0c24c6` · `#0a2cdf` · `#1a46d2` · `#dee7fb`
+Identidad: `--navy #0b2a5b` · `--blue #1668d9` · `--sky #37a6f0` · `--teal #17c3c3`.
 
-**La tinta no es negro puro:** `#1b1d21`, con sesgo azulado, tal como está en el book.
+**Celeste y turquesa NO pueden portar significado por sí solos.** Dan 2.67:1 y 2.18:1 sobre
+blanco, por debajo incluso del 3:1 que la WCAG exige a un elemento gráfico. Por eso existen
+`--sky-ink #1583cc` (4.07:1) y `--teal-ink #0e9797` (3.57:1): el tono claro vale para relleno
+amplio y decoración; **cualquier trazo o marca que el usuario tenga que distinguir usa la
+variante «-ink»**, y si una serie de gráfico usa el tono claro, su significado va además en
+la etiqueta.
 
-Contraste medido, todo por encima de AA: `--ink` 16.9:1 · `--ink-2` 7.9:1 · `--ink-3` 5.3:1
-(**4.98:1 sobre `--canvas-2`, que es el peor caso** — `#6e7689` daba 4.24 y hubo que
-oscurecerlo) · `--accent` 8.6:1 · blanco sobre azul pleno 8.6:1 · blanco sobre el pie 12.6:1.
+Contraste medido: `--ink` 18.5:1 · `--ink-2` 8.4:1 · `--ink-3` 5.5:1 (5.1:1 sobre
+`--canvas-2`) · `--blue` 5.2:1 (4.9:1 sobre tarjeta) · blanco sobre marino 14.0:1.
 
 ### La onda
 
@@ -134,9 +143,16 @@ jerarquía la da el tamaño, nunca el grosor.
   —lo retiraron justamente para que nadie pueda redirigir un formulario ajeno—. Para
   cambiarlo hay que entrar en formspree.io. Que el `mailto:` de la página apunte a una
   dirección no implica que el formulario entregue ahí.
-- **No hay sección de tecnologías ni muro de logos.** Es una decisión de posicionamiento: la
-  práctica *Technology* ya presenta la tecnología como capacidad al servicio de la
-  estrategia. Una firma de consultoría no enseña sus herramientas.
+- **Ninguna cifra de la página es un resultado de cliente.** Los contadores de ROAS, CTR, CPC
+  y conversiones son ejemplos de lectura y llevan el rótulo `.ilus` obligatorio: «ejemplo
+  ilustrativo · no son resultados de un cliente». Presentar una cifra inventada como real
+  sería publicidad engañosa. Si algún día hay datos reales con permiso del cliente, se
+  sustituyen ahí mismo y se cambia el rótulo.
+- **Las herramientas van en wordmark tipográfico, no en logotipo.** Redibujar marcas ajenas a
+  mano se ve barato y es terreno de marca registrada. Se muestran Ahrefs, Semrush, Search
+  Console, Analytics 4, Looker Studio y Business Profile; se dejaron fuera Screaming Frog y
+  PageSpeed Insights por decisión de posicionamiento: son utilidades de oficio y bajan el
+  conjunto.
 - **Jerarquía del posicionamiento: la estrategia manda.** Marketing y Technology se presentan
   como capacidades de *ejecución*, no como oferta principal. El eje es
   diagnóstico → estrategia → ejecución. Aun así se conserva una línea en `.flow__note`

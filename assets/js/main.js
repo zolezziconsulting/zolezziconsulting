@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -136,6 +136,47 @@
     Array.prototype.forEach.call(revealables, function (el) { io.observe(el); });
   } else {
     Array.prototype.forEach.call(revealables, function (el) { el.classList.add('is-in'); });
+  }
+
+  /* ── Contadores ──────────────────────────────────────────────
+     Animan una sola vez, al entrar en pantalla. Con movimiento
+     reducido saltan directamente al valor final: un número que sube
+     solo es exactamente lo que esa preferencia pide evitar. */
+  var counters = document.querySelectorAll('[data-count]');
+
+  function runCount(el) {
+    var end = parseFloat(el.getAttribute('data-count'));
+    var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
+    var pre = el.getAttribute('data-pre') || '';
+    var suf = el.getAttribute('data-suf') || '';
+    var write = function (v) { el.textContent = pre + v.toFixed(dec) + suf; };
+
+    if (reduce) return write(end);
+
+    var t0 = 0;
+    var dur = 1300;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min(1, (ts - t0) / dur);
+      // Mismo easing que el resto de la página, para que el número
+      // frene igual que frenan los bloques al revelarse.
+      write(end * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) window.requestAnimationFrame(step);
+    }
+    window.requestAnimationFrame(step);
+  }
+
+  if ('IntersectionObserver' in window && counters.length) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        runCount(e.target);
+        cio.unobserve(e.target);
+      });
+    }, { threshold: .6 });
+    Array.prototype.forEach.call(counters, function (el) { cio.observe(el); });
+  } else {
+    Array.prototype.forEach.call(counters, runCount);
   }
 
   /* ── Sección activa en el menú ───────────────────────────── */

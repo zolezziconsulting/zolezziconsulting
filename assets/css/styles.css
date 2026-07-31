@@ -25,33 +25,45 @@
 :root {
   color-scheme: light;
 
-  /* Paleta tomada del Brand Book (muestreada de sus páginas, no
-     aproximada). Blanco dominante: en el book el 44-48% de cada página
-     es blanco puro y no hay un solo fondo con degradado. */
+  /* Paleta del 2026-07-30. SUSTITUYE a la del Brand Book: incorpora
+     celeste y turquesa, que el manual no contempla. Decisión tomada a
+     sabiendas de que la web deja de casar con el book y con Instagram.
+     Blanco dominante; los fondos de sección son siempre planos. */
   --canvas:   #ffffff;
-  --canvas-2: #f4f7fe;
-  /* La tinta del book NO es negro puro: lleva sesgo azulado. */
-  --ink:      #1b1d21;
-  --ink-2:    #4b5162;
-  /* #6e7689 daba 4.24:1 sobre --canvas-2, por debajo de AA. Este da
-     4.98:1 ahí y 5.3:1 sobre blanco, sin salirse del gris azulado. */
-  --ink-3:    #636b7d;
-  --rule:     #dde6fa;
-  --rule-2:   #eef3fd;
+  --canvas-2: #f5f8fc;
+  --ink:      #101418;
+  --ink-2:    #474e5a;
+  /* Calibrado contra --canvas-2, que es el peor caso: ahí queda en
+     4.9:1. Un tono más claro caería por debajo de AA. */
+  --ink-3:    #626a78;
+  --rule:     #dfe6f0;
+  --rule-2:   #eef2f8;
 
-  /* Azul eléctrico de marca: el de las páginas a sangre del book.
-     Da 8.6:1 con blanco encima y 10.4:1 como tinta sobre blanco, así
-     que sirve tanto de fondo pleno como de tinta estructural. */
-  --accent:   #0a2cdf;
+  /* Identidad. --blue es el acento operativo (botones, tinta
+     estructural, foco); --navy los bloques a sangre; --sky y --teal
+     solo viven en gráficos, iconografía y acentos de tecnología. */
+  --navy:   #0b2a5b;
+  --blue:   #1668d9;
+  --sky:    #37a6f0;
+  --teal:   #17c3c3;
+  --accent: var(--blue);
 
-  /* Rampa de marca en tripletes RGB, para poder darles alfa con
-     rgb(var(--blue-n) / .5). Los cinco valores salen del book:
-     #111d9a · #0c24c6 · #0a2cdf · #1a46d2 · #dee7fb */
-  --blue-1: 17 29 154;
-  --blue-2: 12 36 198;
-  --blue-3: 10 44 223;
-  --blue-4: 26 70 210;
-  --blue-5: 222 231 251;
+  /* Celeste y turquesa dan 2.67:1 y 2.18:1 sobre blanco: por debajo
+     incluso del 3:1 que la WCAG exige a un elemento gráfico que porta
+     significado. Así que se parten en dos usos:
+       --sky / --teal        relleno amplio, halo, decoración
+       --sky-ink / --teal-ink  trazo, marca y cualquier cosa que el
+                               usuario tenga que poder distinguir
+     Los «-ink» dan 4.07:1 y 3.57:1. Si una serie de gráfico usa el
+     tono claro, su significado tiene que estar además en la etiqueta. */
+  --sky-ink:  #1583cc;
+  --teal-ink: #0e9797;
+
+  /* Tripletes RGB para poder darles alfa: rgb(var(--c-sky) / .16). */
+  --c-navy: 11 42 91;
+  --c-blue: 22 104 217;
+  --c-sky:  55 166 240;
+  --c-teal: 23 195 195;
 
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
@@ -68,31 +80,26 @@
   --ease-o: cubic-bezier(.16, 1, .3, 1);
 }
 
-/* Ámbito invertido. Solo cambia el significado de los tokens. */
-/* Ámbito invertido: azul eléctrico a sangre, como las páginas de
-   declaración del book. Blanco encima da 8.6:1. */
+/* Ámbito invertido: marino a sangre. Solo cambia el significado de los
+   tokens y todo lo de dentro se adapta solo. */
 .sec--dark,
 .cta,
 .ftr {
-  --canvas:  #0a2cdf;
-  --canvas-2: rgba(255, 255, 255, .08);
-  --ink:     #ffffff;
-  --ink-2:   #c8d3fb;
-  --ink-3:   #a9baf7;
-  --rule:    rgba(255, 255, 255, .22);
-  --rule-2:  rgba(255, 255, 255, .10);
-  /* Sobre el azul pleno el acento no puede ser el mismo azul: el papel
-     de tinta estructural lo asume el blanco. */
-  --accent:  #ffffff;
+  --canvas:   #0b2a5b;
+  --canvas-2: rgba(255, 255, 255, .06);
+  --ink:      #ffffff;
+  --ink-2:    #b9c8de;
+  --ink-3:    #93a5c0;
+  --rule:     rgba(255, 255, 255, .20);
+  --rule-2:   rgba(255, 255, 255, .09);
+  /* Sobre marino, --blue queda demasiado cerca del fondo: el papel de
+     tinta estructural lo asume el celeste, que sí despega. */
+  --accent:   #7dc4f7;
 
   position: relative;
   background: var(--canvas);
   color: var(--ink);
 }
-
-/* El pie recede al azul profundo para no competir con las secciones
-   de declaración: dos intensidades, misma familia. */
-.ftr { --canvas: #111d9a; }
 
 /* ── Reset ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
@@ -178,6 +185,30 @@ svg use, .sprite symbol * { fill: none; stroke: currentColor; stroke-width: 1.5;
 /* El texto atenuado da jerarquía dentro de un mismo bloque sin
    recurrir a otro peso ni a otro color de marca. */
 .dim { color: var(--ink-3); }
+/* Lo contrario: destaca la línea que carga el mensaje. Es la única vez
+   que el azul entra en un titular. */
+.hl { color: var(--blue); }
+
+/* Rótulo obligatorio en cualquier gráfico o contador: lo que muestran
+   es la forma de nuestros indicadores, NO un resultado de cliente.
+   Ninguna cifra de la página puede ir sin esto. */
+.ilus {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .875rem;
+  font-size: .6875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.ilus::before {
+  content: '';
+  width: .3rem; height: .3rem;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .55;
+}
 
 .sec__note {
   margin-top: 1.75rem;
@@ -268,6 +299,358 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 .cta .wave use,
 .ftr .wave use { stroke: #fff; stroke-opacity: .28; }
 .wave--foot { bottom: 0; height: clamp(10rem, 18vw, 17rem); }
+
+/* ── Servicio desarrollado ──────────────────────────────────────
+   El bloque largo de consultoría: cabecera con icono, dos columnas
+   (qué resuelve / qué recibe), proceso visual y metadatos.
+   ──────────────────────────────────────────────────────────────── */
+.svc { padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--rule); }
+.svc:first-child { border-top: 0; padding-top: 0; }
+
+.svc__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.75rem);
+  align-items: start;
+}
+.svc__head .feat__t { margin-top: 0; }
+
+.svc__cols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+.svc__k {
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--sky-ink);
+  padding-bottom: .625rem;
+  border-bottom: 1px solid var(--rule);
+}
+.svc__k--wide { display: block; margin-top: clamp(2rem, 4vw, 3rem); }
+/* Dentro de las columnas el inventario va a una sola columna: a dos
+   quedaría de una línea por celda y parecería roto. */
+.feat__l--one { columns: 1; margin-top: .5rem; }
+
+/* ── Cadena de piezas ───────────────────────────────────────────
+   Siete piezas encadenadas. El guion que las une es un ::after, no un
+   carácter, para que no lo lea el lector de pantalla ni sobre en el
+   último elemento.
+   ──────────────────────────────────────────────────────────────── */
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem 0;
+  margin-top: 1.25rem;
+}
+.chain__i {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .625rem 1rem;
+  margin-right: 1.75rem;
+  background: var(--canvas-2);
+  border: 1px solid var(--rule);
+  border-radius: 2rem;
+  font-size: .875rem;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  transition: border-color .4s var(--ease), background-color .4s var(--ease);
+}
+.chain__i:hover { border-color: var(--blue); background: var(--canvas); }
+.chain__i:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -1.375rem;
+  width: 1rem; height: 1px;
+  background: var(--rule);
+}
+.chain__n {
+  font-size: .625rem;
+  letter-spacing: .1em;
+  color: var(--sky-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Línea de tiempo del proceso ────────────────────────────────
+   Seis etapas en horizontal. El conector se dibuja de izquierda a
+   derecha con stroke-dashoffset conforme la sección entra en pantalla,
+   y cada etapa aparece escalonada detrás de él.
+
+   El SVG del conector vive por debajo de los nodos y NO recibe
+   puntero: si lo hiciera, se comería el hover de las etapas.
+   ──────────────────────────────────────────────────────────────── */
+.tl { position: relative; margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+.tl__line {
+  position: absolute;
+  top: 1.5rem; left: 0; right: 0;
+  height: 2px;
+  pointer-events: none;
+  overflow: visible;
+}
+.tl__line path {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 2;
+}
+.tl__line path + path {
+  stroke: var(--blue);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  /* pathLength="1" en el marcado permite animar el trazo sin conocer
+     su longitud real, que cambia con el ancho de la ventana. */
+  transition: stroke-dashoffset 1.6s var(--ease-o);
+}
+.tl.is-in .tl__line path + path { stroke-dashoffset: 0; }
+
+.tl__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(.75rem, 1.6vw, 1.5rem);
+}
+.tl__i {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity .7s var(--ease-o) var(--d, 0s),
+    transform .7s var(--ease-o) var(--d, 0s);
+}
+.tl.is-in .tl__i { opacity: 1; transform: none; }
+
+.tl__dot {
+  width: 3rem; height: 3rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--rule);
+  color: var(--blue);
+  transition: box-shadow .45s var(--ease), color .45s var(--ease);
+}
+.tl__i:hover .tl__dot { box-shadow: inset 0 0 0 2px var(--blue); }
+.tl__dot svg { width: 1.25rem; height: 1.25rem; }
+
+.tl__n {
+  margin-top: 1rem;
+  font-size: .625rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--sky-ink);
+  font-variant-numeric: tabular-nums;
+}
+.tl__t {
+  margin-top: .3rem;
+  font-size: clamp(.9375rem, 1.3vw, 1.0625rem);
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.25;
+}
+.tl__d {
+  margin-top: .4rem;
+  font-size: .8125rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* ── Bloque de servicio ─────────────────────────────────────────
+   Icono, frase, entregables y metadatos. Es el ladrillo con el que se
+   arman marketing digital y tecnología.
+   ──────────────────────────────────────────────────────────────── */
+.feat {
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  padding: clamp(1.75rem, 3vw, 2.5rem) 0;
+  border-top: 1px solid var(--rule);
+}
+.feat__ico {
+  width: 2.75rem; height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: .625rem;
+  background: rgb(var(--c-blue) / .07);
+  color: var(--blue);
+}
+.feat__ico svg { width: 1.375rem; height: 1.375rem; }
+.feat__t {
+  margin-top: 1.125rem;
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-weight: 500;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+}
+.feat__s { margin-top: .75rem; color: var(--ink-2); max-width: 54ch; }
+
+/* Entregables: dos columnas de filetes finos, sin viñetas de disco. */
+.feat__l {
+  margin-top: 1.25rem;
+  columns: 2;
+  column-gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  font-size: .875rem;
+  color: var(--ink-2);
+}
+.feat__l li {
+  break-inside: avoid;
+  padding: .4rem 0 .4rem 1rem;
+  position: relative;
+}
+.feat__l li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 1.05em;
+  width: .375rem; height: 1px;
+  background: var(--sky-ink);
+}
+
+/* Metadatos del mandato: duración y modelo de cobro. Nunca importes. */
+.feat__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule-2);
+  font-size: .8125rem;
+}
+.feat__meta b {
+  display: block;
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: .2rem;
+}
+
+/* ── Herramientas ───────────────────────────────────────────────
+   Wordmark tipográfico, no logotipos redibujados: aproximar marcas
+   ajenas a mano se ve barato y además es terreno de marca registrada.
+   Tratamiento uniforme = se leen como un instrumental, no como un
+   collage de logos.
+   ──────────────────────────────────────────────────────────────── */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: 1.5rem;
+}
+.tools li {
+  padding: .4rem .75rem;
+  border: 1px solid var(--rule);
+  border-radius: .375rem;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .01em;
+  color: var(--ink-2);
+  transition: border-color .4s var(--ease), color .4s var(--ease);
+}
+.tools li:hover { border-color: var(--accent); color: var(--ink); }
+
+/* ── Indicadores ────────────────────────────────────────────────
+   Contadores. El valor de partida en el HTML es «0» para que sin JS
+   no quede vacío, y main.js lo anima hasta data-count.
+   ──────────────────────────────────────────────────────────────── */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 1.75rem;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.kpi { background: var(--canvas); padding: 1.125rem 1rem; }
+.kpi__v {
+  display: block;
+  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+.kpi__k {
+  display: block;
+  margin-top: .3rem;
+  font-size: .625rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── Mockups ────────────────────────────────────────────────────
+   Dibujados en SVG, no imágenes: escalan sin peso y se recolorean
+   solos con los tokens.
+   ──────────────────────────────────────────────────────────────── */
+.mocks {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.5vw, 1.25rem);
+  margin-top: 1.75rem;
+}
+.mock { margin: 0; }
+.mock__img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--rule);
+  border-radius: .5rem;
+  overflow: hidden;
+  transition: transform .5s var(--ease-o), border-color .5s var(--ease);
+}
+.mock:hover .mock__img { transform: translateY(-4px); border-color: var(--accent); }
+.mock figcaption {
+  margin-top: .75rem;
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.mock:hover figcaption { color: var(--ink); }
+/* Los rellenos del mockup no heredan el trazo global de `svg use`. */
+.mock__img rect, .mock__img circle { stroke: none; }
+.mock__bg  { fill: var(--canvas); }
+.mock__bar { fill: rgb(var(--c-navy) / .07); }
+.mock__dot { fill: rgb(var(--c-navy) / .22); }
+.mock__hi  { fill: rgb(var(--c-navy) / .55); }
+.mock__ln  { fill: rgb(var(--c-navy) / .16); }
+.mock__bl  { fill: rgb(var(--c-sky) / .18); }
+.mock__cta { fill: var(--blue); }
+
+/* ── Retícula de cuatro ─────────────────────────────────────────
+   Los cuatro servicios de tecnología.
+   ──────────────────────────────────────────────────────────────── */
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1rem, 2vw, 1.75rem);
+}
+.tcard {
+  padding: clamp(1.5rem, 2.6vw, 2.125rem);
+  background: var(--canvas-2);
+  border: 1px solid var(--rule);
+  transition: border-color .4s var(--ease), background-color .4s var(--ease);
+}
+.tcard:hover { border-color: var(--accent); background: var(--canvas); }
+.tcard__t {
+  margin-top: 1.125rem;
+  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
+  font-weight: 500;
+  letter-spacing: -.028em;
+  line-height: 1.2;
+}
+.tcard__d { margin-top: .625rem; font-size: .875rem; line-height: 1.6; color: var(--ink-2); }
+.tcard__l { margin-top: 1.125rem; font-size: .8125rem; color: var(--ink-2); }
+.tcard__l li { padding: .3rem 0 .3rem 1rem; position: relative; }
+.tcard__l li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: .95em;
+  width: .375rem; height: 1px;
+  background: var(--sky-ink);
+}
 
 /* ── Botones ────────────────────────────────────────────────── */
 .btn {
@@ -647,13 +1030,13 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    dentro se adapta solo. */
 .chal__i--cta {
   --ink:    #ffffff;
-  --ink-2:  #a8b4c8;
-  --accent: #8fbdf8;
-  background: #0a1a33;
-  border-color: #0a1a33;
+  --ink-2:  #b9c8de;
+  --accent: #7dc4f7;
+  background: var(--navy);
+  border-color: var(--navy);
   color: var(--ink);
 }
-.chal__i--cta:hover { background: #0f2647; border-color: var(--accent); }
+.chal__i--cta:hover { background: #0e3672; border-color: var(--accent); }
 .chal__i--cta svg {
   width: 1.125rem; height: 1.125rem;
   margin-top: auto;
@@ -1289,6 +1672,29 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .hero__cta .btn { flex: 1 1 100%; justify-content: center; }
 
   .chal { grid-template-columns: 1fr; }
+
+  /* La línea de tiempo se vuelve vertical: seis columnas en un móvil
+     dejan cada etapa en 50px y el texto ilegible. El conector
+     horizontal desaparece porque ya no une nada. */
+  .tl__line { display: none; }
+  .tl__steps { grid-template-columns: 1fr; gap: 1.5rem; }
+  .tl__i {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+  }
+  .tl__dot { grid-row: 1 / 4; }
+  .tl__n, .tl__t, .tl__d { margin-top: 0; grid-column: 2; }
+  .tl__t { margin-top: .15rem; }
+  .tl__d { margin-top: .3rem; }
+
+  .svc__cols { grid-template-columns: 1fr; }
+  .svc__head { grid-template-columns: 1fr; }
+  .grid4  { grid-template-columns: 1fr; }
+  .mocks  { grid-template-columns: 1fr; }
+  .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feat__l { columns: 1; }
 
   .whys,
   .form__row { grid-template-columns: 1fr; }
