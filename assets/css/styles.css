@@ -412,6 +412,68 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Visuales de servicio ───────────────────────────────────────
+   No hay sistema de componentes —esto es HTML plano sin build—, así
+   que «ServiceVisual» es un contrato de clases: .svis envuelve, y un
+   modificador por visual. Todos comparten el mismo aire y la misma
+   nota inferior.
+
+   REGLA DE ANIMACIÓN, distinta al resto de la hoja: aquí el
+   movimiento se activa dentro de @media (prefers-reduced-motion:
+   no-preference). Sin esa preferencia, el visual se ve completo y
+   quieto. El resto del archivo aún usa la convención inversa; queda
+   pendiente unificarlo.
+   ──────────────────────────────────────────────────────────────── */
+.svis { margin-top: 1.25rem; }
+
+/* ── Visual 1 · Embudo comercial ───────────────────────────────── */
+.fnl {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+}
+.fnl__svg { width: 100%; height: auto; display: block; }
+.fnl__b { fill: url(#fnl-g); }
+
+.fnl__rows { display: flex; flex-direction: column; }
+.fnl__r {
+  display: flex;
+  align-items: baseline;
+  gap: .75rem;
+  padding: .5rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.fnl__rows > :last-child { border-bottom: 0; }
+.fnl__n {
+  min-width: 3.5ch;
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -.03em;
+  color: var(--teal-deep);
+  font-variant-numeric: tabular-nums;
+}
+.fnl__l { font-size: .875rem; color: var(--ink-2); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* El relleno baja de arriba abajo: inset(100% …) recorta la banda
+     entera desde arriba y la transición la va descubriendo. */
+  .fnl__b {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path .75s var(--ease-o) calc(var(--i) * 120ms);
+  }
+  .fnl.is-in .fnl__b { clip-path: inset(0 0 0 0); }
+
+  .fnl__r {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity .5s var(--ease-o) calc(var(--i) * 120ms + 180ms),
+      transform .5s var(--ease-o) calc(var(--i) * 120ms + 180ms);
+  }
+  .fnl.is-in .fnl__r { opacity: 1; transform: none; }
+}
+
 /* ── Línea de tiempo del proceso ────────────────────────────────
    Seis etapas en horizontal. El conector se dibuja de izquierda a
    derecha con stroke-dashoffset conforme la sección entra en pantalla,
@@ -1807,6 +1869,9 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
   .svc__cols { grid-template-columns: 1fr; }
   .svc__head { grid-template-columns: 1fr; }
+  /* El embudo apilado: la silueta arriba, los datos debajo. A dos
+     columnas en móvil el SVG queda en 150px y no se lee nada. */
+  .fnl { grid-template-columns: 1fr; }
   .grid4  { grid-template-columns: 1fr; }
   .mocks  { grid-template-columns: 1fr; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=14">
-<link rel="stylesheet" href="/assets/css/styles.css?v=14">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=15">
+<link rel="stylesheet" href="/assets/css/styles.css?v=15">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=14" defer></script>
+<script src="/assets/js/main.js?v=15" defer></script>
 
 <script type="application/ld+json">
 {
@@ -427,6 +427,56 @@
                 <li>Playbook de ventas y guiones por etapa</li>
               </ul>
             </div>
+          </div>
+
+          <!-- Visual 1 · El embudo es el objeto del trabajo, así que va
+               antes del proceso: primero qué se rediseña, después cómo.
+               La silueta la lleva el SVG; los datos, la lista de al
+               lado, que sí es accesible. -->
+          <h4 class="svc__k svc__k--wide">Qué se rediseña</h4>
+          <div class="svis svis--embudo">
+            <div class="fnl" id="fnl-com">
+              <svg class="fnl__svg" viewBox="0 0 480 300" preserveAspectRatio="none"
+                   role="img" aria-labelledby="fnl-t">
+                <title id="fnl-t">Embudo comercial de cinco etapas. Cada etapa se estrecha
+                respecto de la anterior: prospectos, contactados, reunión, propuesta y cierre.</title>
+                <defs>
+                  <linearGradient id="fnl-g" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0" stop-color="var(--celeste)"/>
+                    <stop offset="1" stop-color="var(--turquesa)"/>
+                  </linearGradient>
+                </defs>
+                <path class="fnl__b" style="--i:0" d="M0 0H480L440 56H40Z"/>
+                <path class="fnl__b" style="--i:1" d="M40 60H440L400 116H80Z"/>
+                <path class="fnl__b" style="--i:2" d="M80 120H400L360 176H120Z"/>
+                <path class="fnl__b" style="--i:3" d="M120 180H360L320 236H160Z"/>
+                <path class="fnl__b" style="--i:4" d="M160 240H320L288 296H192Z"/>
+              </svg>
+
+              <ol class="fnl__rows">
+                <li class="fnl__r" style="--i:0">
+                  <span class="fnl__n" data-count="1240">0</span>
+                  <span class="fnl__l">Prospectos</span>
+                </li>
+                <li class="fnl__r" style="--i:1">
+                  <span class="fnl__n" data-count="496">0</span>
+                  <span class="fnl__l">Contactados</span>
+                </li>
+                <li class="fnl__r" style="--i:2">
+                  <span class="fnl__n" data-count="174">0</span>
+                  <span class="fnl__l">Reunión</span>
+                </li>
+                <li class="fnl__r" style="--i:3">
+                  <span class="fnl__n" data-count="68">0</span>
+                  <span class="fnl__l">Propuesta</span>
+                </li>
+                <li class="fnl__r" style="--i:4">
+                  <span class="fnl__n" data-count="21">0</span>
+                  <span class="fnl__l">Cierre</span>
+                </li>
+              </ol>
+            </div>
+            <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
           </div>
 
           <h4 class="svc__k svc__k--wide">Cómo se ejecuta</h4>

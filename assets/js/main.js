@@ -119,7 +119,7 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl');
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -149,7 +149,14 @@
     var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
     var pre = el.getAttribute('data-pre') || '';
     var suf = el.getAttribute('data-suf') || '';
-    var write = function (v) { el.textContent = pre + v.toFixed(dec) + suf; };
+    // Formato peruano: coma para millares y punto para decimales, que
+    // es justo al revés que en España. Sin esto, 1240 salía «1240».
+    var write = function (v) {
+      el.textContent = pre + v.toLocaleString('es-PE', {
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec
+      }) + suf;
+    };
 
     if (reduce) return write(end);
 
