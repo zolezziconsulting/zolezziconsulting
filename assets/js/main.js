@@ -8,7 +8,7 @@
   'use strict';
 
   var WA_NUM = '51954715846';
-  var WA_MSG = 'Hola, vi la web de ZOLEZZI Consulting y me gustaría conversar sobre el crecimiento de mi empresa.';
+  var WA_MSG = 'Hola, vi la web de Zolezzi Consulting y me gustaría cotizar un servicio.';
   var WA = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_MSG);
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -25,7 +25,14 @@
   // Raíles que se llenan con el scroll: la metodología y el diagrama
   // del enfoque comparten el mismo mecanismo (--p sobre el contenedor).
   var rails = [document.getElementById('proc')].filter(Boolean);
-  var darks = document.querySelectorAll('.sec--dark, .cta, .ftr');
+  // EL HERO TIENE QUE ESTAR EN ESTA LISTA. Es un bloque oscuro como los
+  // demás —la hoja le da los mismos tokens en `.hero, .sec--dark, .cta,
+  // .ftr`— pero no lleva la clase .sec--dark, así que se quedaba fuera
+  // del selector y la cabecera nunca se invertía nada más cargar.
+  // Resultado medido: la marca «ZOLEZZI» salía en #0C1A22 sobre el
+  // #0A1720 del hero, 1.03:1, y el hover del menú igual. Invisibles
+  // justo en el primer pantallazo de la página.
+  var darks = document.querySelectorAll('.hero, .sec--dark, .cta, .ftr');
   var ticking = false;
 
   function frame() {
@@ -121,7 +128,9 @@
     );
   });
 
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .flow__i, .tl, .fnl, .rad, .dash');
+  // .flow__i salió de la lista con la sección que lo usaba. .stall entra
+  // por su clase .rv, así que no necesita mención aparte.
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .tl, .fnl, .rad, .dash');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -217,14 +226,82 @@
     Array.prototype.forEach.call(counters, runCount);
   }
 
-  /* ── Sección activa en el menú ───────────────────────────── */
-  var links = Array.prototype.slice.call(document.querySelectorAll('.nav__link'));
-  var targets = links
-    .map(function (a) { return document.querySelector(a.getAttribute('href')); })
+  /* ── Desplegable «Servicios» ─────────────────────────────────
+     Se abre al pasar el puntero y también al pulsar, porque en táctil
+     y con teclado no hay hover. El <button> lleva aria-expanded y el
+     panel se oculta con [hidden], no solo con CSS: así el contenido no
+     existe para el lector de pantalla mientras está cerrado. */
+  var srvBtn = document.getElementById('nav-srv');
+  var srvMenu = document.getElementById('nav-srv-menu');
+
+  if (srvBtn && srvMenu) {
+    var srvGrp = srvBtn.parentNode;
+    var hoverable = window.matchMedia('(hover: hover)');
+
+    var setSrv = function (open) {
+      srvBtn.setAttribute('aria-expanded', String(open));
+      srvMenu.hidden = !open;
+    };
+
+    srvBtn.addEventListener('click', function () {
+      setSrv(srvBtn.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Solo con puntero real. En táctil, `pointerenter` llega junto al
+    // toque y el par enter+click abriría y cerraría en el mismo gesto.
+    srvGrp.addEventListener('pointerenter', function (e) {
+      if (e.pointerType === 'touch' || !hoverable.matches) return;
+      setSrv(true);
+    });
+    srvGrp.addEventListener('pointerleave', function (e) {
+      if (e.pointerType === 'touch' || !hoverable.matches) return;
+      setSrv(false);
+    });
+
+    // Un enlace del panel cierra el menú; si no, al volver de la
+    // sección el panel seguiría desplegado sobre el contenido.
+    srvMenu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setSrv(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || srvBtn.getAttribute('aria-expanded') !== 'true') return;
+      setSrv(false);
+      srvBtn.focus();
+    });
+
+    // Pulsar fuera cierra. Con focusin se cubre además el tabulado:
+    // al salir del grupo con el teclado el panel se recoge solo.
+    document.addEventListener('pointerdown', function (e) {
+      if (!srvGrp.contains(e.target)) setSrv(false);
+    });
+    document.addEventListener('focusin', function (e) {
+      if (!srvGrp.contains(e.target)) setSrv(false);
+    });
+  }
+
+  /* ── Sección activa en el menú ───────────────────────────────
+     El vigía se guía por `data-spy` y no por el href, porque
+     «Servicios» es un botón sin destino que representa TRES secciones.
+     Cada entrada declara qué ids ilumina y aquí solo se comprueba
+     pertenencia. */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav__link[data-spy]'));
+  var ids = [];
+  links.forEach(function (a) {
+    a.getAttribute('data-spy').split(/\s+/).forEach(function (id) {
+      if (id && ids.indexOf(id) === -1) ids.push(id);
+    });
+  });
+  var targets = ids
+    .map(function (id) { return document.getElementById(id); })
     .filter(Boolean);
 
   if ('IntersectionObserver' in window && targets.length) {
     var visible = new Map();
+    var subLinks = srvMenu
+      ? Array.prototype.slice.call(srvMenu.querySelectorAll('a'))
+      : [];
+
     var spy = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) { visible.set(e.target.id, e.intersectionRatio); });
 
@@ -235,44 +312,25 @@
       });
 
       links.forEach(function (a) {
-        var on = a.getAttribute('href') === '#' + top;
+        var on = a.getAttribute('data-spy').split(/\s+/).indexOf(top) !== -1;
         a.classList.toggle('is-active', on);
-        if (on) { a.setAttribute('aria-current', 'true'); }
+        // aria-current solo en enlaces: en el botón del grupo no
+        // designa una página y sobra.
+        if (on && a.tagName === 'A') { a.setAttribute('aria-current', 'true'); }
         else { a.removeAttribute('aria-current'); }
+      });
+
+      // Dentro del panel se marca además el servicio concreto.
+      subLinks.forEach(function (a) {
+        a.classList.toggle('is-active', a.getAttribute('href') === '#' + top);
       });
     }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
     targets.forEach(function (s) { spy.observe(s); });
   }
 
-  /* ── Casos de uso: pestañas ──────────────────────────────── */
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.cases__tab'));
-
-  function selectTab(tab, focus) {
-    tabs.forEach(function (t) {
-      var on = t === tab;
-      var panel = document.getElementById(t.getAttribute('aria-controls'));
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      if (!panel) return;
-      panel.hidden = !on;
-      panel.classList.toggle('is-on', on);
-    });
-    if (focus) tab.focus();
-  }
-
-  tabs.forEach(function (tab, i) {
-    tab.addEventListener('click', function () { selectTab(tab, false); });
-    tab.addEventListener('keydown', function (e) {
-      var next = null;
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = tabs[(i + 1) % tabs.length];
-      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = tabs[(i - 1 + tabs.length) % tabs.length];
-      else if (e.key === 'Home') next = tabs[0];
-      else if (e.key === 'End') next = tabs[tabs.length - 1];
-      if (!next) return;
-      e.preventDefault();
-      selectTab(next, true);
-    });
-  });
+  /* El manejador de pestañas de «Casos de uso» vivía aquí. La sección
+     no existe en el marcado desde hace varias fases —querySelectorAll
+     devolvía siempre cero— así que se retiró junto con su CSS. */
 
   /* ── Preguntas frecuentes ────────────────────────────────── */
   var faqs = Array.prototype.slice.call(document.querySelectorAll('.faq__q'));

@@ -489,7 +489,10 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    compara es la FORMA de cada resultado, así que todo son barras.
    La única frase legible es la cita de marca, que es el punto.
    ──────────────────────────────────────────────────────────────── */
-.geo__claim {
+/* Rótulo de cabecera de un visual. `.svis__t` es el nombre genérico;
+   `.geo__claim` es el original y se mantiene para no tocar su marcado. */
+.geo__claim,
+.svis__t {
   font-size: 1.0625rem;
   font-weight: 500;
   letter-spacing: -.02em;
@@ -617,6 +620,316 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
     94%       { opacity: 1; }
     100%      { cx: 368px; opacity: 0; }
   }
+}
+
+/* ── Envoltorio de los visuales de servicio ─────────────────────
+   `.svis` se usaba en los seis visuales desde la fase 4 y NO tenía
+   ni una regla: era un gancho sin estilo. El resultado medido era el
+   espaciado justo al revés de lo que pide la lectura —los visuales
+   que van tras su propio rótulo tenían 13px de aire y los que van
+   tras una lista, CERO, pegados al último elemento—.
+
+   Un rótulo nombra al objeto que tiene debajo, así que va junto. Una
+   lista es otro bloque y necesita separación. De ahí las dos reglas.
+   ──────────────────────────────────────────────────────────────── */
+.svis { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
+.svc__k--wide + .svis { margin-top: .75rem; }
+
+/* ── Visuales 11-13 · Los tres mini de tecnología ───────────────
+   Tres de las cuatro tarjetas de tecnología eran lista de viñetas y
+   nada más, en la única sección oscura larga de la página: mucho
+   peso de fondo sosteniendo puro texto.
+
+   Comparten base para que se lean como una familia y no como tres
+   ocurrencias. Viven sobre --canvas-2 (#12242F), donde turquesa y
+   celeste SÍ son legibles —6.26 y 7.96:1—, al revés que sobre claro.
+   ──────────────────────────────────────────────────────────────── */
+.mini { display: block; width: 100%; height: auto; }
+.mini__k {
+  margin-top: .625rem;
+  font-size: .625rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Franja de disponibilidad. Alto fijo: con preserveAspectRatio="none"
+   las barras se estiran a lo ancho y mantienen su grosor relativo. */
+.upt { height: 2.25rem; }
+.upt__b { fill: var(--turquesa); stroke: none; }
+/* La incidencia no se pinta de rojo: no hubo caída. Se atenúa. */
+.upt__b--x { fill: rgb(var(--c-acento) / .28); }
+
+/* Capas de defensa. */
+.lyr__r {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.lyr__r--out { stroke: rgb(var(--c-acento) / .45); stroke-dasharray: 4 4; }
+.lyr__c { fill: var(--turquesa); stroke: none; }
+/* Tinta oscura sobre el relleno turquesa, como en todo el sitio. */
+.lyr__t {
+  fill: var(--bg-dark);
+  font-size: 11px;
+  font-weight: 500;
+  text-anchor: middle;
+}
+
+/* El expediente. */
+.doc__p {
+  fill: var(--bg-dark);
+  stroke: rgb(var(--c-acento) / .35);
+  stroke-width: 1;
+}
+.doc__p--top { fill: var(--bg-dark-alt); stroke: var(--turquesa); }
+.doc__l { fill: none; stroke: rgb(var(--c-acento) / .3); stroke-width: 2; stroke-linecap: round; }
+.doc__s { fill: var(--turquesa); stroke: none; }
+.doc__k { fill: none; stroke: var(--bg-dark); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Las barras de disponibilidad entran en cascada de izquierda a
+     derecha. El retardo se calcula sobre el índice del hermano para
+     no tener que escribir 30 reglas. */
+  .upt__b {
+    opacity: 0;
+    transition: opacity .3s var(--ease-o);
+  }
+  .rv.is-in .upt__b { opacity: 1; }
+  .upt__b:nth-child(3n+1) { transition-delay: .10s; }
+  .upt__b:nth-child(3n+2) { transition-delay: .22s; }
+  .upt__b:nth-child(3n+3) { transition-delay: .34s; }
+}
+
+/* ── Visual 10 · Arquitectura de contenidos ─────────────────────
+   Pilar → clústeres → apoyos, más el enlazado cruzado.
+
+   Jerarquía de peso deliberada: la estructura va en gris y SOLO el
+   enlazado interno va en color de marca. Es lo que distingue una
+   arquitectura de un organigrama, así que es lo único que se resalta.
+   ──────────────────────────────────────────────────────────────── */
+.arq { width: min(100%, 32rem); }
+.arq__svg { display: block; width: 100%; height: auto; }
+
+.arq__ln {
+  fill: none;
+  stroke: var(--rule);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+.arq__ln--fine { stroke-width: 1; }
+
+/* El enlazado interno: el único trazo de marca del dibujo. */
+.arq__x {
+  fill: none;
+  stroke: var(--turquesa);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
+}
+
+.arq__pil { fill: var(--bg-dark); stroke: none; }
+.arq__pl  { fill: var(--ink-invert); font-size: 12px; font-weight: 500; text-anchor: middle; }
+.arq__cl  { fill: rgb(var(--c-turquesa) / .16); stroke: var(--turquesa); stroke-width: 1; }
+.arq__pg  { fill: rgb(var(--c-dark) / .12); stroke: none; }
+
+/* Leyenda. Cada viñeta reproduce la forma que nombra —relleno sólido,
+   barra clara, trazo punteado—, así que se lee sin cruzar la vista con
+   el gráfico. */
+.arq__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1.25rem;
+  margin-top: 1rem;
+  font-size: .6875rem;
+  color: var(--ink-2);
+}
+.arq__key li { display: flex; align-items: center; gap: .4rem; }
+.arq__key li::before {
+  content: '';
+  width: .75rem; height: .625rem;
+  border-radius: 2px;
+  flex: none;
+}
+.arq__key--cl::before {
+  background: rgb(var(--c-turquesa) / .16);
+  box-shadow: inset 0 0 0 1px var(--turquesa);
+}
+.arq__key--pg::before { background: rgb(var(--c-dark) / .12); }
+.arq__key--x::before {
+  height: 0;
+  border-radius: 0;
+  border-top: 1.5px dashed var(--turquesa);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Solo se anima el enlazado: la estructura ya está, lo que aparece
+     es la relación entre sus partes. */
+  .arq__x {
+    opacity: 0;
+    transition: opacity .6s var(--ease-o) .5s;
+  }
+  .rv.is-in .arq__x { opacity: 1; }
+}
+
+/* ── Visual 9 · Matriz de priorización ──────────────────────────
+   Dos ejes, cuatro cuadrantes, cinco burbujas. La convención es tan
+   conocida que el gráfico no necesita explicarse; lo único que hay
+   que resolver es que CONCLUYA algo, y de eso se encarga el relleno:
+   sólido = entra, perfilado = no entra.
+   ──────────────────────────────────────────────────────────────── */
+.mx { width: min(100%, 34rem); margin-inline: auto; }
+.mx__svg { display: block; width: 100%; height: auto; }
+
+.mx__ax  { stroke: var(--ink-3); stroke-width: 1; }
+.mx__tip { fill: var(--ink-3); stroke: none; }
+.mx__div { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 3 3; }
+.mx__q   { fill: rgb(var(--c-turquesa) / .08); stroke: none; }
+
+.mx__ql {
+  fill: var(--ink-3);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.mx__ql--end { text-anchor: end; }
+.mx__ql--on  { fill: var(--teal-deep); }
+
+/* Perfilados por defecto; el relleno se reserva a los que entran. */
+.mx__b {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+}
+.mx__b--on { fill: var(--turquesa); stroke: none; }
+
+.mx__bl {
+  fill: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  text-anchor: middle;
+}
+/* Sobre el relleno turquesa la tinta va OSCURA: en blanco daría
+   2.54:1. Es la misma regla que gobierna la pill de desafíos. */
+.mx__bl--on { fill: var(--bg-dark); }
+
+.mx__at {
+  fill: var(--ink-3);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  text-anchor: middle;
+}
+
+.mx__key {
+  margin-top: .5rem;
+  text-align: center;
+  font-size: .6875rem;
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Las burbujas entran escalando desde su propio centro. El
+     transform-origin va en unidades del viewBox, no en %: con
+     porcentajes el origen se toma de la caja del SVG entero y las
+     burbujas salían disparadas desde una esquina. */
+  .mx__b, .mx__bl {
+    opacity: 0;
+    transition: opacity .5s var(--ease-o) var(--d, 0s);
+  }
+  .rv.is-in .mx__b,
+  .rv.is-in .mx__bl { opacity: 1; }
+  .mx__b:nth-of-type(1), .mx__bl:nth-of-type(1) { --d: .10s; }
+  .mx__b:nth-of-type(2), .mx__bl:nth-of-type(2) { --d: .18s; }
+  .mx__b:nth-of-type(3), .mx__bl:nth-of-type(3) { --d: .26s; }
+  .mx__b:nth-of-type(4), .mx__bl:nth-of-type(4) { --d: .34s; }
+  .mx__b:nth-of-type(5), .mx__bl:nth-of-type(5) { --d: .42s; }
+}
+
+/* ── Visual 7 · La meseta ───────────────────────────────────────
+   El encuadre de la sección de desafíos. Vive en el hueco que dejaba
+   la columna del titular, así que no cuesta altura de página.
+
+   Lo que comunica no es ninguna de las dos curvas: es la BANDA entre
+   ellas. Por eso el relleno lleva más peso visual que los trazos y la
+   etiqueta va dentro, no en una leyenda aparte.
+   ──────────────────────────────────────────────────────────────── */
+.stall { margin: 0; }
+.stall__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.stall__ax { stroke: var(--rule); stroke-width: 1; }
+
+.stall__gap { fill: rgb(var(--c-turquesa) / .14); stroke: none; }
+
+/* La trayectoria real, en degradado de marca: es la única línea que
+   describe un hecho. */
+.stall__now {
+  fill: none;
+  stroke: url(#stall-g);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+/* La potencial va punteada y en tinta, no en color de marca: es una
+   hipótesis, y pintarla como la real sería venderla como un dato. */
+.stall__pot {
+  fill: none;
+  stroke: var(--teal-deep);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+  opacity: .75;
+}
+
+.stall__mark { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 3 3; }
+.stall__pin  { fill: var(--turquesa); stroke: none; }
+
+.stall__lb {
+  fill: var(--ink-3);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.stall__lb--end { text-anchor: end; }
+.stall__lb--mid { text-anchor: middle; }
+
+.stall__gl {
+  fill: var(--teal-deep);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+}
+.stall__gl--end { text-anchor: end; }
+.stall__lead { stroke: var(--teal-deep); stroke-width: 1; opacity: .5; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Primero se dibuja el hecho —la curva real—, después aparecen la
+     hipótesis y el hueco entre ambas. Ese orden ES el argumento.
+
+     Solo se dibuja la curva sólida. La punteada NO se anima con
+     stroke-dashoffset: su dasharray forma parte de su significado y
+     animar el trazado obligaría a pisarlo, así que entra fundiéndose. */
+  .stall__now {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.5s var(--ease-o) .2s;
+  }
+  .stall.is-in .stall__now { stroke-dashoffset: 0; }
+
+  .stall__pot, .stall__gap, .stall__gl, .stall__lead, .stall__pin {
+    opacity: 0;
+    transition: opacity .6s var(--ease-o) 1.5s;
+  }
+  .stall__pot { transition-delay: 1.3s; }
+  .stall.is-in .stall__pot  { opacity: .75; }
+  .stall.is-in .stall__lead { opacity: .5; }
+  .stall.is-in .stall__gap,
+  .stall.is-in .stall__gl,
+  .stall.is-in .stall__pin { opacity: 1; }
 }
 
 /* ── Línea de tiempo del proceso ────────────────────────────────
@@ -750,25 +1063,11 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   background: var(--sky-ink);
 }
 
-/* Metadatos del mandato: duración y modelo de cobro. Nunca importes. */
-.feat__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem 2rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule-2);
-  font-size: .8125rem;
-}
-.feat__meta b {
-  display: block;
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: .2rem;
-}
+/* `.feat__meta` —duración, modelo de cobro y recompra del mandato—
+   se retiró el 2026-08-01 por decisión comercial: al vender consultoría
+   de ticket alto no se publican plazos ni estructura de precios, se
+   conversan. Se quitó también su CSS porque no quedaba ningún uso.
+   Para recuperarlo: git log -S'feat__meta' -- assets/css/styles.css */
 
 /* ── Herramientas ───────────────────────────────────────────────
    Wordmark tipográfico, no logotipos redibujados: aproximar marcas
@@ -1044,6 +1343,17 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   color: var(--ink);
 }
 
+/* Respaldo sin JS: la página SIEMPRE abre sobre el hero, que es
+   oscuro. Si `main.js` no llega a ejecutarse, nadie pone `.is-inv` y la
+   cabecera se quedaría en tinta oscura sobre fondo oscuro. Con esto la
+   marca sigue siendo legible aunque el script falle. */
+html:not(.js) .hdr {
+  --ink:   var(--ink-invert);
+  --ink-2: #a7b2b6;
+  --ink-3: #859196;
+  color: var(--ink);
+}
+
 .hdr__in {
   max-width: var(--shell);
   margin: 0 auto;
@@ -1102,6 +1412,82 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 .nav__link:hover { color: var(--ink); }
 .nav__link:hover::after { transform: none; transform-origin: left; }
 .nav__link.is-active { color: var(--ink); }
+
+/* ── Grupo «Servicios» ────────────────────────────────────────── */
+.nav__grp { position: relative; display: flex; }
+
+.nav__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font: inherit;
+  font-size: .9375rem;
+  cursor: pointer;
+}
+.nav__chev {
+  width: .75rem; height: .75rem;
+  transition: transform .3s var(--ease);
+}
+.nav__btn[aria-expanded="true"] .nav__chev { transform: rotate(180deg); }
+
+.nav__menu {
+  position: absolute;
+  top: 100%; left: 50%;
+  transform: translateX(-50%);
+  margin-top: .875rem;
+  min-width: 13rem;
+  display: flex;
+  flex-direction: column;
+  padding: .5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--borde);
+  border-radius: .625rem;
+  box-shadow: 0 12px 32px rgb(var(--c-dark) / .12);
+}
+
+/* PUENTE SOBRE EL HUECO. Entre el borde inferior del botón y el panel
+   hay 14px de `margin-top`, y ese margen queda FUERA de la caja del
+   panel: al bajar el ratón hacia el menú el puntero cruzaba 14px de
+   tierra de nadie, `pointerleave` saltaba en el grupo y el panel se
+   cerraba antes de llegar. El desplegable era inservible con ratón.
+
+   Este pseudoelemento extiende el área sensible del panel hacia arriba
+   justo esos 14px. Es invisible y, al ser parte de `.nav__menu`, el
+   puntero nunca sale del grupo. Si se cambia el `margin-top` de arriba,
+   hay que cambiar aquí `top` y `height` al mismo valor. */
+.nav__menu::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  top: -.875rem;
+  height: .875rem;
+}
+/* IMPRESCINDIBLE, no redundante: `[hidden]{display:none}` del navegador
+   tiene especificidad casi nula y lo pisa cualquier regla de clase que
+   declare `display` —aquí, el `display:flex` de arriba—. Sin esta línea
+   el panel quedaría siempre abierto. Es la misma trampa documentada
+   para `.drawer[hidden]`, y ya costó un fallo una vez. */
+.nav__menu[hidden] { display: none; }
+
+/* El panel es una tarjeta CLARA siempre, también cuando la cabecera
+   está invertida sobre el hero. Ojo: dentro de `.hdr.is-inv` los alias
+   --ink, --ink-2 y --ink-3 apuntan a la gama invertida, así que aquí no
+   se pueden usar o el texto saldría casi blanco sobre blanco.
+
+   Se tira de tokens que NO se voltean nunca: --ink-soft (tokens.css no
+   lo redefine en ningún ámbito) y --bg-dark, que es el mismo recurso
+   que ya usa `.btn--grad` para su tinta por este mismo motivo. */
+.nav__menu a {
+  padding: .5rem .625rem;
+  border-radius: .375rem;
+  font-size: .875rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: background-color .2s var(--ease), color .2s var(--ease);
+}
+.nav__menu a:hover,
+.nav__menu a:focus-visible { background: var(--bg-tint); color: var(--bg-dark); }
+.nav__menu a.is-active { color: var(--teal-deep); font-weight: 500; }
 /* La sección visible se subraya en turquesa, no en currentColor: es
    la única señal de «dónde estoy» y tiene que distinguirse del hover. */
 .nav__link.is-active::after {
@@ -1173,13 +1559,51 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   transform: translateY(12px);
   transition: opacity .5s var(--ease-o), transform .5s var(--ease-o);
 }
-.drawer.is-open .drawer__nav a { opacity: 1; transform: none; }
-.drawer__nav a:nth-child(1) { transition-delay: .06s; }
-.drawer__nav a:nth-child(2) { transition-delay: .11s; }
-.drawer__nav a:nth-child(3) { transition-delay: .16s; }
-.drawer__nav a:nth-child(4) { transition-delay: .21s; }
-.drawer__nav a:nth-child(5) { transition-delay: .26s; }
-.drawer__nav a:nth-child(6) { transition-delay: .31s; }
+.drawer.is-open .drawer__nav a,
+.drawer.is-open .drawer__grp { opacity: 1; transform: none; }
+
+/* El escalonado va sobre los HIJOS DIRECTOS del cajón, no sobre los
+   enlaces: desde que «Servicios» es un grupo, uno de esos hijos es un
+   <div> con tres enlaces dentro y `a:nth-child(n)` ya no numeraba las
+   filas que se ven. */
+.drawer__nav > * { transition-delay: calc(.06s + var(--i, 0) * .05s); }
+.drawer__nav > :nth-child(1) { --i: 0; }
+.drawer__nav > :nth-child(2) { --i: 1; }
+.drawer__nav > :nth-child(3) { --i: 2; }
+.drawer__nav > :nth-child(4) { --i: 3; }
+.drawer__nav > :nth-child(5) { --i: 4; }
+
+/* El grupo entra como un bloque y sus enlaces no se escalonan aparte:
+   son una sola unidad de lectura. */
+.drawer__grp {
+  border-top: 1px solid var(--rule);
+  padding: 1.125rem 0 .25rem;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity .5s var(--ease-o), transform .5s var(--ease-o);
+}
+.drawer__gt {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: clamp(1.75rem, 8vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -.035em;
+}
+/* Los hijos ya no llevan filete ni retardo propio: los hereda el grupo. */
+.drawer__nav .drawer__sub {
+  border-top: 0;
+  padding: .5rem 0 .5rem 2.5rem;
+  font-size: clamp(1rem, 4.5vw, 1.25rem);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  color: var(--ink-2);
+  opacity: 1;
+  transform: none;
+  transition-delay: 0s;
+}
+.drawer__nav .drawer__sub:hover { color: var(--ink); }
+
 .drawer__n {
   font-size: .6875rem;
   letter-spacing: .16em;
@@ -1335,6 +1759,12 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 .sec__grid--wide .sec__head { grid-column: 1 / 13; position: static; max-width: 46ch; }
 .sec__grid--wide .sec__body { grid-column: 1 / 13; }
 
+/* Titular a la izquierda y una pieza visual ocupando el hueco de la
+   derecha, que en --wide se quedaba vacío. El cuerpo sigue a todo
+   ancho por debajo. Gana composición sin gastar altura. */
+.sec__grid--wide.sec__grid--split .sec__head { grid-column: 1 / 6; max-width: 38ch; }
+.sec__grid--split .stall { grid-column: 7 / 13; align-self: center; }
+
 .chal {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1409,211 +1839,25 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 }
 .chal__i--cta:hover svg { transform: translateX(5px); }
 
-/* ── 03 · Enfoque · el diagrama del sistema ─────────────────────
-   Strategy → Marketing → Technology → Revenue Growth, contado solo
-   con filetes de 1px. Reutiliza el mecanismo del raíl del proceso:
-   una línea vertical que se llena con el scroll (--p desde main.js).
+/* ── 05 · Proceso ───────────────────────────────────────────── */
 
-   El color NO se usa en texto ni en filetes: en la gama cálida, el
-   ámbar sobre hueso da 1.5:1 y sería ilegible. Cada capacidad se
-   identifica con un halo difuso tras su numeral —el mismo lenguaje
-   cromático que la atmósfera del resto del sitio— y el cierre suma
-   los tres halos en uno.
-   ──────────────────────────────────────────────────────────────── */
-.flow {
-  position: relative;
-  margin-top: clamp(3rem, 6vw, 5rem);
-  padding-left: clamp(2rem, 4vw, 3.5rem);
-}
-
-/* El raíl vive en el diagnóstico, no en el contenedor: recorre el único
-   tramo con orden y muere ahí. Que no continúe bajo las capacidades es
-   lo que impide leerlas como una tubería. */
-.flow__entry {
-  position: relative;
-  padding: clamp(1.5rem, 2.6vw, 2.25rem) 0;
+/* La escala del roadmap. Va fuera de la <ol> y alineada con los
+   tramos: comparte su sangrado izquierdo, o los extremos no
+   coincidirían con el principio y el final de las barras. */
+.proc__scale {
+  display: flex;
+  justify-content: space-between;
+  margin-left: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: .5rem;
+  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
   border-bottom: 1px solid var(--rule);
-}
-.flow__entry::before,
-.flow__entry::after {
-  content: '';
-  position: absolute;
-  left: calc(-1 * clamp(2rem, 4vw, 3.5rem) + 4px);
-  top: .85rem; bottom: 0;
-  width: 1px;
-}
-.flow__entry::before { background: var(--rule); }
-.flow__entry::after {
-  background: var(--ink);
-  transform: scaleY(var(--p, 0));
-  transform-origin: top;
-}
-
-/* Tres capacidades hermanas: misma caja, mismo peso, ninguna numeración.
-   El filete pasa arriba —las corona en lugar de encadenarlas—. */
-.flow__caps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  margin-top: clamp(2rem, 4vw, 3rem);
-}
-.flow__caps .flow__i {
-  padding: clamp(1.25rem, 2.4vw, 1.75rem) 0 0;
-  border-bottom: 0;
-  border-top: 1px solid var(--rule);
-}
-.flow__caps .flow__i::after { top: -1px; bottom: auto; }
-.flow__caps .flow__t { font-size: clamp(1.375rem, 2.2vw, 1.875rem); }
-.flow__caps .flow__i::before { left: -12%; width: 13rem; height: 13rem; }
-
-.flow__note {
-  margin-top: clamp(1.75rem, 3vw, 2.5rem);
-  font-size: 1.0625rem;
+  font-size: .625rem;
   font-weight: 500;
-  letter-spacing: -.02em;
-  max-width: 46ch;
-}
-
-.flow__i {
-  position: relative;
-  padding: clamp(1.5rem, 2.6vw, 2.25rem) 0;
-  border-bottom: 1px solid var(--rule);
-}
-/* El filete se traza de izquierda a derecha cuando la banda entra. */
-.flow__i::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0; bottom: -1px;
-  height: 1px;
-  background: var(--ink);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 1.1s var(--ease-o);
-}
-.flow__i.is-in::after { transform: none; }
-
-.flow__rail { position: absolute; left: calc(-1 * clamp(2rem, 4vw, 3.5rem)); top: 1.75rem; }
-.flow__dot {
-  display: block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--canvas);
-  box-shadow: inset 0 0 0 1px var(--ink-3);
-  transition: box-shadow .6s var(--ease), background-color .6s var(--ease), transform .6s var(--ease-o);
-}
-.flow__entry.is-in .flow__dot,
-.flow__i.is-in .flow__dot {
-  background: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--ink);
-  transform: scale(1.15);
-}
-
-/* El halo difuso de identidad desaparece con el resto de degradados.
-   En el book la identidad la marca un filete azul fino, no una mancha:
-   el propio trazo que se dibuja al entrar cumple ese papel. */
-
-.flow__k {
-  font-size: .6875rem;
-  letter-spacing: .18em;
+  letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-.flow__t {
-  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -.04em;
-  margin: .625rem 0 .5rem;
-}
-.flow__f {
-  font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: -.02em;
-  margin-bottom: .625rem;
-}
-.flow__d { font-size: .9375rem; line-height: 1.65; color: var(--ink-2); max-width: 52ch; }
-
-html:not(.js) .flow__i::after { transform: none; }
-
-/* ── 04 · Capacidades ───────────────────────────────────────────
-   Conserva la anatomía de las antiguas filas de servicio —numeral,
-   título y texto— pero invierte la jerarquía: manda la frase de lo
-   que la práctica hace por los ingresos y el inventario de
-   capacidades queda debajo, en gris y cuerpo pequeño. Esa inversión
-   es lo que separa «capacidades de una firma» de «lista de
-   servicios»; si el inventario vuelve a pesar más que la frase, se
-   pierde el registro de consultoría.
-   ──────────────────────────────────────────────────────────────── */
-.caps { display: flex; flex-direction: column; }
-
-.cap {
-  position: relative;
-  display: grid;
-  grid-template-columns: 3.25rem minmax(0, 1fr) minmax(0, 1.15fr);
-  grid-template-areas: "n t s" "n l l";
-  column-gap: clamp(1.25rem, 3vw, 3.5rem);
-  row-gap: clamp(1.75rem, 3vw, 2.5rem);
-  align-content: start;
-  padding: clamp(2rem, 3.5vw, 3rem) clamp(.75rem, 1.5vw, 1.5rem);
-  margin: 0 clamp(-1.5rem, -1.5vw, -.75rem);
-  border-top: 1px solid var(--rule);
-  transition: background-color .45s var(--ease);
-}
-.caps > :last-child { border-bottom: 1px solid var(--rule); }
-/* Hover en tinte plano de marca, sin degradado ni halo: en el book el
-   color aparece en planos limpios o en líneas, nunca difuminado. */
-.cap:hover { background: var(--canvas-2); }
-/* El numeral se enciende en azul al pasar por encima: es la misma
-   señal que el book usa en sus numerales de página. */
-.cap:hover .cap__n { color: var(--accent); }
-
-.cap__n {
-  grid-area: n;
-  font-size: .75rem;
-  letter-spacing: .12em;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-  padding-top: .55rem;
-  transition: color .45s var(--ease);
-}
-.cap__t {
-  grid-area: t;
-  font-size: clamp(1.5rem, 2.6vw, 2.375rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -.038em;
-  transition: transform .5s var(--ease-o);
-}
-.cap:hover .cap__t { transform: translateX(6px); }
-
-.cap__s {
-  grid-area: s;
-  font-size: clamp(1rem, 1.25vw, 1.125rem);
-  line-height: 1.55;
-  letter-spacing: -.015em;
-  color: var(--ink);
 }
 
-/* columns fluye igual con 9 o con 10 capacidades; una retícula
-   explícita dejaría huecos al cambiar el número. */
-.cap__l {
-  grid-area: l;
-  columns: 3;
-  column-gap: var(--gap);
-}
-.cap__l li {
-  break-inside: avoid;
-  border-top: 1px solid var(--rule-2);
-  padding: .5rem 0;
-  font-size: .8125rem;
-  line-height: 1.4;
-  color: var(--ink-2);
-  transition: color .4s var(--ease);
-}
-.cap:hover .cap__l li { color: var(--ink); }
-
-/* ── 05 · Proceso ───────────────────────────────────────────── */
 .proc {
   position: relative;
   padding-left: clamp(2rem, 4vw, 3.5rem);
@@ -1637,7 +1881,11 @@ html:not(.js) .flow__i::after { transform: none; }
   transform-origin: top;
 }
 
-.proc__i { position: relative; padding: 0 0 clamp(3rem, 6vw, 5rem); }
+/* El aire entre etapas se apretó al entrar los tramos: un diagrama de
+   fases solo se lee como UN gráfico si sus filas están cerca. Con la
+   separación anterior (hasta 5rem) los seis tramos parecían seis
+   barras sueltas en vez de una escala continua. */
+.proc__i { position: relative; padding: 0 0 clamp(2.25rem, 4vw, 3.25rem); }
 .proc__i:last-child { padding-bottom: 0; }
 
 .proc__rail { position: absolute; left: calc(-1 * clamp(2rem, 4vw, 3.5rem)); top: .5rem; }
@@ -1680,80 +1928,55 @@ html:not(.js) .proc__c { opacity: 1; transform: none; }
 }
 .proc__d { color: var(--ink-2); max-width: 54ch; }
 
-/* ── 06 · Casos de uso ──────────────────────────────────────── */
-.cases {
-  display: grid;
-  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-  column-gap: var(--gap);
+/* El tramo de cada etapa sobre una escala común. Comparte el
+   max-width de .proc__d: si las pistas no midieran todas lo mismo, la
+   comparación entre etapas —que es el único punto del gráfico— sería
+   falsa. Cualquier cambio a uno de los dos hay que hacerlo a los dos. */
+.proc__bar {
+  position: relative;
+  height: 6px;
+  max-width: 54ch;
+  margin-top: 1.5rem;
+  border-radius: 3px;
+  background: var(--rule);
+}
+.proc__seg {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: var(--a);
+  width: var(--b);
+  border-radius: 3px;
+  background: var(--turquesa);
+}
+/* La puerta: rombo hueco al final del tramo. Se rellena con --canvas
+   para que recorte la pista en lugar de posarse encima. */
+.proc__gate {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--a) + var(--b));
+  width: 9px; height: 9px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px var(--teal-deep);
+}
+/* Optimize no cierra puerta: se desvanece porque el ciclo vuelve a
+   empezar. Es máscara de opacidad, no un degradado de color, así que
+   el fondo de la sección sigue siendo el suyo. */
+.proc__bar--loop .proc__seg {
+  -webkit-mask-image: linear-gradient(to right, #000 45%, transparent);
+  mask-image: linear-gradient(to right, #000 45%, transparent);
 }
 
-.cases__tabs { display: flex; flex-direction: column; align-self: start; }
-.cases__tab {
-  display: flex;
-  align-items: baseline;
-  gap: .875rem;
-  text-align: left;
-  padding: 1rem .5rem 1rem 0;
-  border-top: 1px solid var(--rule);
-  font-size: .9375rem;
-  color: var(--ink-3);
-  transition: color .35s var(--ease), padding-left .45s var(--ease-o);
+@media (prefers-reduced-motion: no-preference) {
+  .proc__seg {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .7s var(--ease-o) .15s;
+  }
+  .proc__i.is-in .proc__seg { transform: scaleX(1); }
+  .proc__gate { opacity: 0; transition: opacity .4s var(--ease) .75s; }
+  .proc__i.is-in .proc__gate { opacity: 1; }
 }
-.cases__tabs > :last-child { border-bottom: 1px solid var(--rule); }
-.cases__tab span {
-  font-size: .6875rem;
-  letter-spacing: .12em;
-  font-variant-numeric: tabular-nums;
-  transition: color .35s var(--ease);
-}
-.cases__tab:hover { color: var(--ink-2); padding-left: .375rem; }
-.cases__tab[aria-selected="true"] { color: var(--ink); padding-left: .5rem; }
-
-.cases__panels { position: relative; }
-.cases__panel { animation: panel-in .6s var(--ease-o) both; }
-@keyframes panel-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: none; }
-}
-
-.cases__h {
-  font-size: clamp(1.75rem, 3.4vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -.04em;
-  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
-}
-.cases__dl { display: grid; }
-.cases__dl dt {
-  font-size: .6875rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--rule-2);
-}
-.cases__dl dd {
-  padding: .625rem 0 1.5rem;
-  color: var(--ink-2);
-  max-width: 62ch;
-}
-.cases__dl dd:last-child { padding-bottom: 0; }
-
-/* ── 07 · Por qué ZOLEZZI ───────────────────────────────────── */
-.whys {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: var(--gap);
-  row-gap: clamp(2.25rem, 4vw, 3.5rem);
-}
-.why { border-top: 1px solid var(--rule); padding-top: 1.5rem; }
-.why h3 {
-  font-size: 1.1875rem;
-  font-weight: 500;
-  letter-spacing: -.025em;
-  margin-bottom: .75rem;
-}
-.why p { font-size: .9375rem; line-height: 1.65; color: var(--ink-2); }
 
 /* ── 08 · FAQ ───────────────────────────────────────────────── */
 .faq { display: flex; flex-direction: column; }
@@ -1993,27 +2216,11 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .sec__head { position: static; }
   .sec__note { max-width: 52ch; }
 
-  .cap__l { columns: 2; }
-
-  .cases { grid-template-columns: 1fr; row-gap: clamp(2rem, 4vw, 3rem); }
-  .cases__tabs {
-    flex-direction: row;
-    overflow-x: auto;
-    scrollbar-width: none;
-    margin: 0 calc(-1 * var(--margin));
-    padding: 0 var(--margin);
-    border-top: 1px solid var(--rule);
-    border-bottom: 1px solid var(--rule);
-  }
-  .cases__tabs::-webkit-scrollbar { display: none; }
-  .cases__tab {
-    border-top: 0;
-    white-space: nowrap;
-    padding: .875rem 1.25rem .875rem 0;
-  }
-  .cases__tabs > :last-child { border-bottom: 0; }
-  .cases__tab:hover,
-  .cases__tab[aria-selected="true"] { padding-left: 0; }
+  /* En una columna el reparto izquierda/derecha ya no existe. El
+     selector de --split gana por especificidad (0,3,0) al de arriba,
+     así que hay que anularlo con el suyo propio, no con .sec__head. */
+  .sec__grid--wide.sec__grid--split .sec__head { grid-column: 1; max-width: 46ch; }
+  .sec__grid--split .stall { grid-column: 1; max-width: 34rem; }
 
   /* A dos columnas el filete vertical solo separa la segunda de cada
      fila, no cada celda de la anterior. */
@@ -2121,28 +2328,26 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
      cada caja, las barras no comunican nada. */
   .geo    { grid-template-columns: 1fr; }
   .flw__ns { font-size: .625rem; }
+
+  /* El texto dentro de un SVG escala con el viewBox, no con la raíz:
+     en un móvil de 390px la meseta se dibuja a 0.73 y la matriz a
+     0.79, así que un rótulo de 9px acaba renderizado a 6.5px reales
+     —ilegible—. Aquí se compensa la escala para que TODOS caigan
+     alrededor de 10-11px de pantalla.
+
+     Si algún día cambia el viewBox de uno de estos gráficos, hay que
+     recalcular su factor o el rótulo volverá a encogerse. */
+  .stall__lb { font-size: 14px; }
+  .stall__gl { font-size: 13px; }
+  .mx__ql    { font-size: 12px; }
+  .mx__at    { font-size: 12px; }
+  .mx__bl    { font-size: 15px; }
+  .arq__pl   { font-size: 14px; }
+  .lyr__t    { font-size: 13px; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat__l { columns: 1; }
 
-  .whys,
   .form__row { grid-template-columns: 1fr; }
-
-  .cap {
-    grid-template-columns: 1fr;
-    grid-template-areas: "n" "t" "s" "l";
-    row-gap: 1rem;
-    padding: 1.75rem .75rem;
-  }
-  .cap__n { padding-top: 0; }
-  .cap:hover .cap__t { transform: none; }
-  .cap__l { columns: 1; }
-  .cap::before { width: 9rem; height: 9rem; }
-
-  .flow__t { margin-top: .5rem; }
-  /* En una columna las tres capacidades se apilan; el filete superior
-     sigue distinguiéndolas sin necesidad de retícula. */
-  .flow__caps { grid-template-columns: 1fr; gap: 0; }
-  .flow__caps .flow__i { padding-bottom: 1.5rem; }
 
   .ftr__top { grid-template-columns: 1fr; }
   .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
@@ -2162,9 +2367,7 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   }
   .rv, .proc__c { opacity: 1; transform: none; }
   .mask .ln > i { transform: none; }
-  .proc::after, .flow__entry::after { transform: scaleY(1); }
-  .flow__i::after { transform: none; }
-  .flow__i::before { opacity: 1; }
+  .proc::after { transform: scaleY(1); }
 
   /* Estado final de los visuales de la fase 4. La regla `*` de arriba
      deja las transiciones en .01ms, pero eso las hace instantáneas, no
@@ -2175,7 +2378,16 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .fnl__b   { clip-path: none; }
   .fnl__r,
   .rad__n,
+  .stall__gap, .stall__gl, .stall__pin,
   .tl__i    { opacity: 1; }
+  .stall__now  { stroke-dasharray: none; stroke-dashoffset: 0; }
+  .stall__pot  { opacity: .75; }
+  .stall__lead { opacity: .5; }
+  .proc__seg   { transform: none; }
+  .proc__gate  { opacity: 1; }
+  .mx__b, .mx__bl { opacity: 1; }
+  .arq__x { opacity: 1; }
+  .upt__b { opacity: 1; }
   .rad__n   { transform: translate(-50%, -50%); }
   .tl__i    { transform: none; }
   .dash__line { stroke-dasharray: none; stroke-dashoffset: 0; }

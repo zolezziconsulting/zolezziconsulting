@@ -14,7 +14,7 @@ index.html            Hero, desafíos, consultoría (comercial + marketing
                       FAQ, CTA, contacto y pie
 assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
-                      pestañas, acordeón y formulario
+                      acordeón y formulario
 assets/fonts/         Inter (variable, subset latin, autoalojada)
 assets/img/           og-v2.jpg (1200×630) y apple-touch-icon.png
 favicon.svg  robots.txt  sitemap.xml  site.webmanifest  _headers
@@ -44,7 +44,7 @@ el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referenci
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=18`.
+vieja. Va por `v=21`.
 
 ## Desplegar
 
@@ -122,15 +122,67 @@ metodología en tint; el resto hereda `--bg-base`.
 - Sobre oscuro, los tonos intermedios se **derivan** de `--ink-invert` con `color-mix` y
   respaldo estático delante. No son colores nuevos.
 
-**Contraste: 37 pares de texto/fondo de todas las secciones medidos, todos por encima de AA.**
-El más ajustado es la pill de desafíos, 5.27:1. Al medir hay que **componer el alfa**: los
-fondos translúcidos (`.geo__cite` al 7 %) dan falsos negativos si se leen como opacos.
+**Contraste: 37 pares de la fase 4 + los 15 de los visuales nuevos, todos por encima de AA.**
+El más ajustado de la tanda nueva es `.mini__k` sobre las tarjetas oscuras, 4.92:1; le sigue
+el rótulo de la banda de la meseta sobre el turquesa al 14 %, 5.13:1.
+
+Al medir, dos trampas que ya costaron un falso diagnóstico:
+
+- **Hay que componer el alfa.** Los fondos translúcidos (`.geo__cite` al 7 %, el cuadrante
+  de la matriz al 8 %, la banda de la meseta al 14 %) dan falsos negativos si se leen como
+  opacos.
+- **En un `<text>` de SVG el color es `fill`, no `color`,** y su fondo suele ser un `<rect>`
+  hermano, no un ancestro del DOM. Medir `getComputedStyle().color` y subir por
+  `parentElement` da resultados sin ningún sentido (16:1 donde hay 6:1, 1,1:1 donde hay
+  7,1:1). Además `getComputedStyle` puede devolver `color(srgb 0.52 0.57 0.59)`: un parser
+  que asuma `rgb(0-255)` lo lee como negro casi puro.
 
 ### Visuales de servicio
 
-Seis, todos en SVG y CSS, sin librerías: embudo (`.fnl`), radial de Go-to-Market (`.rad`),
-las dos superficies de SEO/GEO (`.geo`), panel de campaña (`.dash`), mockups de web
-(`.mock`) y flujo de sistemas (`.flw`). Todos con `role="img"` y `<title>`.
+**Trece**, todos en SVG y CSS, sin librerías. Todos con `role="img"` y `<title>`.
+
+| # | Clase | Sección | Qué argumenta |
+|---|---|---|---|
+| 1 | `.fnl` | Consultoría comercial | El embudo que se rediseña |
+| 2 | `.rad` | Marketing estratégico | Las siete piezas del plan |
+| 3 | `.geo` | SEO & GEO | Buscador clásico vs. respuesta con IA |
+| 4 | `.dash` | Publicidad | Panel de campaña con contadores |
+| 5 | `.mock` | Diseño web | Tres tipos de sitio |
+| 6 | `.flw` | Soluciones e IA | Un dato recorriendo cuatro sistemas |
+| 7 | `.stall` | Desafíos | La meseta: el crecimiento no capturado |
+| 8 | `.proc__bar` | Metodología | Roadmap de seis fases con puertas |
+| 9 | `.mx` | Marketing estratégico | Matriz de priorización 2×2 |
+| 10 | `.arq` | SEO & GEO | Arquitectura de contenidos y enlazado |
+| 11 | `.upt` | Infraestructura | Franja de disponibilidad de 30 días |
+| 12 | `.lyr` | Seguridad | Capas de defensa |
+| 13 | `.doc` | Cumplimiento | El expediente legal |
+
+Los seis primeros son de la fase 4. **Del 7 al 13 entraron el 2026-07-31**, cuando se pidió
+que la web «demostrara en vez de explicar». El criterio de esa tanda: *cada pieza tiene que
+argumentar algo que el texto ya no necesite decir*. Ninguna es decorativa y ninguna se
+añadió a una sección que ya tuviera visual suficiente —por eso Publicidad no recibió el
+gráfico de segmentación que se llegó a plantear: marketing ya era la sección más visual de
+la página (8,2 palabras por cada 100 px) y el problema estaba en otra parte—.
+
+**`.svis` es el envoltorio común de todos ellos y ahora sí tiene reglas.** Existía desde la
+fase 4 como gancho sin una sola declaración, y el espaciado resultante estaba justo al
+revés de lo que pide la lectura: los visuales que van tras su rótulo `h4` tenían 13 px de
+aire y los que van tras una lista, **cero**. Hoy: `.svis` separa 1,5–2,25 rem y
+`.svc__k--wide + .svis` vuelve a apretar a 0,75 rem, porque un rótulo nombra a lo que tiene
+debajo.
+
+**El texto dentro de un SVG escala con su `viewBox`, no con la raíz.** En un móvil de 390 px
+la meseta se dibuja a 0,73 y la matriz a 0,79, así que un rótulo declarado a 9 px acababa
+renderizado a 6,5 px reales. El bloque de 760 px sube el tamaño de `.stall__lb`, `.stall__gl`,
+`.mx__ql`, `.mx__at`, `.mx__bl`, `.arq__pl` y `.lyr__t` para compensar la escala. **Si algún
+día cambia el `viewBox` de uno de esos gráficos hay que recalcular su factor.**
+
+En el roadmap de metodología, `.proc__bar` comparte `max-width: 54ch` con `.proc__d`. No es
+casualidad estética: si las pistas no midieran todas lo mismo, comparar la duración de una
+etapa con otra —el único punto del gráfico— sería falso. **Cualquier cambio a uno de los dos
+hay que hacerlo a los dos.** Los tramos no se solapan porque el rótulo promete que ninguna
+etapa empieza sin la conclusión de la anterior; si algún día se admite solapar fases, hay
+que cambiar los números o el gráfico estaría mintiendo.
 
 En el radial, los nodos se posicionan por **`left`/`top` en porcentaje, no por
 `transform: translate()`**: los porcentajes de `translate` se refieren al tamaño del propio
@@ -158,7 +210,88 @@ el trazo; `pointer-events: none` también, porque cubre secciones enteras.
 Tipografía: **Inter**, variable y autoalojada. Sin peticiones a Google Fonts. La jerarquía la
 da el tamaño, nunca el grosor.
 
+## Navegación y rutas de contacto
+
+**Cinco entradas de primer nivel** (2026-08-01): Desafíos · Servicios · Metodología ·
+Preguntas frecuentes · Contacto. Las tres capacidades cuelgan de «Servicios» en un
+desplegable; antes competían en el mismo nivel que Contacto siendo la misma familia.
+
+Los antetítulos numeran esa jerarquía: `01`, `02.1`, `02.2`, `02.3`, `03`, `04`, `05`. La
+subnumeración no es un capricho: con cinco entradas y siete secciones, la alternativa era
+repetir «02» tres veces —que se lee como un error— o desalinear menú y página.
+
+Tres cosas del desplegable que se romperían con un descuido:
+
+- **`.nav__menu[hidden] { display: none }` es imprescindible**, no redundante. Es la misma
+  trampa que `.drawer[hidden]`: el `[hidden]` del navegador no tiene casi especificidad y lo
+  pisa el `display: flex` de la clase. Sin esa línea el panel se queda abierto para siempre.
+- **`.nav__menu::before` es un puente, no decoración.** Entre el botón y el panel hay 14 px
+  de `margin-top` que quedan fuera de la caja del panel; al bajar el ratón, `pointerleave`
+  saltaba y el menú se cerraba antes de llegar. El pseudoelemento extiende el área sensible
+  esos 14 px. **Si cambia el `margin-top`, hay que cambiar su `top` y su `height` al mismo
+  valor.**
+- **Dentro del panel no se pueden usar `--ink`, `--ink-2` ni `--ink-3`:** en `.hdr.is-inv`
+  apuntan a la gama invertida y el texto saldría casi blanco sobre blanco. Se usan
+  `--ink-soft` y `--bg-dark`, que no se voltean en ningún ámbito.
+
+El vigía de sección se guía por **`data-spy`**, no por el `href`, porque «Servicios» es un
+`<button>` sin destino que representa tres secciones a la vez. Cada entrada declara qué ids
+ilumina. Si se añade una sección al grupo, hay que añadir su id a ese atributo.
+
+### Los dos caminos de contacto
+
+Desde el 2026-08-01 no todos los botones van a WhatsApp, y la diferencia es comercial:
+
+| Rótulo | Destino | Por qué |
+|---|---|---|
+| **Solicitar un diagnóstico** | `#contacto` (formulario) | Es la venta de consultoría. El formulario pide contexto por escrito, califica solo y deja constancia |
+| **Solicitar un servicio específico** | WhatsApp | Encargo puntual; esa conversación funciona mejor en mensajería |
+| Hablemos · WhatsApp · «¿No encuentra su desafío?» | WhatsApp | Contacto rápido, sin calificar |
+
+Aparece en el hero, en el CTA previo a contacto y en el pie. **El rótulo «Solicitar
+diagnóstico» tiene que llevar al formulario en los tres sitios**: si en uno abre WhatsApp, el
+mismo texto hace dos cosas distintas según dónde se pulse.
+
 ## Restricciones que no se ven en el código
+
+- **La fila de credibilidad del hero decía `[TODO]` en producción.** Hasta el 2026-07-31,
+  tres de sus cuatro celdas se servían literalmente como «Experiencia **[TODO]** años»,
+  «Empresas atendidas **[TODO]**» y «Sectores **[TODO]**» en `zolezziconsulting.com`, en el
+  primer bloque que lee un director. Ahora las cuatro describen el **modelo** —alcance,
+  responsable, interlocución, cobertura— y todas son comprobables contra la propia página,
+  así que pueden estar publicadas sin riesgo.
+  **Siguen faltando las cifras reales.** Cuando existan (años de experiencia, empresas
+  atendidas, sectores), sustituyen a «Alcance» y «Cobertura»: un número comprobable pesa más
+  que una descripción. Lo que no se puede volver a hacer es publicar un marcador de posición.
+
+- **No se publican plazos, modelo de cobro ni precios.** El bloque `.feat__meta` de los dos
+  servicios de consultoría —«Duración», «Modelo», «Recompra»— se retiró el 2026-08-01 por
+  decisión comercial: al vender consultoría de ticket alto eso se conversa, no se publica.
+  Se quitó también su CSS. **Esto gobierna las preguntas frecuentes:** ninguna puede hablar
+  de precio ni de plazo contractual, o contradiría la misma decisión.
+
+- **Las seis preguntas frecuentes viven DOS veces en `index.html`:** en el marcado visible y
+  en el JSON-LD de `FAQPage` de la cabecera, palabra por palabra. Cambiar una y no la otra
+  publica datos estructurados que no coinciden con la página, y eso Google lo penaliza.
+  Se reescribieron enteras el 2026-08-01: las anteriores eran del posicionamiento previo y
+  sonaban a agencia. Las nuevas responden a encaje, qué incluye el diagnóstico, plazos,
+  medición, convivencia con equipo o agencia, y qué pasa con lo ya hecho.
+
+- **El hero no se invierte solo: hay que decírselo a `main.js`.** El selector `darks` incluye
+  `.hero` además de `.sec--dark, .cta, .ftr`. La hoja da a los cuatro los mismos tokens
+  oscuros, pero el hero no lleva la clase `.sec--dark`, así que se quedaba fuera del selector
+  y la cabecera nunca se invertía al cargar: la marca «ZOLEZZI» salía a **1.03:1** sobre el
+  hero —invisible— y el hover del menú igual. Corregido el 2026-08-01, con un respaldo en
+  `html:not(.js) .hdr` por si el script no llega a ejecutarse. **Cualquier bloque oscuro
+  nuevo tiene que entrar en ese selector o repetirá el fallo.**
+
+- **Se retiró CSS y JS de secciones que ya no existen.** `.flow*` (el diagrama del enfoque),
+  `.caps`/`.cap*` (capacidades), `.cases*` (casos de uso, con su manejador de pestañas
+  completo en `main.js` y su `@keyframes panel-in`) y `.whys`/`.why`. Ninguna de esas clases
+  aparecía en el marcado —`querySelectorAll` devolvía cero en las cuatro—, así que el
+  navegador descargaba y parseaba ~280 líneas de reglas y un componente de teclado entero
+  que no gobernaban nada. Si alguna de esas secciones vuelve, hay que recuperar su bloque
+  del historial: `git log -S'.cases__tab' -- assets/css/styles.css`.
 
 - **Correo público: `zolezziconsulting@gmail.com`.** Aparece como `mailto:` en la sección
   Contacto y en el pie, y en el JSON-LD (`email` de la organización y del `contactPoint`).

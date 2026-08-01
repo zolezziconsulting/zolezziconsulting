@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=18">
-<link rel="stylesheet" href="/assets/css/styles.css?v=18">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=21">
+<link rel="stylesheet" href="/assets/css/styles.css?v=21">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=18" defer></script>
+<script src="/assets/js/main.js?v=21" defer></script>
 
 <script type="application/ld+json">
 {
@@ -102,33 +102,33 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "¿En qué se diferencian de una consultora tradicional?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Las consultoras tradicionales suelen entregar recomendaciones y finalizar el proyecto. Nosotros combinamos estrategia con ejecución. Diseñamos el plan, implementamos las iniciativas prioritarias y medimos su impacto para asegurar que las recomendaciones se conviertan en resultados." }
+      "name": "¿Con qué tipo de empresa trabajan?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Con empresas que ya venden y quieren crecer de forma ordenada, no con proyectos que arrancan de cero. El punto en común no es el tamaño ni el sector: es que exista una dirección con capacidad de decidir y de sostener los cambios que salgan del diagnóstico." }
     },
     {
       "@type": "Question",
-      "name": "¿Cuándo tiene sentido llamarnos?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Cuando el crecimiento de la empresa se ha estancado, las acciones de marketing no generan el retorno esperado, los procesos limitan la escalabilidad o existe la necesidad de definir una estrategia clara antes de seguir invirtiendo." }
+      "name": "¿Qué incluye el diagnóstico inicial?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Revisamos el modelo de ingresos, el proceso comercial, la generación de demanda, la conversión y la tecnología que lo sostiene. El resultado es un diagnóstico priorizado por impacto sobre el ingreso y un roadmap con secuencia y responsables. Es la puerta de entrada a cualquier mandato." }
     },
     {
       "@type": "Question",
-      "name": "¿Cómo empieza un mandato?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Todo proyecto comienza con un diagnóstico. Analizamos el modelo de negocio, el proceso comercial, la adquisición de clientes, la conversión, la operación y la tecnología para identificar las principales oportunidades de crecimiento. A partir de ello definimos un roadmap priorizado." }
+      "name": "¿En cuánto tiempo se ven resultados?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Depende de la palanca. Corregir una fuga de conversión o una campaña mal estructurada suele notarse en semanas; rediseñar un modelo comercial o entrar a un mercado nuevo se mide en meses. En el roadmap se acuerda qué se espera de cada bloque y cuándo, para que el trabajo no se juzgue contra una expectativa que nunca se pactó." }
     },
     {
       "@type": "Question",
       "name": "¿Cómo se mide el trabajo?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No medimos nuestro trabajo por entregables, sino por indicadores de negocio previamente acordados. Dependiendo del proyecto, estos pueden incluir crecimiento de ingresos, generación de oportunidades, conversión, eficiencia operativa o rentabilidad." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Por indicadores de negocio acordados antes de empezar, no por entregables. Según el mandato pueden ser crecimiento de ingresos, oportunidades generadas, conversión, eficiencia operativa o rentabilidad. Si un indicador no se puede atribuir, no entra en el cuadro de mando." }
     },
     {
       "@type": "Question",
-      "name": "¿Sustituyen al equipo interno?",
-      "acceptedAnswer": { "@type": "Answer", "text": "No. Trabajamos junto al equipo de la empresa. Nuestro objetivo es aportar metodología, experiencia y capacidad de ejecución para acelerar los resultados, transfiriendo conocimiento y fortaleciendo las capacidades internas." }
+      "name": "¿Sustituyen a nuestro equipo o a nuestra agencia?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Trabajamos junto al equipo interno y le transferimos el método para que quede en casa. Con proveedores externos lo habitual es que pasemos a dirigir el criterio: qué se le pide a cada uno y contra qué se le mide. Esa suele ser justamente la pieza que falta cuando hay tres proveedores y ninguno responde por el resultado." }
     },
     {
       "@type": "Question",
-      "name": "¿Qué pasa con lo que la empresa ya tiene hecho?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Aprovechamos todo aquello que aporte valor. Revisamos campañas, procesos, tecnología y activos existentes antes de proponer cambios. Preferimos optimizar y construir sobre una base sólida antes que reemplazarla innecesariamente." }
+      "name": "¿Qué pasa con lo que ya tenemos hecho?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Se aprovecha todo lo que aporte valor. Revisamos campañas, procesos, tecnología y activos existentes antes de proponer cambios: reemplazar lo que ya funciona es caro y rara vez necesario. Lo que no rinde se corta, y se explica por qué." }
     }
   ]
 }
@@ -142,6 +142,7 @@
   <defs>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6.5-6.5L19 12l-6.5 6.5"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
 
     <!-- Iconografía de línea, 24×24. Heredan trazo y color de
          `svg use` en la hoja, así que aquí solo va la geometría. -->
@@ -224,12 +225,33 @@
       <span class="brand__sub">Consulting</span>
     </a>
 
+    <!-- Cinco entradas de primer nivel. Las tres capacidades cuelgan de
+         «Servicios» en vez de competir con Metodología y Contacto por el
+         mismo peso: antes había cinco enlaces planos y tres de ellos
+         eran la misma familia.
+
+         `data-spy` dice qué secciones ilumina cada entrada. Hace falta
+         porque «Servicios» es un <button> sin href y el vigía no puede
+         deducir su destino: cubre tres secciones, no una. -->
     <nav class="nav" aria-label="Navegación principal">
-      <a class="nav__link" href="#desafios">Desafíos</a>
-      <a class="nav__link" href="#consultoria">Consultoría</a>
-      <a class="nav__link" href="#marketing">Marketing</a>
-      <a class="nav__link" href="#tecnologia">Tecnología</a>
-      <a class="nav__link" href="#contacto">Contacto</a>
+      <a class="nav__link" href="#desafios" data-spy="desafios">Desafíos</a>
+
+      <div class="nav__grp">
+        <button class="nav__link nav__btn" type="button" id="nav-srv"
+                aria-expanded="false" aria-controls="nav-srv-menu"
+                data-spy="consultoria marketing tecnologia">
+          Servicios<svg class="nav__chev" aria-hidden="true"><use href="#i-chev"/></svg>
+        </button>
+        <div class="nav__menu" id="nav-srv-menu" hidden>
+          <a href="#consultoria">Consultoría</a>
+          <a href="#marketing">Marketing digital</a>
+          <a href="#tecnologia">Tecnología</a>
+        </div>
+      </div>
+
+      <a class="nav__link" href="#metodologia" data-spy="metodologia">Metodología</a>
+      <a class="nav__link" href="#faq" data-spy="faq">Preguntas frecuentes</a>
+      <a class="nav__link" href="#contacto" data-spy="contacto">Contacto</a>
     </nav>
 
     <div class="hdr__end">
@@ -243,13 +265,20 @@
 </header>
 
 <div class="drawer" id="drawer" hidden>
+  <!-- En el cajón no hay desplegable: no hay sitio que ganar y un menú
+       dentro de otro menú en táctil es un clic de más. Los tres
+       servicios se muestran ya abiertos, sangrados bajo su epígrafe. -->
   <nav class="drawer__nav" aria-label="Navegación móvil">
     <a href="#desafios"><span class="drawer__n">01</span>Desafíos</a>
-    <a href="#consultoria"><span class="drawer__n">02</span>Consultoría</a>
-    <a href="#marketing"><span class="drawer__n">03</span>Marketing</a>
-    <a href="#tecnologia"><span class="drawer__n">04</span>Tecnología</a>
-    <a href="#faq"><span class="drawer__n">05</span>Preguntas</a>
-    <a href="#contacto"><span class="drawer__n">06</span>Contacto</a>
+    <div class="drawer__grp">
+      <p class="drawer__gt"><span class="drawer__n">02</span>Servicios</p>
+      <a class="drawer__sub" href="#consultoria">Consultoría</a>
+      <a class="drawer__sub" href="#marketing">Marketing digital</a>
+      <a class="drawer__sub" href="#tecnologia">Tecnología</a>
+    </div>
+    <a href="#metodologia"><span class="drawer__n">03</span>Metodología</a>
+    <a href="#faq"><span class="drawer__n">04</span>Preguntas frecuentes</a>
+    <a href="#contacto"><span class="drawer__n">05</span>Contacto</a>
   </nav>
   <div class="drawer__foot">
     <a class="lnk" data-wa target="_blank" rel="noopener" href="#">WhatsApp</a>
@@ -284,26 +313,43 @@
 
       <p class="hero__geo rv" style="--d:.52s">Para empresas de Latinoamérica.</p>
 
+      <!-- Dos caminos distintos a propósito, y no es un detalle de
+           maquetación: el diagnóstico es la venta de consultoría y va al
+           FORMULARIO —pide contexto por escrito, califica solo y deja
+           constancia—; el encargo puntual va a WhatsApp, que es donde
+           esa conversación funciona. Si algún día el diagnóstico vuelve
+           a WhatsApp, se pierde la calificación. -->
       <div class="hero__cta rv" style="--d:.58s">
-        <a class="btn btn--grad" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn--grad" href="#contacto"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un servicio específico</span></a>
         <a class="btn btn--ghost" href="#consultoria"><span>Ver cómo trabajamos</span></a>
       </div>
     </div>
 
+    <!-- Esta fila es la tira de credibilidad: es lo primero que un
+         director lee después del titular. Hasta el 2026-07-31 tres de
+         las cuatro celdas decían literalmente «[TODO]» EN PRODUCCIÓN.
+
+         Ahora describen el MODELO —alcance, responsable, interlocución,
+         cobertura—, no resultados. Todas son verificables contra la
+         propia página, así que no hay nada que inventar y la fila puede
+         estar publicada sin riesgo.
+
+         Cuando existan las cifras reales (años de experiencia, empresas
+         atendidas, sectores), sustituyen a «Alcance» y «Cobertura»: un
+         número comprobable pesa más que una descripción. Lo que NO se
+         puede hacer es volver a publicar un marcador de posición. -->
     <ul class="hero__meta">
-      <!-- TODO: sustituir por la cifra real. -->
-      <li class="rv" style="--d:.70s"><span>Experiencia</span>[TODO] años</li>
-      <!-- TODO: sustituir por la cifra real. -->
-      <li class="rv" style="--d:.76s"><span>Empresas atendidas</span>[TODO]</li>
-      <!-- TODO: sustituir por los sectores reales. -->
-      <li class="rv" style="--d:.82s"><span>Sectores</span>[TODO]</li>
-      <li class="rv" style="--d:.88s"><span>Interlocución</span>Directa con dirección</li>
+      <li class="rv" style="--d:.70s"><span>Alcance</span>Estrategia, demanda y tecnología</li>
+      <li class="rv" style="--d:.76s"><span>Responsable</span>Una sola firma</li>
+      <li class="rv" style="--d:.82s"><span>Interlocución</span>Directa con dirección</li>
+      <li class="rv" style="--d:.88s"><span>Cobertura</span>Latinoamérica</li>
     </ul>
   </section>
 
   <!-- ── 02 · Desafíos ──────────────────────────────────────── -->
   <section class="sec" id="desafios" aria-labelledby="t-desafios">
-    <div class="sec__grid sec__grid--wide">
+    <div class="sec__grid sec__grid--wide sec__grid--split">
       <div class="sec__head">
         <p class="eyebrow rv"><span class="eyebrow__n">01</span> — Desafíos</p>
         <h2 class="h2 mask" id="t-desafios">
@@ -311,10 +357,60 @@
           <span class="ln"><i class="dim">resolver su empresa?</i></span>
         </h2>
         <p class="sec__note rv" style="--d:.3s">
-          Un mandato no empieza por un servicio, empieza por una decisión pendiente.
-          Identifique el suyo y le muestro exactamente cómo lo resolvemos.
+          Un mandato no empieza por un servicio: empieza por una decisión pendiente.
         </p>
       </div>
+
+      <!-- Visual 7 · La meseta ───────────────────────────────────
+           Ocupa el hueco que dejaba la columna del titular, así que no
+           alarga la página ni un píxel.
+
+           Es el encuadre de toda la sección: la curva real se aplana,
+           la punteada es la trayectoria que seguiría sin el freno, y lo
+           que se vende es la BANDA entre las dos. Las seis tarjetas de
+           abajo son las seis causas posibles de esa banda; por eso el
+           gráfico va antes y no después. -->
+      <figure class="stall rv" style="--d:.18s">
+        <svg class="stall__svg" viewBox="0 0 480 232" role="img" aria-labelledby="stall-t">
+          <title id="stall-t">Curva de ingresos que crece y luego se aplana. Una
+          trayectoria punteada muestra el recorrido que seguiría sin el freno; la banda
+          entre ambas es el crecimiento que no se está capturando.</title>
+          <defs>
+            <linearGradient id="stall-g" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="var(--celeste)"/>
+              <stop offset="1" stop-color="var(--turquesa)"/>
+            </linearGradient>
+          </defs>
+
+          <line class="stall__ax" x1="40" y1="200" x2="464" y2="200"/>
+          <line class="stall__ax" x1="40" y1="16"  x2="40"  y2="200"/>
+
+          <!-- La banda va primero: es relleno y tiene que quedar por
+               debajo de los dos trazos que la delimitan. -->
+          <path class="stall__gap"
+                d="M330 64 C 370 52 410 38 460 22 L460 59 C 420 60 380 61 330 64 Z"/>
+
+          <path class="stall__pot" pathLength="1"
+                d="M330 64 C 370 52 410 38 460 22"/>
+          <path class="stall__now" pathLength="1"
+                d="M40 190 C 100 188 160 150 220 108 C 270 74 300 66 330 64 C 380 61 420 60 460 59"/>
+
+          <line class="stall__mark" x1="330" y1="64" x2="330" y2="200"/>
+          <circle class="stall__pin" cx="330" cy="64" r="4"/>
+
+          <text class="stall__lb" x="46" y="30">Ingresos</text>
+          <text class="stall__lb stall__lb--end" x="460" y="14">Potencial</text>
+          <text class="stall__lb stall__lb--end" x="460" y="76">Trayectoria actual</text>
+          <text class="stall__lb stall__lb--mid" x="330" y="216">Hoy</text>
+
+          <!-- La banda es demasiado estrecha para alojar el rótulo
+               dentro: mide 16px de alto donde empieza y 37 donde acaba,
+               y dos líneas de 11px no caben. Va fuera, en el vacío que
+               deja la meseta, con un filete que lo lleva hasta dentro. -->
+          <text class="stall__gl stall__gl--end" x="306" y="50">Crecimiento no capturado</text>
+          <line class="stall__lead" x1="314" y1="46" x2="398" y2="46"/>
+        </svg>
+      </figure>
 
       <div class="sec__body">
         <!-- Cada tarjeta es un enlace al servicio que resuelve ese
@@ -379,7 +475,7 @@
   <section class="sec sec--surface" id="consultoria" aria-labelledby="t-consultoria">
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">02</span> — Consultoría</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">02.1</span> — Servicios · Consultoría</p>
         <h2 class="h2 mask" id="t-consultoria">
           <span class="ln"><i>Primero se decide</i></span>
           <span class="ln"><i class="dim">cómo se va a vender.</i></span>
@@ -398,9 +494,13 @@
             <div class="feat__ico" aria-hidden="true"><svg><use href="#i-funnel"/></svg></div>
             <div>
               <h3 class="feat__t">Consultoría comercial y aceleración de ventas</h3>
-              <p class="feat__s">Rediseñamos el modelo comercial completo: estrategia,
-              proceso, embudo, estructura del equipo, comisiones e indicadores. El objetivo
-              no es un informe, es que la empresa cierre más y en menos tiempo.</p>
+              <!-- La enumeración («estrategia, proceso, embudo, equipo,
+                   comisiones e indicadores») estaba repetida punto por
+                   punto en la columna «Qué recibe» de aquí debajo. Se
+                   quita de la entradilla: decirlo dos veces no lo hace
+                   más cierto, solo más largo. -->
+              <p class="feat__s">Rediseñamos el modelo comercial completo. El objetivo no es
+              un informe: es que la empresa cierre más y en menos tiempo.</p>
             </div>
           </div>
 
@@ -525,11 +625,6 @@
             </ol>
           </div>
 
-          <div class="feat__meta">
-            <div><b>Duración</b>3 a 6 meses</div>
-            <div><b>Modelo</b>Precio fijo por el diseño + acompañamiento mensual</div>
-            <div><b>Recompra</b>El modelo se recalibra cada 1–2 años</div>
-          </div>
         </article>
 
         <!-- 2 · Marketing estratégico ─────────────────────────── -->
@@ -538,9 +633,11 @@
             <div class="feat__ico" aria-hidden="true"><svg><use href="#i-target"/></svg></div>
             <div>
               <h3 class="feat__t">Marketing estratégico, go-to-market y plan comercial</h3>
+              <!-- «Segmentos, precios, canales, presupuesto y
+                   calendario» lo dibujan ahora el radial y la matriz.
+                   La frase se queda solo con la pregunta que resuelve. -->
               <p class="feat__s">Definimos por qué alguien debería elegirle a usted y no al
-              de al lado, y bajamos esa respuesta a segmentos, precios, canales, presupuesto
-              y calendario.</p>
+              de al lado.</p>
             </div>
           </div>
 
@@ -624,11 +721,68 @@
             </div>
           </div>
 
-          <div class="feat__meta">
-            <div><b>Duración</b>6 a 14 semanas</div>
-            <div><b>Modelo</b>Precio fijo por el plan; mensual si se acompaña la ejecución</div>
-            <div><b>Recompra</b>El plan es anual</div>
+          <!-- Visual 9 · Matriz de priorización ─────────────────────
+               «Segmentación y priorización de segmentos objetivo» ya
+               estaba entre los entregables de arriba, pero solo como
+               una línea de lista. Esto es ese entregable dibujado.
+
+               Es la pieza más reconocible del oficio: cualquier
+               director que haya trabajado con una firma de estrategia
+               sabe leer una matriz de dos ejes sin instrucciones. Por
+               eso no lleva leyenda de cuadrantes: llevan el nombre
+               dentro.
+
+               Los segmentos van con letra, no con nombre de sector: un
+               sector concreto se leería como un caso real y no lo es.
+               El relleno codifica la recomendación —sólidos los que
+               entran, perfilados los que no—, así que el gráfico no
+               solo sitúa, también concluye. -->
+          <h4 class="svc__k svc__k--wide">Cómo se prioriza</h4>
+          <div class="svis svis--matriz">
+            <div class="mx">
+              <svg class="mx__svg" viewBox="0 0 440 316" role="img" aria-labelledby="mx-t">
+                <title id="mx-t">Matriz de dos ejes: atractivo del segmento frente a
+                capacidad de ganar. Cinco segmentos situados por su posición y su tamaño de
+                facturación. Los del cuadrante prioritario aparecen rellenos; el resto,
+                perfilados.</title>
+
+                <!-- El cuadrante que manda se tiñe. Es la única zona con
+                     relleno: si se tiñeran los cuatro, ninguno destacaría. -->
+                <rect class="mx__q" x="240" y="16" width="184" height="124"/>
+
+                <line class="mx__div" x1="240" y1="16" x2="240" y2="264"/>
+                <line class="mx__div" x1="56"  y1="140" x2="424" y2="140"/>
+
+                <line class="mx__ax" x1="56" y1="264" x2="424" y2="264"/>
+                <line class="mx__ax" x1="56" y1="16"  x2="56"  y2="264"/>
+                <path class="mx__tip" d="M424 264 L417 260.5 L417 267.5 Z"/>
+                <path class="mx__tip" d="M56 16 L52.5 23 L59.5 23 Z"/>
+
+                <text class="mx__ql" x="66"  y="30">Construir capacidad</text>
+                <text class="mx__ql mx__ql--on mx__ql--end" x="414" y="30">Prioritario</text>
+                <text class="mx__ql" x="66"  y="256">Descartar</text>
+                <text class="mx__ql mx__ql--end" x="414" y="256">Mantener</text>
+
+                <circle class="mx__b mx__b--on" cx="330" cy="66"  r="24"/>
+                <circle class="mx__b mx__b--on" cx="283" cy="112" r="15"/>
+                <circle class="mx__b" cx="150" cy="74"  r="19"/>
+                <circle class="mx__b" cx="335" cy="205" r="13"/>
+                <circle class="mx__b" cx="128" cy="228" r="11"/>
+
+                <text class="mx__bl mx__bl--on" x="330" y="70">A</text>
+                <text class="mx__bl mx__bl--on" x="283" y="116">B</text>
+                <text class="mx__bl" x="150" y="78">C</text>
+                <text class="mx__bl" x="335" y="209">D</text>
+                <text class="mx__bl" x="128" y="232">E</text>
+
+                <text class="mx__at" x="240" y="292">Capacidad de ganar</text>
+                <text class="mx__at" x="18" y="140" transform="rotate(-90 18 140)">Atractivo del segmento</text>
+              </svg>
+              <p class="mx__key">Cada círculo es un segmento · el tamaño es su facturación</p>
+            </div>
+            <p class="ilus">Ejemplo ilustrativo · no son resultados de un cliente</p>
           </div>
+
         </article>
 
       </div>
@@ -640,7 +794,7 @@
     <svg class="wave wave--foot" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true"><use href="#i-wave"/></svg>
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">03</span> — Marketing digital</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">02.2</span> — Servicios · Marketing digital</p>
         <h2 class="h2 mask" id="t-marketing">
           <span class="ln"><i>La estrategia</i></span>
           <span class="ln"><i class="dim">se convierte en demanda.</i></span>
@@ -668,6 +822,71 @@
               <li>Datos estructurados</li>
               <li>Visibilidad en respuestas de IA</li>
             </ul>
+            <!-- Visual 10 · Arquitectura de contenidos ────────────────
+                 El bloque de SEO enseñaba dónde SALE el resultado (las
+                 dos superficies de abajo) pero no qué se construye para
+                 llegar ahí. Esto es lo segundo.
+
+                 Va ANTES de las superficies a propósito: primero lo que
+                 se levanta, después dónde aparece.
+
+                 Las líneas punteadas son el enlazado interno cruzado
+                 entre clústeres, que es justo lo que separa una
+                 arquitectura de una pila de artículos. Sin ellas el
+                 dibujo sería un organigrama cualquiera. -->
+            <div class="svis svis--arq">
+              <p class="svis__t">No son artículos sueltos. <span class="dim">Es una arquitectura.</span></p>
+              <div class="arq">
+                <svg class="arq__svg" viewBox="0 0 420 240" role="img" aria-labelledby="arq-t">
+                  <title id="arq-t">Mapa de arquitectura de contenidos: una página pilar
+                  alimenta tres clústeres temáticos, cada uno con tres contenidos de apoyo.
+                  Dos trazos punteados representan el enlazado interno entre clústeres.</title>
+
+                  <!-- Jerarquía: pilar → clústeres -->
+                  <path class="arq__ln" d="M84 120 C 120 120 124 44 156 44"/>
+                  <path class="arq__ln" d="M84 120 H156"/>
+                  <path class="arq__ln" d="M84 120 C 120 120 124 196 156 196"/>
+
+                  <!-- Clúster → sus tres apoyos -->
+                  <path class="arq__ln arq__ln--fine" d="M234 44 C 254 44 258 26 274 26"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 44 H274"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 44 C 254 44 258 62 274 62"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 120 C 254 120 258 102 274 102"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 120 H274"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 120 C 254 120 258 138 274 138"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 196 C 254 196 258 178 274 178"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 196 H274"/>
+                  <path class="arq__ln arq__ln--fine" d="M234 196 C 254 196 258 214 274 214"/>
+
+                  <!-- Enlazado interno: los dos únicos trazos de marca -->
+                  <path class="arq__x" d="M338 62 C 376 74 376 90 338 102"/>
+                  <path class="arq__x" d="M338 138 C 376 150 376 166 338 178"/>
+
+                  <rect class="arq__pil" x="8" y="98" width="76" height="44" rx="6"/>
+                  <text class="arq__pl" x="46" y="124">Pilar</text>
+
+                  <rect class="arq__cl" x="156" y="28"  width="78" height="32" rx="5"/>
+                  <rect class="arq__cl" x="156" y="104" width="78" height="32" rx="5"/>
+                  <rect class="arq__cl" x="156" y="180" width="78" height="32" rx="5"/>
+
+                  <rect class="arq__pg" x="274" y="20"  width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="38"  width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="56"  width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="96"  width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="114" width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="132" width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="172" width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="190" width="64" height="12" rx="2"/>
+                  <rect class="arq__pg" x="274" y="208" width="64" height="12" rx="2"/>
+                </svg>
+                <ul class="arq__key">
+                  <li class="arq__key--cl">Clúster temático</li>
+                  <li class="arq__key--pg">Contenido de apoyo</li>
+                  <li class="arq__key--x">Enlazado interno</li>
+                </ul>
+              </div>
+            </div>
+
             <!-- Visual 3 · Las dos superficies. Izquierda: resultado
                  clásico. Derecha: caja de respuesta de IA con la cita
                  a la marca. Todo son cajas y filetes, no texto real:
@@ -843,7 +1062,7 @@
   <section class="sec sec--dark" id="tecnologia" aria-labelledby="t-tecnologia">
     <div class="sec__grid sec__grid--wide">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">04</span> — Tecnología</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">02.3</span> — Servicios · Tecnología</p>
         <h2 class="h2 mask" id="t-tecnologia">
           <span class="ln"><i>Lo que sostiene</i></span>
           <span class="ln"><i class="dim">el crecimiento.</i></span>
@@ -901,6 +1120,50 @@
               <li>Optimización de rendimiento</li>
               <li>Migraciones</li>
             </ul>
+
+            <!-- Visual 11 · Franja de disponibilidad ─────────────────
+                 Treinta barras, una por día. Las dos atenuadas no son
+                 caídas: son incidencias detectadas y resueltas, que es
+                 exactamente lo que se contrata. Un mes perfecto no
+                 demostraría que hay alguien mirando. -->
+            <div class="svis svis--mini">
+              <svg class="mini upt" viewBox="0 0 300 36" preserveAspectRatio="none"
+                   role="img" aria-labelledby="upt-t">
+                <title id="upt-t">Franja de treinta días de disponibilidad. Dos jornadas
+                aparecen atenuadas: incidencias detectadas y resueltas.</title>
+                <rect class="upt__b" x="0"   y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="10"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="20"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="30"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="40"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="50"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="60"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="70"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="80"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="90"  y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="100" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b upt__b--x" x="110" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="120" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="130" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="140" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="150" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="160" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="170" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="180" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="190" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="200" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="210" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b upt__b--x" x="220" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="230" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="240" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="250" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="260" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="270" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="280" y="0" width="6" height="36" rx="1"/>
+                <rect class="upt__b" x="290" y="0" width="6" height="36" rx="1"/>
+              </svg>
+              <p class="mini__k">30 días · 2 incidencias detectadas y resueltas</p>
+            </div>
           </article>
 
           <article class="tcard rv" style="--d:.12s">
@@ -916,6 +1179,25 @@
               <li>Monitoreo de vulnerabilidades</li>
               <li>Control de accesos</li>
             </ul>
+
+            <!-- Visual 12 · Capas de defensa ─────────────────────────
+                 Cuatro marcos concéntricos. El de fuera va punteado
+                 —el perímetro es permeable por definición— y el núcleo
+                 va macizo. La idea que vende es que no hay UNA medida
+                 de seguridad sino capas, y que los datos son la
+                 última. -->
+            <div class="svis svis--mini">
+              <svg class="mini lyr" viewBox="0 0 300 104" role="img" aria-labelledby="lyr-t">
+                <title id="lyr-t">Cuatro capas concéntricas de seguridad: perímetro,
+                aplicación, accesos y, en el centro, los datos.</title>
+                <rect class="lyr__r lyr__r--out" x="24" y="6"  width="252" height="92" rx="10"/>
+                <rect class="lyr__r" x="54" y="18" width="192" height="68" rx="9"/>
+                <rect class="lyr__r" x="84" y="30" width="132" height="44" rx="8"/>
+                <rect class="lyr__c" x="114" y="42" width="72" height="20" rx="5"/>
+                <text class="lyr__t" x="150" y="56">Datos</text>
+              </svg>
+              <p class="mini__k">Perímetro · aplicación · accesos · datos</p>
+            </div>
           </article>
 
           <article class="tcard rv" style="--d:.18s">
@@ -931,6 +1213,36 @@
               <li>Términos y condiciones</li>
               <li>Tratamiento de datos personales</li>
             </ul>
+
+            <!-- Visual 13 · El expediente ────────────────────────────
+                 Tres documentos superpuestos con su sello. No es un
+                 gráfico de datos y no pretende serlo: lo que comunica
+                 es que esto se entrega como un EXPEDIENTE cerrado, no
+                 como una recomendación de que alguien lo redacte.
+
+                 Sin cifras: una sanción inventada sería exactamente el
+                 tipo de dato que el resto de la página se prohíbe. -->
+            <div class="svis svis--mini">
+              <svg class="mini doc" viewBox="0 0 300 104" role="img" aria-labelledby="doc-t">
+                <title id="doc-t">Tres documentos legales superpuestos, cada uno con su
+                sello de conformidad.</title>
+                <g class="doc__g" transform="translate(96 14) rotate(-6 40 38)">
+                  <rect class="doc__p" x="0" y="0" width="80" height="76" rx="4"/>
+                  <path class="doc__l" d="M12 18h56M12 30h56M12 42h34"/>
+                </g>
+                <g class="doc__g" transform="translate(110 10) rotate(-1 40 38)">
+                  <rect class="doc__p" x="0" y="0" width="80" height="76" rx="4"/>
+                  <path class="doc__l" d="M12 18h56M12 30h56M12 42h34"/>
+                </g>
+                <g class="doc__g" transform="translate(124 6) rotate(4 40 38)">
+                  <rect class="doc__p doc__p--top" x="0" y="0" width="80" height="76" rx="4"/>
+                  <path class="doc__l" d="M12 18h56M12 30h56M12 42h34"/>
+                  <circle class="doc__s" cx="58" cy="58" r="11"/>
+                  <path class="doc__k" d="M53 58l3.5 3.5L63 55"/>
+                </g>
+              </svg>
+              <p class="mini__k">Se entrega redactado, no recomendado</p>
+            </div>
           </article>
         </div>
       </div>
@@ -941,7 +1253,7 @@
   <section class="sec sec--tint" id="metodologia" aria-labelledby="t-metodologia">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">05</span> — Metodología</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">03</span> — Metodología</p>
         <h2 class="h2 mask" id="t-metodologia">
           <span class="ln"><i>Cómo</i></span>
           <span class="ln"><i class="dim">trabajamos.</i></span>
@@ -952,67 +1264,109 @@
         </p>
       </div>
 
-      <ol class="sec__body proc" id="proc">
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 01</p>
-            <h3 class="proc__t">Discover</h3>
-            <p class="proc__d">Entendemos el modelo de ingresos antes que el canal: de dónde
-            viene el margen, cuánto dura el ciclo de venta, qué se ha intentado ya y por qué
-            se abandonó. Sin esta etapa, todo lo demás son suposiciones caras.</p>
-          </div>
-        </li>
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 02</p>
-            <h3 class="proc__t">Analyze</h3>
-            <p class="proc__d">Auditamos lo que ya existe —demanda, conversión, operación,
-            datos y competencia— y localizamos dónde se está perdiendo el crecimiento. El
-            entregable es un diagnóstico priorizado por impacto sobre el ingreso.</p>
-          </div>
-        </li>
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 03</p>
-            <h3 class="proc__t">Design</h3>
-            <p class="proc__d">Convertimos el diagnóstico en un roadmap con secuencia,
-            responsables, coste e indicadores. Se aprueba antes de ejecutar nada y define
-            de forma explícita qué queda fuera del alcance.</p>
-          </div>
-        </li>
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 04</p>
-            <h3 class="proc__t">Execute</h3>
-            <p class="proc__d">Implementamos por bloques con entregas visibles. Cada bloque
-            se entrega funcionando, documentado y a nombre de la empresa, no del proveedor.</p>
-          </div>
-        </li>
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 05</p>
-            <h3 class="proc__t">Measure</h3>
-            <p class="proc__d">Instrumentamos la medición hasta el ingreso, no hasta el
-            clic ni hasta la conversión que declara la plataforma. Si un indicador no se
-            puede atribuir, no entra en el cuadro de mando.</p>
-          </div>
-        </li>
-        <li class="proc__i">
-          <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
-          <div class="proc__c">
-            <p class="proc__n">Etapa 06</p>
-            <h3 class="proc__t">Optimize</h3>
-            <p class="proc__d">Revisión periódica con la dirección sobre los indicadores
-            acordados. Lo que no rinde se corta, lo que rinde se amplía y el roadmap se
-            actualiza. Es un ciclo, no un cierre de proyecto.</p>
-          </div>
-        </li>
-      </ol>
+      <!-- Visual 8 · Roadmap por fases con puertas ─────────────────
+           La sección tenía seis párrafos sobre un raíl y NI UN SOLO
+           gráfico: era la más larga sin nada que mirar.
+
+           Ahora cada etapa lleva su tramo en una escala de tiempo
+           común. Leídos en vertical, los seis tramos forman un
+           diagrama de fases y se ve de un vistazo lo que antes había
+           que deducir: que Execute ocupa el doble que las demás y que
+           ninguna se solapa con la siguiente.
+
+           El rombo entre tramo y tramo es la PUERTA —la conclusión
+           escrita y aprobada de la que habla el rótulo—. Que no haya
+           solapamiento es el argumento, no una casualidad del dibujo:
+           si algún día se admite solapar fases, hay que cambiar los
+           números o el gráfico estaría mintiendo.
+
+           Los textos bajaron de 183 palabras a 100: lo que el tramo ya
+           dice no hace falta escribirlo. -->
+      <div class="sec__body">
+        <p class="proc__scale" aria-hidden="true">
+          <span>Inicio del mandato</span>
+          <span>Cierre del ciclo</span>
+        </p>
+        <p class="vh">Cada etapa muestra el tramo del mandato que ocupa. Ninguna se solapa
+        con la siguiente: entre una y otra hay una conclusión escrita y aprobada.</p>
+
+        <ol class="proc" id="proc">
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 01</p>
+              <h3 class="proc__t">Discover</h3>
+              <p class="proc__d">El modelo de ingresos antes que el canal. Sin esta etapa,
+              todo lo demás son suposiciones caras.</p>
+              <div class="proc__bar" aria-hidden="true" style="--a:0%;--b:13%">
+                <span class="proc__seg"></span><span class="proc__gate"></span>
+              </div>
+            </div>
+          </li>
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 02</p>
+              <h3 class="proc__t">Analyze</h3>
+              <p class="proc__d">Dónde se está perdiendo el crecimiento. Sale un diagnóstico
+              priorizado por impacto sobre el ingreso.</p>
+              <div class="proc__bar" aria-hidden="true" style="--a:13%;--b:16%">
+                <span class="proc__seg"></span><span class="proc__gate"></span>
+              </div>
+            </div>
+          </li>
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 03</p>
+              <h3 class="proc__t">Design</h3>
+              <p class="proc__d">El diagnóstico se convierte en roadmap: secuencia,
+              responsables, coste e indicadores. Y qué queda fuera.</p>
+              <div class="proc__bar" aria-hidden="true" style="--a:29%;--b:16%">
+                <span class="proc__seg"></span><span class="proc__gate"></span>
+              </div>
+            </div>
+          </li>
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 04</p>
+              <h3 class="proc__t">Execute</h3>
+              <p class="proc__d">Por bloques. Cada uno se entrega funcionando, documentado y
+              a nombre de la empresa.</p>
+              <div class="proc__bar" aria-hidden="true" style="--a:45%;--b:27%">
+                <span class="proc__seg"></span><span class="proc__gate"></span>
+              </div>
+            </div>
+          </li>
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 05</p>
+              <h3 class="proc__t">Measure</h3>
+              <p class="proc__d">Hasta el ingreso, no hasta el clic. Lo que no se puede
+              atribuir no entra en el cuadro de mando.</p>
+              <div class="proc__bar" aria-hidden="true" style="--a:72%;--b:16%">
+                <span class="proc__seg"></span><span class="proc__gate"></span>
+              </div>
+            </div>
+          </li>
+          <li class="proc__i">
+            <div class="proc__rail" aria-hidden="true"><span class="proc__dot"></span></div>
+            <div class="proc__c">
+              <p class="proc__n">Etapa 06</p>
+              <h3 class="proc__t">Optimize</h3>
+              <p class="proc__d">Lo que no rinde se corta; lo que rinde se amplía. Es un
+              ciclo, no un cierre de proyecto.</p>
+              <!-- Sin rombo: esta etapa no cierra ninguna puerta, vuelve
+                   al principio. El tramo se degrada en su lugar. -->
+              <div class="proc__bar proc__bar--loop" aria-hidden="true" style="--a:88%;--b:12%">
+                <span class="proc__seg"></span>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -1020,47 +1374,60 @@
   <section class="sec" id="faq" aria-labelledby="t-faq">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">06</span> — Preguntas frecuentes</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">04</span> — Preguntas frecuentes</p>
         <h2 class="h2 mask" id="t-faq">
           <span class="ln"><i>Antes de</i></span>
           <span class="ln"><i class="dim">escribirnos.</i></span>
         </h2>
       </div>
 
+      <!-- Reescritas el 2026-08-01. Las anteriores eran del posicionamiento
+           previo y sonaban a agencia («¿cuándo tiene sentido llamarnos?»).
+           Estas responden a lo que pregunta de verdad quien va a contratar
+           un mandato de ticket alto: encaje, qué recibe al entrar, plazos,
+           cómo se le juzga a uno y qué pasa con lo que ya tiene montado.
+
+           NINGUNA habla de precio, plazo contractual ni modelo de cobro:
+           es la misma decisión que retiró `.feat__meta` de los servicios.
+           Si se añade una pregunta de precio, se contradice esa decisión.
+
+           El JSON-LD de FAQPage de la cabecera REPLICA estas seis palabra
+           por palabra. Cambiar una aquí y no allí publica datos
+           estructurados que no coinciden con la página. -->
       <div class="sec__body faq" id="faq-list">
         <div class="faq__i rv">
           <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a1">
-            <span>¿En qué se diferencian de una consultora tradicional?</span>
+            <span>¿Con qué tipo de empresa trabajan?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a1"><div><p>Las consultoras tradicionales suelen entregar
-          recomendaciones y finalizar el proyecto. Nosotros combinamos estrategia con
-          ejecución. Diseñamos el plan, implementamos las iniciativas prioritarias y medimos
-          su impacto para asegurar que las recomendaciones se conviertan en
-          resultados.</p></div></div>
+          <div class="faq__a" id="a1"><div><p>Con empresas que ya venden y quieren crecer de
+          forma ordenada, no con proyectos que arrancan de cero. El punto en común no es el
+          tamaño ni el sector: es que exista una dirección con capacidad de decidir y de
+          sostener los cambios que salgan del diagnóstico.</p></div></div>
         </div>
 
         <div class="faq__i rv">
           <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a2">
-            <span>¿Cuándo tiene sentido llamarnos?</span>
+            <span>¿Qué incluye el diagnóstico inicial?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a2"><div><p>Cuando el crecimiento de la empresa se ha
-          estancado, las acciones de marketing no generan el retorno esperado, los procesos
-          limitan la escalabilidad o existe la necesidad de definir una estrategia clara
-          antes de seguir invirtiendo.</p></div></div>
+          <div class="faq__a" id="a2"><div><p>Revisamos el modelo de ingresos, el proceso
+          comercial, la generación de demanda, la conversión y la tecnología que lo sostiene.
+          El resultado es un diagnóstico priorizado por impacto sobre el ingreso y un roadmap
+          con secuencia y responsables. Es la puerta de entrada a cualquier
+          mandato.</p></div></div>
         </div>
 
         <div class="faq__i rv">
           <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a3">
-            <span>¿Cómo empieza un mandato?</span>
+            <span>¿En cuánto tiempo se ven resultados?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a3"><div><p>Todo proyecto comienza con un diagnóstico.
-          Analizamos el modelo de negocio, el proceso comercial, la adquisición de clientes,
-          la conversión, la operación y la tecnología para identificar las principales
-          oportunidades de crecimiento. A partir de ello definimos un roadmap
-          priorizado.</p></div></div>
+          <div class="faq__a" id="a3"><div><p>Depende de la palanca. Corregir una fuga de
+          conversión o una campaña mal estructurada suele notarse en semanas; rediseñar un
+          modelo comercial o entrar a un mercado nuevo se mide en meses. En el roadmap se
+          acuerda qué se espera de cada bloque y cuándo, para que el trabajo no se juzgue
+          contra una expectativa que nunca se pactó.</p></div></div>
         </div>
 
         <div class="faq__i rv">
@@ -1068,32 +1435,33 @@
             <span>¿Cómo se mide el trabajo?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a4"><div><p>No medimos nuestro trabajo por entregables,
-          sino por indicadores de negocio previamente acordados. Dependiendo del proyecto,
-          estos pueden incluir crecimiento de ingresos, generación de oportunidades,
-          conversión, eficiencia operativa o rentabilidad.</p></div></div>
+          <div class="faq__a" id="a4"><div><p>Por indicadores de negocio acordados antes de
+          empezar, no por entregables. Según el mandato pueden ser crecimiento de ingresos,
+          oportunidades generadas, conversión, eficiencia operativa o rentabilidad. Si un
+          indicador no se puede atribuir, no entra en el cuadro de mando.</p></div></div>
         </div>
 
         <div class="faq__i rv">
           <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a5">
-            <span>¿Sustituyen al equipo interno?</span>
+            <span>¿Sustituyen a nuestro equipo o a nuestra agencia?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a5"><div><p>No. Trabajamos junto al equipo de la empresa.
-          Nuestro objetivo es aportar metodología, experiencia y capacidad de ejecución para
-          acelerar los resultados, transfiriendo conocimiento y fortaleciendo las capacidades
-          internas.</p></div></div>
+          <div class="faq__a" id="a5"><div><p>No. Trabajamos junto al equipo interno y le
+          transferimos el método para que quede en casa. Con proveedores externos lo habitual
+          es que pasemos a dirigir el criterio: qué se le pide a cada uno y contra qué se le
+          mide. Esa suele ser justamente la pieza que falta cuando hay tres proveedores y
+          ninguno responde por el resultado.</p></div></div>
         </div>
 
         <div class="faq__i rv">
           <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a6">
-            <span>¿Qué pasa con lo que la empresa ya tiene hecho?</span>
+            <span>¿Qué pasa con lo que ya tenemos hecho?</span>
             <svg aria-hidden="true"><use href="#i-plus"/></svg>
           </button></h3>
-          <div class="faq__a" id="a6"><div><p>Aprovechamos todo aquello que aporte valor.
+          <div class="faq__a" id="a6"><div><p>Se aprovecha todo lo que aporte valor.
           Revisamos campañas, procesos, tecnología y activos existentes antes de proponer
-          cambios. Preferimos optimizar y construir sobre una base sólida antes que
-          reemplazarla innecesariamente.</p></div></div>
+          cambios: reemplazar lo que ya funciona es caro y rara vez necesario. Lo que no
+          rinde se corta, y se explica por qué.</p></div></div>
         </div>
       </div>
     </div>
@@ -1112,9 +1480,11 @@
         Una conversación de treinta minutos basta para saber si hay una hipótesis de
         crecimiento que valga la pena perseguir. Sin propuesta comercial de por medio.
       </p>
+      <!-- Mismo reparto que en el hero: diagnóstico al formulario,
+           encargo puntual a WhatsApp. -->
       <div class="cta__btns rv" style="--d:.45s">
-        <a class="btn" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn--ghost" href="#contacto"><span>Escribirnos por el formulario</span></a>
+        <a class="btn" href="#contacto"><span>Solicitar un diagnóstico</span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn--ghost" data-wa target="_blank" rel="noopener" href="#"><span>Solicitar un servicio específico</span></a>
       </div>
     </div>
   </section>
@@ -1123,7 +1493,7 @@
   <section class="sec sec--surface" id="contacto" aria-labelledby="t-contacto">
     <div class="sec__grid">
       <div class="sec__head">
-        <p class="eyebrow rv"><span class="eyebrow__n">07</span> — Contacto</p>
+        <p class="eyebrow rv"><span class="eyebrow__n">05</span> — Contacto</p>
         <h2 class="h2 mask" id="t-contacto">
           <span class="ln"><i>Cuéntenos</i></span>
           <span class="ln"><i class="dim">el contexto.</i></span>
@@ -1235,7 +1605,10 @@
         <div class="ftr__col">
           <h2>Contacto</h2>
           <ul>
-            <li><a data-wa target="_blank" rel="noopener" href="#">Solicitar diagnóstico</a></li>
+            <!-- «Solicitar diagnóstico» lleva al formulario en toda la
+                 página; aquí también, o el mismo rótulo haría dos cosas
+                 distintas según dónde se pulse. -->
+            <li><a href="#contacto">Solicitar diagnóstico</a></li>
             <li><a data-wa target="_blank" rel="noopener" href="#">WhatsApp</a></li>
             <li><a href="mailto:zolezziconsulting@gmail.com">zolezziconsulting@gmail.com</a></li>
             <li><span>Lun a Vie &middot; 9:00–18:00</span></li>
