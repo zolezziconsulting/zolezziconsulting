@@ -1,0 +1,19 @@
+# ================================================================
+# Redirecciones — Cloudflare Pages
+# ----------------------------------------------------------------
+# El proyecto de Pages está conectado al repositorio y publica la raíz
+# tal cual, así que TODO archivo suelto que viva aquí queda servido en
+# el dominio. Comprobado el 2026-08-07: https://zolezziconsulting.com/README.md
+# devolvía el documento interno de diseño con `text/markdown`, indexable
+# —`robots.txt` lo permite todo— desde el dominio comercial.
+#
+# No es material secreto: el repositorio es público. Pero la
+# documentación de trabajo no tiene por qué servirse desde la web de la
+# firma, así que se redirige a la portada.
+#
+# Si algún día se añade otro archivo de trabajo en la raíz (notas,
+# CHANGELOG, plantillas), hay que añadirlo también aquí.
+# ================================================================
+
+/README.md    /  301
+/.gitignore   /  301

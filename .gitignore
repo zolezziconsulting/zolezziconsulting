@@ -4,6 +4,10 @@
 # Configuración local de herramientas
 .claude/
 
+# Variables locales de wrangler. NUNCA se sube: contiene el endpoint
+# real del formulario cuando se prueba la Function en local.
+.dev.vars
+
 # Basura del sistema
 Thumbs.db
 desktop.ini

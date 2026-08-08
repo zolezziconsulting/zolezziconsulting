@@ -1,23 +1,49 @@
 # ZOLEZZI Consulting
 
-**Consultoría estratégica** · Strategy · Marketing · Technology
+**Estudios de mercado y ejecución digital** · Research · Marketing · Technology
 
-Sitio single-page. HTML, CSS y JavaScript sin dependencias ni build. Se despliega
-subiendo la carpeta tal cual.
+Sitio single-page. HTML, CSS y JavaScript sin dependencias ni build, más una única
+Cloudflare Pages Function para el formulario.
+
+## Qué vende el sitio
+
+Reestructurado el 2026-08-07. Antes eran mandatos largos de consultoría comercial y
+go-to-market; ahora son **tres estudios independientes** más la ejecución:
+
+| # | Servicio | Pregunta que responde | Entregable |
+|---|----------|-----------------------|------------|
+| 01 | Viabilidad de negocio en zona | ¿Dónde? | Score de viabilidad + recomendación de enfoque |
+| 02 | Análisis de competencia | ¿Contra quién? | Matriz comparativa + mapa de posicionamiento + huecos |
+| 03 | Estudio de pricing | ¿A cuánto? | Rango recomendado + escenarios |
+
+Los tres se venden **por separado** porque cada uno responde una pregunta de negocio
+distinta. Lo único que comparten es la lista de competidores: el 02 la levanta y el 03
+puede reutilizarla, y eso —no un descuento arbitrario— es lo que justifica el paquete.
+
+Los apartados «Qué no incluye» de cada estudio **no son relleno legal**: son el mecanismo
+que impide que los tres se confundan entre sí y acaben fusionados en un servicio genérico
+de investigación. Si se borran, vuelve el solapamiento.
+
+Marketing digital se limita al **ecosistema Google** —SEO, GEO, Google Business Profile y
+Google Ads—. Meta Ads y TikTok Ads salieron por decisión comercial el 2026-08-07; no fue
+un olvido. Web (landing, corporativo y e-commerce) vive en **Tecnología**, no en
+marketing: un sitio se construye, no se difunde.
 
 ## Estructura
 
 ```
-index.html            Hero, desafíos, consultoría (comercial + marketing
-                      estratégico), marketing digital (SEO/GEO, publicidad,
-                      diseño web), tecnología (4 servicios), metodología,
-                      FAQ, CTA, contacto y pie
+index.html            Hero, desafíos, consultoría (3 estudios), marketing
+                      digital (SEO/GEO, Business Profile, Google Ads),
+                      tecnología (web + 4 tarjetas), metodología, FAQ,
+                      CTA, contacto y pie
 assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
                       acordeón y formulario
 assets/fonts/         Inter (variable, subset latin, autoalojada)
 assets/img/           og-v2.jpg (1200×630) y apple-touch-icon.png
-favicon.svg  robots.txt  sitemap.xml  site.webmanifest  _headers
+functions/api/        contact.js — pasarela del formulario
+favicon.svg  robots.txt  sitemap.xml  site.webmanifest
+_headers  _redirects
 ```
 
 `assets/fonts/bodoni-moda-latin.woff2` es un resto del concepto anterior: ya no se declara
@@ -26,10 +52,70 @@ ni se precarga, así que ningún navegador lo pide. Se puede borrar.
 ## Ver en local
 
 ```bash
-npx --yes serve . -l 5173
+npx --yes wrangler pages dev . --port 8788 --compatibility-date=2026-08-07
 ```
 
-Abrir `http://localhost:5173`. No uses `file://`: las rutas son absolutas y no cargarían.
+Hay que usar **wrangler y no un servidor estático**: es lo único que aplica `_headers`,
+`_redirects` y la Function de `/api/contact`. Con `npx serve` la página se ve, pero el
+formulario devuelve 404 y no hay ni una cabecera de seguridad, así que no sirve para
+comprobar nada de eso. No uses `file://`: las rutas son absolutas y no cargarían.
+
+Para probar el formulario **sin enviar correo de verdad**, crea un `.dev.vars` (está en
+`.gitignore`) apuntando a un receptor local y reinicia wrangler —solo lee ese archivo al
+arrancar—:
+
+```
+FORMSPREE_ENDPOINT="http://127.0.0.1:8791/"
+```
+
+## Formulario: la pasarela de `/api/contact`
+
+Hasta el 2026-08-07 el `action` del formulario era el endpoint de Formspree escrito en el
+HTML. Cualquiera que abriese el código fuente —o cualquier robot que rastrease la página—
+se llevaba una URL contra la que enviar formularios saltándose el sitio. Con la cuota
+mensual de Formspree, eso es un buzón inutilizado en una tarde.
+
+Ahora el navegador solo conoce `/api/contact`. `functions/api/contact.js` comprueba que el
+origen es este mismo sitio, valida en servidor, descarta los campos que no estén en su
+lista blanca, corta los saltos de línea de los campos de una sola línea —inyección de
+cabeceras de correo— y reenvía. El endpoint real nunca se sirve al cliente.
+
+### Configuración pendiente (una vez, en el panel de Cloudflare)
+
+> Workers & Pages → el proyecto → Settings → Variables and Secrets
+> `FORMSPREE_ENDPOINT` = `https://formspree.io/f/XXXXXXXX` **como secreto**
+
+Mientras no exista esa variable, la Function usa el endpoint de respaldo que ya estaba
+publicado en el HTML, así que el formulario **no se rompe** con este despliegue. En cuanto
+la variable esté puesta conviene **rotar el formulario en Formspree** y borrar el respaldo
+de `contact.js`: el viejo queda en el historial de este repositorio, que es público.
+
+Lo que la Function no puede hacer sola es limitar por IP —haría falta un binding de KV— ni
+resolver un captcha. Si aparece spam, el siguiente paso es Cloudflare Turnstile más la
+restricción de dominio del propio panel de Formspree.
+
+## Seguridad: `_headers` y `_redirects`
+
+`_headers` publica CSP, HSTS, COOP, `Permissions-Policy`, `X-Content-Type-Options`,
+`X-Frame-Options` y `Referrer-Policy`. Tres cosas que cuestan un rato descubrir:
+
+- **Las reglas se SUMAN, no se sustituyen.** Declarar `Cross-Origin-Resource-Policy` en
+  `/*` y otra vez en `/assets/img/*` produce la cabecera literal
+  `same-origin, cross-origin`, que no es un valor válido. Por eso CORP va ruta por ruta.
+- **`_headers` no alcanza a las Functions.** `/api/contact` salía sin ninguna cabecera de
+  seguridad; se las pone `contact.js` por su cuenta.
+- **La CSP autoriza el script en línea POR HASH**, no con `'unsafe-inline'`. Si se toca esa
+  única línea de `index.html`, hay que recalcular el hash o el sitio se queda sin
+  JavaScript:
+
+  ```bash
+  node -e "console.log(require('crypto').createHash('sha256').update(\"document.documentElement.classList.add('js');\").digest('base64'))"
+  ```
+
+`_redirects` tapa `README.md` y `.gitignore`. El proyecto de Pages publica la raíz del
+repositorio tal cual, así que **todo archivo suelto queda servido en el dominio**:
+`https://zolezziconsulting.com/README.md` devolvía este documento con `text/markdown` e
+indexable. Si se añade otro archivo de trabajo en la raíz, hay que añadirlo también ahí.
 
 ## Al cambiar la imagen Open Graph: RENOMBRARLA
 
@@ -44,7 +130,34 @@ el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referenci
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=21`.
+vieja. Va por `v=22`.
+
+## Adaptación a móvil: la trampa del `min-width: auto`
+
+Corregido el 2026-08-07, después de que el sitio se viera **al 75 % en móvil**. Merece
+apartado porque son tres fallos distintos con la misma forma y volverán si alguien añade
+contenido ancho:
+
+1. **`grid-column` que sobrevive al media query.** `.sec__grid--wide .sec__head` tiene
+   especificidad (0,2,0) y el media query lo anulaba con `.sec__head` (0,1,0). Los media
+   queries no añaden especificidad, así que perdía: seguían existiendo 12 pistas de rejilla
+   con 32 px de hueco —352 px— dentro de un contenedor de 334. El documento medía 504 px en
+   una pantalla de 375 y el navegador encogía la página entera.
+2. **`min-width: auto` en los ítems de rejilla.** Un ítem no baja del min-content de lo que
+   lleva dentro. La matriz comparativa, con sus 480 px de `min-width`, ensanchaba su pista,
+   luego la rejilla, luego el documento. De ahí `.sec__grid > * { min-width: 0 }` y lo mismo
+   en `.ftr__col`.
+3. **Absolutos que escapan del contenedor con scroll.** Los `.vh` de las celdas son
+   `position: absolute`; sin `position: relative` en `.tscroll`, su bloque contenedor era el
+   `.sec__grid` de la sección y conservaban su posición estática dentro de la tabla de
+   480 px, fuera del recorte.
+
+Los tres titulares grandes llevan `min(clamp(…), Nvw)`. El `clamp` deja de encoger por
+debajo de unos 420 px mientras el contenedor sigue estrechándose, y la línea más larga se
+parte en dos —lo que rompe `.mask`, que anima UNA línea por `.ln`—. **Si se escribe un
+titular más largo que los actuales hay que volver a medir y bajar el coeficiente.**
+
+Comprobado sin desbordamiento ni reescalado en 320, 375, 414, 768, 1024, 1180 y 1440 px.
 
 ## Desplegar
 

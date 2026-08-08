@@ -128,9 +128,9 @@
     );
   });
 
-  // .flow__i salió de la lista con la sección que lo usaba. .stall entra
-  // por su clase .rv, así que no necesita mención aparte.
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .tl, .fnl, .rad, .dash');
+  // .stall, .zon y .prc entran por su clase .rv, así que no necesitan
+  // mención aparte. .fnl y .rad salieron con el embudo y el radial.
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .tl, .dash');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -149,34 +149,9 @@
     Array.prototype.forEach.call(revealables, function (el) { el.classList.add('is-in'); });
   }
 
-  /* ── Radial de Go-to-Market ──────────────────────────────────
-     El centro muestra la descripción de la pieza señalada. Es un
-     realce visual: la descripción ya viaja dentro de cada botón en un
-     span oculto, así que un lector de pantalla no depende de esto y
-     no hace falta aria-live —que estaría cantando en cada hover—. */
-  var rad = document.getElementById('rad-gtm');
-  if (rad) {
-    var core = document.getElementById('rad-core');
-    var base = core.getAttribute('data-base');
-
-    var show = function (texto) {
-      core.textContent = texto || base;
-      rad.classList.toggle('is-live', !!texto);
-    };
-
-    Array.prototype.forEach.call(rad.querySelectorAll('.rad__n'), function (b) {
-      var d = b.getAttribute('data-d');
-      b.addEventListener('pointerenter', function () { show(d); });
-      b.addEventListener('focus', function () { show(d); });
-      b.addEventListener('pointerleave', function () { show(null); });
-      b.addEventListener('blur', function () { show(null); });
-      // En táctil no hay hover: el toque fija la descripción.
-      b.addEventListener('click', function () { show(d); });
-    });
-
-    // Un toque fuera devuelve el centro a su estado base.
-    rad.addEventListener('pointerleave', function () { show(null); });
-  }
+  /* El manejador del radial de go-to-market vivía aquí. Salió el
+     2026-08-07 con el servicio que ilustraba, junto con el embudo
+     comercial. Para recuperarlo: git log -S'rad-gtm' -- assets/js/main.js */
 
   /* ── Contadores ──────────────────────────────────────────────
      Animan una sola vez, al entrar en pantalla. Con movimiento

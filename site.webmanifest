@@ -1,12 +1,12 @@
 {
   "name": "ZOLEZZI Consulting",
   "short_name": "ZOLEZZI",
-  "description": "Consultoría estratégica. Ayudamos a empresas a resolver sus desafíos de negocio mediante estrategia, marketing y tecnología.",
+  "description": "Estudios de viabilidad de zona, análisis de competencia y pricing. Y la ejecución: SEO, GEO, Google Business Profile, Google Ads y desarrollo web.",
   "lang": "es",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#F1F5F7",
+  "theme_color": "#0A1720",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }

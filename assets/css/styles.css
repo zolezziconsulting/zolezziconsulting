@@ -187,11 +187,32 @@ svg use, .sprite symbol * { fill: none; stroke: currentColor; stroke-width: 1.5;
    tinta: marca la estructura del documento sección a sección. */
 .eyebrow__n { color: var(--accent); }
 
+/* ── El techo proporcional de los titulares ─────────────────────
+   Los tres display (.h2, .hero__title y .cta__t) llevan
+   `min(clamp(…), Nvw)`. El clamp resuelve el tamaño; el `min` con vw
+   es un TECHO que solo actúa en pantallas estrechas.
+
+   Sin él, por debajo de unos 420px el clamp se queda clavado en su
+   mínimo mientras el contenedor sigue encogiendo, y la línea más
+   larga se parte en dos. Eso no es solo feo: `.mask` recorta y anima
+   UNA línea por `.ln`, así que una línea partida se revela entera de
+   golpe y con la mitad asomando por debajo del recorte. Medido: «Un
+   solo responsable.» ya se partía en 375px antes de esta sesión.
+
+   El coeficiente sale de medir la línea más larga de cada bloque
+   contra el ancho disponible en 320px, que es el peor caso. Si se
+   escribe un titular MÁS LARGO que los actuales, hay que volver a
+   medir y bajar el coeficiente. Los actuales son:
+     .h2          «¿Qué problema necesita»  cabe hasta 8.15vw → 7.9vw
+     .hero__title «Un solo responsable.»    cabe hasta  9.6vw → 9.2vw
+     .cta__t      «Empecemos por ahí.»      cabe hasta  9.8vw → 9.4vw
+   ──────────────────────────────────────────────────────────────── */
+
 /* El tope de 2.875rem no es estético: es lo que cabe en la columna
    pegajosa sin que la palabra más larga («reconocibles.») se salga.
    Si se amplía el cuerpo, hay que ampliar antes .sec__head. */
 .h2 {
-  font-size: clamp(1.875rem, 3.2vw, 2.875rem);
+  font-size: min(clamp(1.875rem, 3.2vw, 2.875rem), 7.9vw);
   font-weight: 500;
   line-height: 1;
   letter-spacing: -.038em;
@@ -376,72 +397,9 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    quedaría de una línea por celda y parecería roto. */
 .feat__l--one { columns: 1; margin-top: .5rem; }
 
-/* ── Visual 2 · Radial de Go-to-Market ──────────────────────────
-   Los nodos se colocan por left/top en porcentaje, NO por
-   transform: translate(): los porcentajes de translate se refieren al
-   tamaño del propio elemento, no al del contenedor, y los nodos
-   habrían quedado a distancias distintas según lo largo de su texto.
-
-   Con left/top en % y el SVG en viewBox 0 0 100 100 con
-   preserveAspectRatio="none", las coordenadas de las líneas y las de
-   los nodos son el mismo sistema y encajan a cualquier tamaño.
-   ──────────────────────────────────────────────────────────────── */
-.rad {
-  position: relative;
-  width: min(100%, 30rem);
-  margin-inline: auto;
-  aspect-ratio: 1;
-}
-.rad__web { position: absolute; inset: 0; width: 100%; height: 100%; }
-.rad__web line { stroke: var(--borde); stroke-width: .4; }
-
-.rad__core {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  width: 42%;
-  text-align: center;
-  font-size: clamp(.75rem, 1.5vw, .875rem);
-  font-weight: 500;
-  line-height: 1.35;
-  color: var(--ink);
-  transition: color .3s var(--ease);
-}
-.rad.is-live .rad__core { color: var(--teal-deep); }
-
-.rad__n {
-  position: absolute;
-  left: var(--x); top: var(--y);
-  transform: translate(-50%, -50%) scale(var(--s, 1));
-  padding: .4rem .7rem;
-  max-width: 8.5rem;
-  border-radius: 999px;
-  background: var(--bg-surface);
-  box-shadow: inset 0 0 0 1px var(--borde);
-  color: var(--ink-2);
-  font-size: .6875rem;
-  font-weight: 500;
-  line-height: 1.25;
-  text-align: center;
-  cursor: pointer;
-  transition:
-    transform .3s var(--ease-o),
-    background-color .3s var(--ease),
-    color .3s var(--ease),
-    box-shadow .3s var(--ease);
-}
-/* Tinta oscura sobre el turquesa: el blanco ahí da 2.54:1. */
-.rad__n:hover,
-.rad__n:focus-visible {
-  --s: 1.08;
-  background: var(--turquesa);
-  box-shadow: inset 0 0 0 1px var(--turquesa);
-  color: var(--bg-dark);
-}
-
-/* Texto solo para lectores de pantalla. La descripción viaja aquí
-   dentro del botón, así que no depende del intercambio visual del
-   centro ni de un aria-live que estaría cantando en cada hover. */
+/* Texto solo para lectores de pantalla: equivalentes de los gráficos,
+   leyendas de tabla y todo lo que se comunica visualmente por forma o
+   por color y no tendría traducción sin esto. */
 .vh {
   position: absolute;
   width: 1px; height: 1px;
@@ -452,19 +410,319 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   border: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .rad__n {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(.9);
-    transition:
-      opacity .45s var(--ease-o) calc(var(--i) * 70ms),
-      transform .45s var(--ease-o) calc(var(--i) * 70ms),
-      background-color .3s var(--ease),
-      color .3s var(--ease),
-      box-shadow .3s var(--ease);
-  }
-  .rad.is-in .rad__n { opacity: 1; transform: translate(-50%, -50%) scale(var(--s, 1)); }
+/* El embudo comercial (.fnl) y el radial de go-to-market (.rad) vivían
+   aquí. Se retiraron el 2026-08-07 con los dos servicios que ilustraban.
+   Para recuperarlos: git log -S'.rad__core' -- assets/css/styles.css */
+
+/* ── Los tres estudios ──────────────────────────────────────────
+   Piezas comunes a los tres bloques de consultoría. La pareja
+   «Qué incluye / Qué no incluye» es lo que impide que los tres
+   estudios se lean como el mismo servicio contado tres veces, así que
+   el lado negativo tiene tratamiento propio y no es una nota al pie.
+   ──────────────────────────────────────────────────────────────── */
+.svc__num {
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--sky-ink);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: .5rem;
 }
+
+.svc__ql {
+  margin-top: 1.125rem;
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+/* La pregunta pesa casi como el titular del servicio a propósito: es
+   lo que el visitante está buscando y lo que decide si sigue leyendo. */
+.svc__q {
+  margin-top: .375rem;
+  max-width: 32ch;
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -.028em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* El rótulo del lado negativo va en gris y no en azul: el azul marca
+   estructura afirmativa en toda la hoja. */
+.svc__k--out { color: var(--ink-3); }
+
+.svc__no {
+  margin-top: .5rem;
+  font-size: .875rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+.svc__no li { position: relative; padding: .4rem 0 .4rem 1rem; }
+.svc__no li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 1.05em;
+  width: .375rem; height: 1px;
+  background: var(--ink-3);
+}
+.svc__no a {
+  color: var(--teal-deep);
+  text-decoration: underline;
+  text-underline-offset: .18em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgb(var(--c-teal) / .4);
+  transition: text-decoration-color .3s var(--ease);
+}
+.svc__no a:hover { text-decoration-color: var(--teal-deep); }
+
+.svc__nn {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule-2);
+  font-size: .8125rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* El entregable. Es lo único que el cliente se lleva a casa, así que
+   es el único bloque de la sección con relleno. */
+.svc__deliv {
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 72ch;
+  padding: 1.125rem 1.375rem;
+  border-left: 2px solid var(--turquesa);
+  background: rgb(var(--c-turquesa) / .07);
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.svc__dk {
+  display: block;
+  margin-bottom: .375rem;
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+}
+
+/* Los dos bloques de cierre son `.svc` y heredan su filete superior,
+   pero abren con un rótulo, no con una cabecera de servicio: ahí el
+   margen de `--wide` sobra. */
+.svc__k--first { margin-top: 0; }
+
+/* ── Visual 1 · La zona ─────────────────────────────────────────
+   Plano y score dentro de UN solo panel: son las dos mitades del
+   mismo entregable —dónde se mide y qué sale de medirlo— y separarlos
+   en dos tarjetas rompería esa lectura.
+
+   Las coordenadas del plano son abstractas a propósito. Un mapa
+   reconocible se leería como el caso de un cliente real.
+   ──────────────────────────────────────────────────────────────── */
+.zon {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(1.25rem, 2.5vw, 2rem);
+  align-items: center;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  background: var(--canvas-2);
+  border: 1px solid var(--borde);
+  border-radius: .625rem;
+}
+.zon__map { margin: 0; }
+.zon__svg { display: block; width: 100%; height: auto; }
+
+/* El viario no puede ir en --rule: sobre el fondo teñido del panel
+   quedaría en 1.05:1 e invisible. Va en alfa de tinta. */
+.zon__st path { fill: none; stroke: rgb(var(--c-dark) / .10); stroke-width: 1; }
+.zon__av { fill: none; stroke: rgb(var(--c-dark) / .16); stroke-width: 3.5; }
+
+.zon__ring { fill: none; stroke: var(--turquesa); stroke-width: 1.25; stroke-dasharray: 5 4; opacity: .8; }
+.zon__ring--o { opacity: .45; }
+
+.zon__pt circle { fill: rgb(var(--c-teal) / .55); stroke: none; }
+.zon__cmp rect {
+  fill: var(--canvas-2);
+  stroke: var(--ink-3);
+  stroke-width: 1.25;
+  stroke-dasharray: 2.5 2;
+}
+
+.zon__halo { fill: rgb(var(--c-turquesa) / .25); stroke: none; }
+.zon__pin  { fill: var(--bg-dark); stroke: none; }
+.zon__pd   { fill: var(--acento); stroke: none; }
+
+/* paint-order dibuja primero el trazo y encima el relleno, así que el
+   halo del color del panel recorta el anillo punteado por debajo del
+   rótulo. Sin él, la línea de puntos cruza las letras. */
+.zon__rl {
+  fill: var(--teal-deep);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: var(--canvas-2);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.zon__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1.125rem;
+  margin-top: .75rem;
+  font-size: .6875rem;
+  color: var(--ink-2);
+}
+.zon__key li { display: flex; align-items: center; gap: .4rem; }
+.zon__key li::before { content: ''; flex: none; }
+.zon__key--pt::before {
+  width: .4375rem; height: .4375rem;
+  border-radius: 50%;
+  background: rgb(var(--c-teal) / .55);
+}
+.zon__key--cmp::before {
+  width: .5rem; height: .5rem;
+  border: 1.25px dashed var(--ink-3);
+}
+.zon__key--ring::before {
+  width: .75rem; height: 0;
+  border-top: 1.25px dashed var(--turquesa);
+}
+
+/* El score: el entregable dibujado. Sin él el plano sería ambiente. */
+.scr__h {
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+  padding-bottom: .625rem;
+  border-bottom: 1px solid var(--rule);
+}
+.scr__rows { margin-top: .75rem; }
+.scr__r {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(2.5rem, 5rem) 1.5rem;
+  align-items: center;
+  gap: .625rem;
+  padding: .3125rem 0;
+}
+.scr__k { font-size: .8125rem; line-height: 1.35; color: var(--ink-2); }
+.scr__t { height: 5px; border-radius: 3px; background: rgb(var(--c-dark) / .10); }
+.scr__f {
+  display: block;
+  height: 100%;
+  width: var(--v);
+  border-radius: 3px;
+  background: var(--turquesa);
+}
+/* El criterio que baja el score va en gris, no en rojo: no es un
+   error, es el dato que obliga a diferenciarse. */
+.scr__r--low .scr__f { background: var(--ink-3); }
+.scr__v {
+  font-size: .8125rem;
+  font-weight: 500;
+  text-align: right;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.scr__tot {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .25rem .5rem;
+  margin-top: .875rem;
+  padding-top: .875rem;
+  border-top: 1px solid var(--rule);
+}
+.scr__n {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--teal-deep);
+  font-variant-numeric: tabular-nums;
+}
+.scr__d { font-size: .9375rem; color: var(--ink-3); }
+.scr__vd { flex-basis: 100%; font-size: .8125rem; color: var(--ink-2); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .scr__f {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .7s var(--ease-o) calc(var(--i) * 90ms + .25s);
+  }
+  .rv.is-in .scr__f { transform: scaleX(1); }
+}
+
+/* ── Visual 2 · Matriz comparativa ──────────────────────────────
+   Tabla de verdad. Los círculos son la valoración y su equivalente en
+   palabra viaja al lado en `.vh`: un punto relleno no significa nada
+   para quien no lo ve.
+   ──────────────────────────────────────────────────────────────── */
+/* Cualquier contenido más ancho que la columna se desplaza DENTRO de
+   su caja. Es lo que impide que una tabla obligue a desplazar la
+   página entera en horizontal.
+
+   `position: relative` es IMPRESCINDIBLE y no es un resto. Los `.vh`
+   de las celdas son `position: absolute`, y sin esto su bloque
+   contenedor es el `.sec__grid` de la sección, que sí está
+   posicionado. Un absoluto anclado FUERA del contenedor de scroll no
+   lo recorta: cada equivalente textual conservaba su posición estática
+   dentro de la tabla de 480px y las de más a la derecha caían más allá
+   del borde. El documento se iba a 429px en una pantalla de 375 y la
+   cabecera fija —que se dimensiona contra el bloque contenedor
+   inicial— sacaba el botón del menú fuera de la pantalla.
+   Con esto los absolutos se anclan aquí y se recortan aquí. */
+.tscroll { position: relative; overflow-x: auto; overscroll-behavior-x: contain; }
+
+.cmat {
+  width: 100%;
+  min-width: 30rem;
+  border-collapse: collapse;
+  font-size: .8125rem;
+  text-align: left;
+}
+.cmat th,
+.cmat td {
+  padding: .75rem .875rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+.cmat thead th {
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink-3);
+}
+.cmat tbody th { font-weight: 500; color: var(--ink); white-space: nowrap; }
+.cmat tbody tr:last-child th,
+.cmat tbody tr:last-child td { border-bottom: 0; }
+.cmat__p { color: var(--ink-2); }
+
+/* La fila del cliente se tiñe: es la única referencia que le importa
+   al que lee, y sin marcarla la tabla es un listado de terceros. */
+.cmat__me th,
+.cmat__me td { background: rgb(var(--c-turquesa) / .09); }
+.cmat__me th { color: var(--teal-deep); }
+
+.cmat__d { display: inline-flex; gap: .3rem; align-items: center; }
+.cmat__d i {
+  width: .4375rem; height: .4375rem;
+  border-radius: 50%;
+  background: rgb(var(--c-dark) / .18);
+}
+.cmat__d i.on { background: var(--teal-deep); }
+.cmat__me .cmat__d i.on { background: var(--turquesa); }
 
 /* ── Movimiento de botones y tarjetas ───────────────────────────
    200ms en transform y sombra. Nada rebota y nada pasa de 1.02: por
@@ -545,6 +803,75 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   color: var(--ink-2);
 }
 .geo__mark { color: var(--teal-deep); font-weight: 500; }
+
+/* ── Visual 7 · Paquete local y ficha de negocio ────────────────
+   La tercera superficie del buscador, y la que decide la venta de un
+   negocio con local. Reutiliza la caja y las barras de `.geo`: son la
+   misma familia de mockup abstracto y tienen que leerse igual.
+
+   Se enseñan las dos mitades juntas porque son inseparables: el
+   paquete decide si le miran y la ficha, si le llaman.
+   ──────────────────────────────────────────────────────────────── */
+.gbp {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.6vw, 1.25rem);
+}
+
+.gbp__pack { display: flex; flex-direction: column; }
+.gbp__row { display: flex; gap: .625rem; align-items: flex-start; padding: .625rem 0; }
+.gbp__row + .gbp__row { border-top: 1px solid var(--rule-2); }
+/* Gota de mapa: un círculo con una esquina en punta, girado. */
+.gbp__pin {
+  flex: none;
+  width: 1rem; height: 1rem;
+  margin-top: .125rem;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: rgb(var(--c-dark) / .16);
+}
+.gbp__row--top .gbp__pin { background: var(--turquesa); }
+.gbp__rl { display: block; flex: 1; min-width: 0; }
+
+.gbp__stars { display: inline-flex; gap: .125rem; margin-top: .375rem; }
+.gbp__stars svg { width: .6875rem; height: .6875rem; }
+/* La estrella es el único icono relleno del sitio: hay que revertir
+   el `fill:none; stroke:currentColor` que la hoja impone a `svg use`. */
+.gbp__stars svg use { fill: var(--celeste); stroke: none; }
+
+.gbp__card { display: flex; flex-direction: column; }
+.gbp__name { font-size: .9375rem; font-weight: 600; letter-spacing: -.02em; }
+.gbp__rate {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .25rem .5rem;
+  margin-top: .375rem;
+}
+.gbp__rate .gbp__stars { margin-top: 0; }
+.gbp__num { font-size: .8125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.gbp__cnt { font-size: .75rem; color: var(--ink-3); }
+.gbp__open { margin-top: .5rem; font-size: .75rem; font-weight: 500; color: var(--teal-deep); }
+
+.gbp__acts { display: flex; flex-wrap: wrap; gap: .375rem; margin-top: .875rem; }
+.gbp__acts li {
+  padding: .3rem .625rem;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  font-size: .6875rem;
+  color: var(--ink-2);
+}
+/* Tinta oscura sobre el turquesa, como en toda la hoja. Y con dos
+   clases, no una: `.gbp__acts li` ya declara color y le ganaría. */
+.gbp__acts .gbp__act--on {
+  background: var(--turquesa);
+  border-color: var(--turquesa);
+  color: var(--bg-dark);
+  font-weight: 500;
+}
+
+.gbp__ph { display: flex; gap: .375rem; margin-top: .875rem; }
+.gbp__ph span { flex: 1; aspect-ratio: 4 / 3; border-radius: .25rem; background: rgb(var(--c-sky) / .18); }
 
 /* ── Visual 4 · Panel de campaña ────────────────────────────────
    Los contadores viven dentro de una ventana: el marco es lo que los
@@ -772,11 +1099,16 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   .rv.is-in .arq__x { opacity: 1; }
 }
 
-/* ── Visual 9 · Matriz de priorización ──────────────────────────
-   Dos ejes, cuatro cuadrantes, cinco burbujas. La convención es tan
+/* ── Visual 3 · Mapa de posicionamiento ─────────────────────────
+   Dos ejes, cuatro cuadrantes, cinco marcas. La convención es tan
    conocida que el gráfico no necesita explicarse; lo único que hay
    que resolver es que CONCLUYA algo, y de eso se encarga el relleno:
-   sólido = entra, perfilado = no entra.
+   sólido = la marca del cliente, perfilado = los competidores.
+
+   Nació como matriz de priorización de segmentos y se reconvirtió el
+   2026-08-07 al análisis de competencia. Las clases se conservaron
+   —resuelven ejes, burbujas y rótulos— y lo que cambió es qué
+   significan; solo hizo falta añadir el hueco.
    ──────────────────────────────────────────────────────────────── */
 .mx { width: min(100%, 34rem); margin-inline: auto; }
 .mx__svg { display: block; width: 100%; height: auto; }
@@ -824,6 +1156,23 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   text-anchor: middle;
 }
 
+/* El hueco: el cuadrante que nadie ocupa. Es la conclusión del
+   gráfico, así que es lo único punteado en color de marca y lo último
+   que aparece. */
+.mx__gap {
+  fill: none;
+  stroke: var(--turquesa);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.mx__gl {
+  fill: var(--teal-deep);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-anchor: middle;
+}
+
 .mx__key {
   margin-top: .5rem;
   text-align: center;
@@ -832,21 +1181,159 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Las burbujas entran escalando desde su propio centro. El
-     transform-origin va en unidades del viewBox, no en %: con
-     porcentajes el origen se toma de la caja del SVG entero y las
-     burbujas salían disparadas desde una esquina. */
+  /* El escalonado se declara con --d en el marcado y NO con
+     nth-of-type: los rótulos de cuadrante son <text> igual que las
+     etiquetas de burbuja, así que la numeración por tipo contaba
+     primero los cuatro cuadrantes y ninguna regla llegaba a acertar.
+     Estuvo así desde que se dibujó el gráfico. */
   .mx__b, .mx__bl {
     opacity: 0;
     transition: opacity .5s var(--ease-o) var(--d, 0s);
   }
   .rv.is-in .mx__b,
   .rv.is-in .mx__bl { opacity: 1; }
-  .mx__b:nth-of-type(1), .mx__bl:nth-of-type(1) { --d: .10s; }
-  .mx__b:nth-of-type(2), .mx__bl:nth-of-type(2) { --d: .18s; }
-  .mx__b:nth-of-type(3), .mx__bl:nth-of-type(3) { --d: .26s; }
-  .mx__b:nth-of-type(4), .mx__bl:nth-of-type(4) { --d: .34s; }
-  .mx__b:nth-of-type(5), .mx__bl:nth-of-type(5) { --d: .42s; }
+
+  .mx__gap, .mx__gl {
+    opacity: 0;
+    transition: opacity .6s var(--ease-o) .6s;
+  }
+  .rv.is-in .mx__gap,
+  .rv.is-in .mx__gl { opacity: 1; }
+}
+
+/* ── Visual 4 · La escala de precio ─────────────────────────────
+   Todo sobre una sola recta: dónde cobra cada competidor, hasta dónde
+   llega la disposición a pagar y qué franja se recomienda.
+
+   El argumento del servicio es que esas tres capas casi nunca
+   coinciden, y en una recta única eso se ve sin explicarlo. Si algún
+   día se cambian las cifras, hay que recalcular las coordenadas: la
+   escala es x = 40 + (precio − 20) × 3.0833.
+   ──────────────────────────────────────────────────────────────── */
+.prc { width: min(100%, 34rem); margin-inline: auto; }
+.prc__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.prc__band {
+  fill: rgb(var(--c-turquesa) / .10);
+  stroke: rgb(var(--c-turquesa) / .40);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+.prc__bl {
+  fill: var(--teal-deep);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  text-anchor: middle;
+}
+
+.prc__ax { stroke: var(--ink-3); stroke-width: 1; }
+.prc__tick path { fill: none; stroke: var(--ink-3); stroke-width: 1; }
+.prc__sl text {
+  fill: var(--ink-3);
+  font-size: 10px;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.prc__c path { fill: none; stroke: var(--ink-2); stroke-width: 1.5; }
+.prc__cl text { fill: var(--ink-2); font-size: 10px; font-weight: 600; text-anchor: middle; }
+
+.prc__rec { fill: var(--turquesa); stroke: none; }
+.prc__lead { fill: none; stroke: var(--teal-deep); stroke-width: 1; stroke-dasharray: 3 3; }
+.prc__rl { fill: var(--teal-deep); font-size: 11px; font-weight: 500; text-anchor: middle; }
+.prc__rv {
+  fill: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.prc__key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1.125rem;
+  margin-top: 1rem;
+  font-size: .6875rem;
+  color: var(--ink-2);
+}
+.prc__key li { display: flex; align-items: center; gap: .4rem; }
+.prc__key li::before { content: ''; flex: none; }
+.prc__key--c::before { width: 1.5px; height: .75rem; background: var(--ink-2); }
+.prc__key--b::before {
+  width: .75rem; height: .625rem;
+  background: rgb(var(--c-turquesa) / .12);
+  box-shadow: inset 0 0 0 1px rgb(var(--c-turquesa) / .45);
+}
+.prc__key--r::before { width: .875rem; height: .5rem; border-radius: 2px; background: var(--turquesa); }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Orden de lectura: primero el mercado, después lo que el cliente
+     acepta pagar y solo al final la recomendación. Ese orden ES el
+     razonamiento del estudio. */
+  .prc__band, .prc__bl { opacity: 0; transition: opacity .6s var(--ease-o) .35s; }
+  .prc__rec, .prc__lead, .prc__rl, .prc__rv {
+    opacity: 0;
+    transition: opacity .6s var(--ease-o) .85s;
+  }
+  .rv.is-in .prc__band,
+  .rv.is-in .prc__bl,
+  .rv.is-in .prc__rec,
+  .rv.is-in .prc__lead,
+  .rv.is-in .prc__rl,
+  .rv.is-in .prc__rv { opacity: 1; }
+}
+
+/* ── Cómo se combinan ───────────────────────────────────────────
+   El argumento comercial de la sección: tres preguntas distintas,
+   tres compras posibles. El filete superior en turquesa de las dos
+   últimas celdas es lo único que dibuja la relación entre ellas —el
+   02 levanta la lista de competidores y el 03 la reutiliza—, y por
+   eso no lleva flecha: una flecha implicaría secuencia obligatoria,
+   que es justo lo contrario de lo que se vende.
+   ──────────────────────────────────────────────────────────────── */
+.trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.5vw, 1.125rem);
+  margin-top: 1.25rem;
+}
+.trio__i {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: clamp(1.25rem, 2.2vw, 1.75rem);
+  background: var(--canvas-2);
+  border: 1px solid var(--rule);
+}
+.trio__q {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--teal-deep);
+}
+.trio__n { font-size: .9375rem; font-weight: 500; color: var(--ink); }
+.trio__u { font-size: .8125rem; line-height: 1.6; color: var(--ink-2); }
+.trio__x {
+  margin-top: auto;
+  padding-top: .75rem;
+  border-top: 1px solid var(--rule);
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+.trio__x--out,
+.trio__x--in { color: var(--teal-deep); border-top-color: var(--turquesa); }
+
+.trio__note {
+  margin-top: 1.25rem;
+  max-width: 78ch;
+  font-size: .875rem;
+  line-height: 1.6;
+  color: var(--ink-2);
 }
 
 /* ── Visual 7 · La meseta ───────────────────────────────────────
@@ -970,6 +1457,9 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   grid-template-columns: repeat(6, 1fr);
   gap: clamp(.75rem, 1.6vw, 1.5rem);
 }
+/* La de los estudios tiene cuatro etapas, no seis. Es la única que
+   queda desde que se retiró el proceso de consultoría comercial. */
+.tl__steps--4 { grid-template-columns: repeat(4, 1fr); }
 .tl__i {
   opacity: 0;
   transform: translateY(12px);
@@ -1032,6 +1522,11 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   background: rgb(var(--c-blue) / .07);
   color: var(--blue);
 }
+/* --blue es --teal-deep, que nació para fondo claro: sobre el azul
+   noche da 3.07:1 y el relleno al 7% desaparece del todo. En ámbito
+   oscuro el icono va en --acento, que ahí da 12:1. Es la misma regla
+   que ya seguían los botones fantasma. */
+.sec--dark .feat__ico { background: rgb(var(--c-acento) / .10); color: var(--acento); }
 .feat__ico svg { width: 1.375rem; height: 1.375rem; }
 .feat__t {
   margin-top: 1.125rem;
@@ -1176,6 +1671,34 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
 .mock__ln  { fill: rgb(var(--c-navy) / .16); }
 .mock__bl  { fill: rgb(var(--c-sky) / .18); }
 .mock__cta { fill: var(--blue); }
+
+/* Los mockups se mudaron a Tecnología, que es un bloque oscuro. Sus
+   rellenos son alfas de --c-navy —tinta oscura sobre claro— y sobre el
+   azul noche desaparecían todos: el mockup quedaba en un rectángulo
+   vacío con borde. Aquí se invierten a alfas de la tinta clara.
+
+   No se resuelve con tokens porque --c-navy es un TRIPLETE crudo, no
+   un alias que el ámbito oscuro pueda reasignar. */
+.sec--dark .mock__bg  { fill: var(--bg-dark-alt); }
+.sec--dark .mock__bar { fill: rgb(var(--c-acento) / .09); }
+.sec--dark .mock__dot { fill: rgb(var(--c-acento) / .28); }
+.sec--dark .mock__hi  { fill: rgb(var(--c-acento) / .68); }
+.sec--dark .mock__ln  { fill: rgb(var(--c-acento) / .20); }
+.sec--dark .mock__bl  { fill: rgb(var(--c-celeste) / .26); }
+.sec--dark .mock__cta { fill: var(--turquesa); }
+
+/* ── Web, en Tecnología ─────────────────────────────────────────
+   A todo el ancho y por delante de las cuatro tarjetas: es el
+   servicio más grande de la sección y como quinta celda de una
+   retícula de dos columnas habría quedado igualado con
+   «Cumplimiento digital» y con un hueco al final de la fila.
+   ──────────────────────────────────────────────────────────────── */
+.webs {
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--rule);
+}
+.webs .mocks { margin-top: clamp(1.75rem, 3vw, 2.5rem); }
 
 /* ── Retícula de cuatro ─────────────────────────────────────────
    Los cuatro servicios de tecnología.
@@ -1630,6 +2153,19 @@ html:not(.js) .hdr {
   row-gap: clamp(2.5rem, 5vw, 4rem);
 }
 
+/* min-width:0 en los hijos NO es defensivo por gusto. Un ítem de
+   rejilla nace con `min-width: auto`, es decir, no puede encogerse por
+   debajo del min-content de lo que lleva dentro. Basta un solo
+   descendiente ancho —una tabla con min-width, un <pre>, una palabra
+   larguísima— para que ensanche su pista, después la rejilla, después
+   el documento, y el móvil acabe mostrando la página al 75%.
+
+   Pasó exactamente eso con la matriz comparativa: sus 480px de
+   min-width atravesaron el contenedor de scroll, `.sec__body` y la
+   rejilla hasta empujar el documento a 502px en una pantalla de 375.
+   Con esta línea, el que se pasa de ancho se desborda solo. */
+.sec__grid > * { min-width: 0; }
+
 /* El titular se queda fijo mientras el contenido de la derecha
    pasa por delante. Es el gesto que sostiene el ritmo del sitio. */
 .sec__head {
@@ -1685,11 +2221,11 @@ html:not(.js) .hdr {
   padding: 0 var(--margin);
 }
 
-/* El mínimo de 2.375rem es el mayor con el que «no se improvisa.»
-   —la línea más larga— sigue cabiendo entera en una pantalla de
-   375px. Subirlo parte el titular por donde no toca. */
+/* El techo de 9.2vw es lo que impide que «Un solo responsable.» se
+   parta en dos líneas por debajo de 413px. Ver la nota del bloque de
+   titulares más arriba. */
 .hero__title {
-  font-size: clamp(2.375rem, 8.4vw, 8.5rem);
+  font-size: min(clamp(2.375rem, 8.4vw, 8.5rem), 9.2vw);
   font-weight: 500;
   line-height: .94;
   letter-spacing: -.048em;
@@ -2034,7 +2570,7 @@ html:not(.js) .faq__a { grid-template-rows: 1fr; }
   padding: 0 var(--margin);
 }
 .cta__t {
-  font-size: clamp(2.5rem, 8vw, 8rem);
+  font-size: min(clamp(2.5rem, 8vw, 8rem), 9.4vw);
   font-weight: 500;
   line-height: .94;
   letter-spacing: -.048em;
@@ -2172,6 +2708,13 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
 }
+/* Mismo motivo que en `.sec__grid > *`: sin min-width:0 la columna no
+   baja del min-content de su hijo más ancho, y aquí ese hijo es la
+   dirección de correo. En tablet empujaba el pie 100px fuera de la
+   pantalla. El `overflow-wrap` le da además por dónde partirse en vez
+   de recortarse. */
+.ftr__col { min-width: 0; }
+.ftr__col a { overflow-wrap: anywhere; }
 .ftr__col h2 {
   font-size: .6875rem;
   font-weight: 500;
@@ -2210,17 +2753,40 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 }
 
 @media (max-width: 1024px) {
-  .sec__grid { grid-template-columns: 1fr; }
+  /* column-gap a cero NO es cosmético, es la red de seguridad de toda
+     la adaptación. `grid-template-columns: 1fr` declara UNA pista, pero
+     cualquier hijo que conserve un `grid-column: 1 / 13` obliga al
+     navegador a crear once pistas implícitas, y entre ellas sigue
+     habiendo hueco: 11 × 32px = 352px dentro de un contenedor de 334.
+     El documento medía 504px de ancho en una pantalla de 375 y el
+     navegador respondía encogiendo LA PÁGINA ENTERA al 74%. Era el
+     fallo de móvil. Con el hueco a cero, un span perdido descoloca esa
+     sección; sin él, deforma el sitio completo. */
+  .sec__grid { grid-template-columns: 1fr; column-gap: 0; }
   .sec__head,
   .sec__body { grid-column: 1; }
   .sec__head { position: static; }
   .sec__note { max-width: 52ch; }
 
-  /* En una columna el reparto izquierda/derecha ya no existe. El
-     selector de --split gana por especificidad (0,3,0) al de arriba,
-     así que hay que anularlo con el suyo propio, no con .sec__head. */
+  /* En una columna el reparto izquierda/derecha ya no existe. Y estos
+     selectores hay que anularlos CON SU MISMO PESO: los de arriba son
+     (0,1,0) y los de --wide y --split, (0,2,0) y (0,3,0). El media
+     query no añade especificidad, así que perdían.
+     Era justo el origen del desbordamiento descrito arriba: --split ya
+     estaba cubierto, --wide se había quedado fuera y son cuatro de las
+     cinco secciones de la página. */
+  .sec__grid--wide .sec__head,
+  .sec__grid--wide .sec__body { grid-column: 1; }
+  .sec__grid--wide .sec__head { max-width: 52ch; }
   .sec__grid--wide.sec__grid--split .sec__head { grid-column: 1; max-width: 46ch; }
   .sec__grid--split .stall { grid-column: 1; max-width: 34rem; }
+
+  /* Cuatro columnas de pie dentro de la pista de 2fr dejan unos 100px
+     por columna en una tablet: ahí no cabe ni «Google Business
+     Profile». La marca pasa arriba y las columnas se reparten el
+     ancho completo de dos en dos. */
+  .ftr__top  { grid-template-columns: 1fr; }
+  .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2rem; }
 
   /* A dos columnas el filete vertical solo separa la segunda de cada
      fila, no cada celda de la anterior. */
@@ -2268,65 +2834,23 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
   .svc__cols { grid-template-columns: 1fr; }
   .svc__head { grid-template-columns: 1fr; }
-  /* El embudo apilado: la silueta arriba, los datos debajo. A dos
-     columnas en móvil el SVG queda en 150px y no se lee nada. */
-  .fnl { grid-template-columns: 1fr; }
 
-  /* El radial NO cabe en móvil: medido a 390px, un nodo se salía del
-     contenedor y dos se montaban sobre el centro. Aquí se convierte en
-     lista apilada, con la descripción ya visible —que en escritorio
-     solo la oye el lector de pantalla—. La telaraña sobra. */
-  .rad { aspect-ratio: auto; width: 100%; }
-  .rad__web { display: none; }
-  .rad__core {
-    position: static;
-    transform: none;
-    width: auto;
-    text-align: left;
-    padding-bottom: .625rem;
-    margin-bottom: .25rem;
-    border-bottom: 1px solid var(--rule);
-    font-size: .625rem;
-    letter-spacing: .16em;
-    text-transform: uppercase;
-    color: var(--teal-deep);
-  }
-  /* .rad.is-in .rad__n del bloque no-preference tiene más
-     especificidad (0,2,1) y volvía a imponer el translate del radial.
-     Hay que anularlo con el mismo selector, no solo con .rad__n. */
-  .rad.is-in .rad__n,
-  .rad__n {
-    position: static;
-    transform: none;
-    display: block;
-    width: 100%;
-    max-width: none;
-    text-align: left;
-    border-radius: .5rem;
-    padding: .75rem .875rem;
-    margin-bottom: .5rem;
-    font-size: .875rem;
-    color: var(--ink);
-  }
-  .rad__d {
-    position: static;
-    width: auto; height: auto;
-    margin: .25rem 0 0;
-    clip-path: none;
-    white-space: normal;
-    display: block;
-    font-size: .8125rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--ink-2);
-  }
-  .rad__n:hover .rad__d,
-  .rad__n:focus-visible .rad__d { color: var(--bg-dark); }
+  /* El plano y su score se apilan. A dos columnas en un móvil el plano
+     cae por debajo de 170px y los anillos dejan de distinguirse del
+     viario. */
+  .zon { grid-template-columns: 1fr; }
+  /* El score deja de competir por el ancho con el plano, así que la
+     pista de cada criterio puede crecer. */
+  .scr__r { grid-template-columns: minmax(0, 1fr) minmax(4rem, 7rem) 1.5rem; }
+
   .grid4  { grid-template-columns: 1fr; }
   .mocks  { grid-template-columns: 1fr; }
   /* Las dos superficies del visual SEO se apilan: a 170px de ancho
-     cada caja, las barras no comunican nada. */
+     cada caja, las barras no comunican nada. Lo mismo vale para el
+     paquete local y la ficha de negocio, que son la misma familia. */
   .geo    { grid-template-columns: 1fr; }
+  .gbp    { grid-template-columns: 1fr; }
+  .trio   { grid-template-columns: 1fr; }
   .flw__ns { font-size: .625rem; }
 
   /* El texto dentro de un SVG escala con el viewBox, no con la raíz:
@@ -2342,8 +2866,18 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .mx__ql    { font-size: 12px; }
   .mx__at    { font-size: 12px; }
   .mx__bl    { font-size: 15px; }
+  .mx__gl    { font-size: 14px; }
   .arq__pl   { font-size: 14px; }
   .lyr__t    { font-size: 13px; }
+  /* El plano de la zona apilado se dibuja a ~1.1 de escala en un móvil
+     de 375, así que su rótulo casi no necesita compensación. La escala
+     de precio, en cambio, cae a 0.78 y sí. */
+  .zon__rl   { font-size: 11px; }
+  .prc__bl   { font-size: 12px; }
+  .prc__sl text { font-size: 12px; }
+  .prc__cl text { font-size: 12px; }
+  .prc__rl   { font-size: 13px; }
+  .prc__rv   { font-size: 15px; }
   .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat__l { columns: 1; }
 
@@ -2351,6 +2885,12 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
   .ftr__top { grid-template-columns: 1fr; }
   .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
+  /* Los enlaces del pie medían 19px de alto en táctil. Con el hueco de
+     10px entre filas pasan la excepción de separación de la WCAG por
+     poco; el relleno los sube a ~29px de zona pulsable propia. */
+  .ftr__col a,
+  .ftr__up a { display: inline-block; padding: .3125rem 0; }
+  .ftr__up a { display: inline-flex; }
 }
 
 @media (max-width: 420px) {
@@ -2375,9 +2915,6 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
      necesitando que el observador le ponga .is-in. Aquí se les da
      directamente el estado final, así que se ven aunque el observador
      no llegue nunca. */
-  .fnl__b   { clip-path: none; }
-  .fnl__r,
-  .rad__n,
   .stall__gap, .stall__gl, .stall__pin,
   .tl__i    { opacity: 1; }
   .stall__now  { stroke-dasharray: none; stroke-dashoffset: 0; }
@@ -2385,10 +2922,14 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .stall__lead { opacity: .5; }
   .proc__seg   { transform: none; }
   .proc__gate  { opacity: 1; }
-  .mx__b, .mx__bl { opacity: 1; }
+  .mx__b, .mx__bl, .mx__gap, .mx__gl { opacity: 1; }
+  .prc__band, .prc__bl,
+  .prc__rec, .prc__lead, .prc__rl, .prc__rv { opacity: 1; }
+  /* La barra del score arranca en scaleX(0): sin esto el panel del
+     estudio de viabilidad se quedaría con las cuatro pistas vacías. */
+  .scr__f { transform: none; }
   .arq__x { opacity: 1; }
   .upt__b { opacity: 1; }
-  .rad__n   { transform: translate(-50%, -50%); }
   .tl__i    { transform: none; }
   .dash__line { stroke-dasharray: none; stroke-dashoffset: 0; }
   /* El punto que recorre el flujo desaparece: es puro movimiento y sin

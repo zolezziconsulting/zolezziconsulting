@@ -1,20 +1,80 @@
+# ================================================================
+# Cabeceras — Cloudflare Pages
+# ----------------------------------------------------------------
+# Cloudflare aplica este archivo tal cual; se puede comprobar en
+# producción con:  curl -sSI https://zolezziconsulting.com/
+# ================================================================
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: SAMEORIGIN
-  Permissions-Policy: geolocation=(), microphone=(), camera=(), interest-cohort=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), midi=(), serial=(), bluetooth=(), display-capture=(), idle-detection=(), interest-cohort=()
+
+  # HTTPS obligatorio durante un año. SIN `preload` a propósito: entrar
+  # en la lista precargada de los navegadores es prácticamente
+  # irreversible y solo tiene sentido cuando se está seguro de que
+  # ningún subdominio va a necesitar HTTP nunca.
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+  # Aísla la pestaña de cualquier ventana que la abra. Corta los ataques
+  # que dependen de conservar una referencia a `window.opener`.
+  Cross-Origin-Opener-Policy: same-origin
+
+  # ── Política de contenido ──────────────────────────────────────
+  # El sitio no carga NADA de terceros: tipografías, CSS y JS son
+  # propios, y desde que el formulario pasa por /api/contact tampoco
+  # hay peticiones salientes. Por eso puede permitirse un `default-src
+  # 'self'` estricto, que es lo que convierte a la CSP en una defensa
+  # real y no en un adorno.
+  #
+  #   script-src   un solo script en línea, autorizado POR HASH y no con
+  #                'unsafe-inline'. Es el que añade la clase `js` antes
+  #                de pintar. SI SE TOCA ESA LÍNEA HAY QUE RECALCULAR EL
+  #                HASH o el sitio se queda sin JavaScript:
+  #                  node -e "console.log(require('crypto').createHash('sha256').update(\"document.documentElement.classList.add('js');\").digest('base64'))"
+  #                Los bloques `application/ld+json` no ejecutan y no los
+  #                cubre esta directiva.
+  #   style-src    'unsafe-inline' es inevitable: los retardos de la
+  #                animación viajan en atributos `style="--d:.45s"`,
+  #                repartidos por cientos de elementos. `style-src-elem`
+  #                deja aparte los <style> y <link>, que sí van estrictos,
+  #                de modo que lo permisivo se limita a los atributos.
+  #   form-action  el POST nativo del formulario solo puede ir a este
+  #                mismo origen. Impide que una inyección redirija los
+  #                datos del visitante a otro servidor.
+  #   base-uri     sin esto, un <base> inyectado reescribe TODAS las
+  #                rutas relativas de la página de una vez.
+  Content-Security-Policy: default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'unsafe-inline'; style-src-elem 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw='; connect-src 'self'; manifest-src 'self'; worker-src 'none'; upgrade-insecure-requests
+
+# OJO CON `Cross-Origin-Resource-Policy`: las reglas de este archivo se
+# SUMAN, no se sustituyen. Declararlo en `/*` como `same-origin` y aquí
+# como `cross-origin` producía la cabecera literal
+# `Cross-Origin-Resource-Policy: same-origin, cross-origin`, que no es
+# un valor válido. Por eso NO está en `/*` y se declara ruta por ruta.
+# Las imágenes se quedan fuera a propósito: la de Open Graph tiene que
+# poder cargarse desde otros orígenes o los clientes que la pinten en el
+# navegador —en vez de en su servidor— enseñarían un hueco.
 
 /assets/fonts/*
   Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: same-origin
 
 /assets/css/*
   Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: same-origin
 
 /assets/js/*
   Cache-Control: public, max-age=31536000, immutable
+  Cross-Origin-Resource-Policy: same-origin
 
 /assets/img/*
   Cache-Control: public, max-age=31536000, immutable
 
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# `_headers` NO se aplica a lo que devuelve una Function: comprobado el
+# 2026-08-07, /api/contact salía sin ninguna de estas cabeceras. Las
+# suyas las pone functions/api/contact.js por su cuenta. Esta sección no
+# existe por eso mismo; si alguien la añade, no hará nada.
