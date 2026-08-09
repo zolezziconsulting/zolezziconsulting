@@ -7,8 +7,14 @@
 (function () {
   'use strict';
 
-  var WA_NUM = '51954715846';
-  var WA_MSG = 'Hola, vi la web de Zolezzi Consulting y me gustaría cotizar un servicio.';
+  // Número de WhatsApp Business, cambiado el 2026-08-09. El anterior
+  // (…954715846) era la línea personal y ya no atiende.
+  //
+  // El mensaje viaja precargado en el enlace a propósito: quien pulsa
+  // llega a la conversación con el texto ya escrito y solo tiene que
+  // darle a enviar. Es una fricción menos, y la que más se nota.
+  var WA_NUM = '51941519053';
+  var WA_MSG = 'Hola, quisiera información sobre sus servicios.';
   var WA = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_MSG);
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -129,8 +135,9 @@
   });
 
   // .stall, .zon y .prc entran por su clase .rv, así que no necesitan
-  // mención aparte. .fnl y .rad salieron con el embudo y el radial.
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i, .tl, .dash');
+  // mención aparte. .fnl y .rad salieron con el embudo y el radial;
+  // .tl y .dash, con la línea de tiempo y el panel de campaña.
+  var revealables = document.querySelectorAll('.rv, .mask, .proc__i');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -153,53 +160,11 @@
      2026-08-07 con el servicio que ilustraba, junto con el embudo
      comercial. Para recuperarlo: git log -S'rad-gtm' -- assets/js/main.js */
 
-  /* ── Contadores ──────────────────────────────────────────────
-     Animan una sola vez, al entrar en pantalla. Con movimiento
-     reducido saltan directamente al valor final: un número que sube
-     solo es exactamente lo que esa preferencia pide evitar. */
-  var counters = document.querySelectorAll('[data-count]');
-
-  function runCount(el) {
-    var end = parseFloat(el.getAttribute('data-count'));
-    var dec = parseInt(el.getAttribute('data-dec') || '0', 10);
-    var pre = el.getAttribute('data-pre') || '';
-    var suf = el.getAttribute('data-suf') || '';
-    // Formato peruano: coma para millares y punto para decimales, que
-    // es justo al revés que en España. Sin esto, 1240 salía «1240».
-    var write = function (v) {
-      el.textContent = pre + v.toLocaleString('es-PE', {
-        minimumFractionDigits: dec,
-        maximumFractionDigits: dec
-      }) + suf;
-    };
-
-    if (reduce) return write(end);
-
-    var t0 = 0;
-    var dur = 1300;
-    function step(ts) {
-      if (!t0) t0 = ts;
-      var p = Math.min(1, (ts - t0) / dur);
-      // Mismo easing que el resto de la página, para que el número
-      // frene igual que frenan los bloques al revelarse.
-      write(end * (1 - Math.pow(1 - p, 3)));
-      if (p < 1) window.requestAnimationFrame(step);
-    }
-    window.requestAnimationFrame(step);
-  }
-
-  if ('IntersectionObserver' in window && counters.length) {
-    var cio = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        runCount(e.target);
-        cio.unobserve(e.target);
-      });
-    }, { threshold: .6 });
-    Array.prototype.forEach.call(counters, function (el) { cio.observe(el); });
-  } else {
-    Array.prototype.forEach.call(counters, runCount);
-  }
+  /* Los contadores animados vivían aquí: los del embudo comercial y
+     los del panel de campaña de Google Ads. No queda ningún
+     [data-count] en la página desde el 2026-08-09, así que se retiran
+     junto con su observador. Para recuperarlos:
+     git log -S"runCount" -- assets/js/main.js */
 
   /* ── Desplegable «Servicios» ─────────────────────────────────
      Se abre al pasar el puntero y también al pulsar, porque en táctil

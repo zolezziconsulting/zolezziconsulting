@@ -1,6 +1,6 @@
 # ZOLEZZI Consulting
 
-**Estudios de mercado y ejecución digital** · Research · Marketing · Technology
+**Estudios de mercado** · Viabilidad · Competencia · Pricing
 
 Sitio single-page. HTML, CSS y JavaScript sin dependencias ni build, más una única
 Cloudflare Pages Function para el formulario.
@@ -24,18 +24,26 @@ Los apartados «Qué no incluye» de cada estudio **no son relleno legal**: son 
 que impide que los tres se confundan entre sí y acaben fusionados en un servicio genérico
 de investigación. Si se borran, vuelve el solapamiento.
 
-Marketing digital se limita al **ecosistema Google** —SEO, GEO, Google Business Profile y
-Google Ads—. Meta Ads y TikTok Ads salieron por decisión comercial el 2026-08-07; no fue
-un olvido. Web (landing, corporativo y e-commerce) vive en **Tecnología**, no en
-marketing: un sitio se construye, no se difunde.
+**La firma NO vende nada más.** El 2026-08-09 se eliminaron por completo las secciones de
+marketing digital (SEO, GEO, Google Business Profile, Google Ads) y de tecnología (web,
+automatización, IA, infraestructura, seguridad, cumplimiento). No fue una poda de catálogo:
+fue una decisión de enfoque. La página entera —menú, desafíos, metodología, FAQ, formulario,
+pie y datos estructurados— está escrita para que se entienda que solo hay un tipo de
+servicio. Si vuelve a añadirse un servicio de ejecución, hay que revisar la FAQ: una de las
+seis preguntas vende justamente lo contrario, que no ejecutamos lo que recomendamos, y ese
+es hoy el argumento de independencia de la firma.
+
+**La captación va por WhatsApp.** Es el único botón de la página. El formulario sigue
+existiendo para quien prefiera contar el caso por escrito, y se llega a él por «Contacto»
+del menú; los botones que llevaban a él se retiraron el 2026-08-09. El enlace de WhatsApp
+lleva el mensaje precargado, así que el visitante solo tiene que pulsar enviar: eso vive en
+`WA_NUM` y `WA_MSG` de `main.js`, no en el marcado.
 
 ## Estructura
 
 ```
-index.html            Hero, desafíos, consultoría (3 estudios), marketing
-                      digital (SEO/GEO, Business Profile, Google Ads),
-                      tecnología (web + 4 tarjetas), metodología, FAQ,
-                      CTA, contacto y pie
+index.html            Hero, desafíos, los tres estudios, metodología,
+                      FAQ, CTA, contacto y pie
 assets/css/styles.css Sistema de diseño completo
 assets/js/main.js     Cabecera, menú móvil, revelados, raíles de scroll,
                       acordeón y formulario
@@ -130,7 +138,7 @@ el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referenci
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=22`.
+vieja. Va por `v=23`.
 
 ## Adaptación a móvil: la trampa del `min-width: auto`
 

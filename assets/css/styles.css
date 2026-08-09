@@ -730,223 +730,16 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    truco. Solo dentro de no-preference.
    ──────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
-  .btn, .chal__i, .tcard, .mock__img, .tools li {
+  .btn, .chal__i {
     transition-duration: .2s;
     transition-property: transform, box-shadow, background-color, border-color, color;
     transition-timing-function: var(--ease-o);
   }
-  .btn:hover, .chal__i:hover, .tcard:hover { transform: translateY(-2px); }
-  .btn:active, .chal__i:active, .tcard:active { transform: translateY(0); }
+  .btn:hover, .chal__i:hover { transform: translateY(-2px); }
+  .btn:active, .chal__i:active { transform: translateY(0); }
   /* El barrido interno del botón conserva su propia duración: es el
      gesto de marca, no una microinteracción de hover. */
   .btn::before { transition-duration: .5s; }
-}
-
-/* ── Visual 3 · SEO & GEO ───────────────────────────────────────
-   Dos superficies enfrentadas. Ni una línea de texto real: lo que se
-   compara es la FORMA de cada resultado, así que todo son barras.
-   La única frase legible es la cita de marca, que es el punto.
-   ──────────────────────────────────────────────────────────────── */
-/* Rótulo de cabecera de un visual. `.svis__t` es el nombre genérico;
-   `.geo__claim` es el original y se mantiene para no tocar su marcado. */
-.geo__claim,
-.svis__t {
-  font-size: 1.0625rem;
-  font-weight: 500;
-  letter-spacing: -.02em;
-  margin-bottom: 1rem;
-}
-.geo {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(.75rem, 1.6vw, 1.25rem);
-}
-.geo__p { margin: 0; }
-.geo__k {
-  font-size: .625rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: .5rem;
-}
-.geo__box {
-  padding: clamp(.875rem, 1.8vw, 1.25rem);
-  background: var(--bg-surface);
-  border: 1px solid var(--borde);
-  border-radius: .5rem;
-  min-height: 11rem;
-}
-.geo__box--ai { border-color: rgb(var(--c-turquesa) / .45); }
-
-.geo__res { padding: .5rem 0; }
-.geo__res + .geo__res { border-top: 1px solid var(--rule-2); }
-.geo__url, .geo__ttl, .geo__ln {
-  display: block;
-  border-radius: 2px;
-  background: rgb(var(--c-dark) / .12);
-}
-.geo__url { width: 38%; height: 5px; margin-bottom: .4rem; }
-.geo__ttl { width: 72%; height: 9px; margin-bottom: .4rem; background: rgb(var(--c-dark) / .3); }
-.geo__ln  { width: 92%; height: 5px; margin-bottom: .3rem; }
-.geo__ln--s { width: 64%; }
-/* El primero destaca: es la posición que se disputa en SEO clásico. */
-.geo__res--top .geo__ttl { background: var(--celeste); }
-.geo__res--top .geo__url { background: rgb(var(--c-celeste) / .5); }
-
-.geo__cite {
-  margin: .625rem 0;
-  padding: .625rem .75rem;
-  border-left: 2px solid var(--turquesa);
-  background: rgb(var(--c-turquesa) / .07);
-  font-size: .75rem;
-  line-height: 1.5;
-  color: var(--ink-2);
-}
-.geo__mark { color: var(--teal-deep); font-weight: 500; }
-
-/* ── Visual 7 · Paquete local y ficha de negocio ────────────────
-   La tercera superficie del buscador, y la que decide la venta de un
-   negocio con local. Reutiliza la caja y las barras de `.geo`: son la
-   misma familia de mockup abstracto y tienen que leerse igual.
-
-   Se enseñan las dos mitades juntas porque son inseparables: el
-   paquete decide si le miran y la ficha, si le llaman.
-   ──────────────────────────────────────────────────────────────── */
-.gbp {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(.75rem, 1.6vw, 1.25rem);
-}
-
-.gbp__pack { display: flex; flex-direction: column; }
-.gbp__row { display: flex; gap: .625rem; align-items: flex-start; padding: .625rem 0; }
-.gbp__row + .gbp__row { border-top: 1px solid var(--rule-2); }
-/* Gota de mapa: un círculo con una esquina en punta, girado. */
-.gbp__pin {
-  flex: none;
-  width: 1rem; height: 1rem;
-  margin-top: .125rem;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  background: rgb(var(--c-dark) / .16);
-}
-.gbp__row--top .gbp__pin { background: var(--turquesa); }
-.gbp__rl { display: block; flex: 1; min-width: 0; }
-
-.gbp__stars { display: inline-flex; gap: .125rem; margin-top: .375rem; }
-.gbp__stars svg { width: .6875rem; height: .6875rem; }
-/* La estrella es el único icono relleno del sitio: hay que revertir
-   el `fill:none; stroke:currentColor` que la hoja impone a `svg use`. */
-.gbp__stars svg use { fill: var(--celeste); stroke: none; }
-
-.gbp__card { display: flex; flex-direction: column; }
-.gbp__name { font-size: .9375rem; font-weight: 600; letter-spacing: -.02em; }
-.gbp__rate {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .25rem .5rem;
-  margin-top: .375rem;
-}
-.gbp__rate .gbp__stars { margin-top: 0; }
-.gbp__num { font-size: .8125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.gbp__cnt { font-size: .75rem; color: var(--ink-3); }
-.gbp__open { margin-top: .5rem; font-size: .75rem; font-weight: 500; color: var(--teal-deep); }
-
-.gbp__acts { display: flex; flex-wrap: wrap; gap: .375rem; margin-top: .875rem; }
-.gbp__acts li {
-  padding: .3rem .625rem;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  font-size: .6875rem;
-  color: var(--ink-2);
-}
-/* Tinta oscura sobre el turquesa, como en toda la hoja. Y con dos
-   clases, no una: `.gbp__acts li` ya declara color y le ganaría. */
-.gbp__acts .gbp__act--on {
-  background: var(--turquesa);
-  border-color: var(--turquesa);
-  color: var(--bg-dark);
-  font-weight: 500;
-}
-
-.gbp__ph { display: flex; gap: .375rem; margin-top: .875rem; }
-.gbp__ph span { flex: 1; aspect-ratio: 4 / 3; border-radius: .25rem; background: rgb(var(--c-sky) / .18); }
-
-/* ── Visual 4 · Panel de campaña ────────────────────────────────
-   Los contadores viven dentro de una ventana: el marco es lo que los
-   convierte en «panel» y no en cuatro cifras sueltas.
-   ──────────────────────────────────────────────────────────────── */
-.dash {
-  border: 1px solid var(--borde);
-  border-radius: .625rem;
-  overflow: hidden;
-  background: var(--bg-surface);
-}
-.dash__bar {
-  display: flex;
-  align-items: center;
-  gap: .375rem;
-  padding: .625rem .875rem;
-  background: var(--bg-tint);
-  border-bottom: 1px solid var(--borde);
-}
-.dash__bar > span {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: rgb(var(--c-dark) / .18);
-}
-.dash__ttl {
-  margin-left: .625rem;
-  font-size: .625rem;
-  font-style: normal;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.dash .kpis { margin-top: 0; border: 0; border-bottom: 1px solid var(--borde); }
-.dash__spark { display: block; width: 100%; height: clamp(4rem, 9vw, 5.5rem); }
-.dash__line {
-  fill: none;
-  stroke: url(#spark-g);
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-}
-
-/* ── Visual 6 · Flujo de sistemas ───────────────────────────────── */
-.flw { display: block; width: 100%; height: auto; }
-.flw__l { stroke: var(--borde); stroke-width: 1.5; }
-.flw__dot { fill: var(--turquesa); opacity: 0; }
-.flw__ns {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: .5rem;
-  margin-top: .375rem;
-  text-align: center;
-  font-size: .6875rem;
-  font-weight: 500;
-  color: var(--ink-2);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* La sparkline se dibuja de izquierda a derecha. pathLength="1" en
-     el marcado permite animarla sin conocer su longitud real. */
-  .dash__line {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 1.4s var(--ease-o) .3s;
-  }
-  .dash.is-in .dash__line { stroke-dashoffset: 0; }
-
-  /* El punto recorre el flujo en bucle de 3s. Solo se mueve cx, que
-     el navegador compone sin recalcular estilo. */
-  .flw__dot { animation: flw-run 3s linear infinite; }
-  @keyframes flw-run {
-    0%        { cx: 52px;  opacity: 0; }
-    6%        { opacity: 1; }
-    94%       { opacity: 1; }
-    100%      { cx: 368px; opacity: 0; }
-  }
 }
 
 /* ── Envoltorio de los visuales de servicio ─────────────────────
@@ -961,143 +754,6 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    ──────────────────────────────────────────────────────────────── */
 .svis { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
 .svc__k--wide + .svis { margin-top: .75rem; }
-
-/* ── Visuales 11-13 · Los tres mini de tecnología ───────────────
-   Tres de las cuatro tarjetas de tecnología eran lista de viñetas y
-   nada más, en la única sección oscura larga de la página: mucho
-   peso de fondo sosteniendo puro texto.
-
-   Comparten base para que se lean como una familia y no como tres
-   ocurrencias. Viven sobre --canvas-2 (#12242F), donde turquesa y
-   celeste SÍ son legibles —6.26 y 7.96:1—, al revés que sobre claro.
-   ──────────────────────────────────────────────────────────────── */
-.mini { display: block; width: 100%; height: auto; }
-.mini__k {
-  margin-top: .625rem;
-  font-size: .625rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-/* Franja de disponibilidad. Alto fijo: con preserveAspectRatio="none"
-   las barras se estiran a lo ancho y mantienen su grosor relativo. */
-.upt { height: 2.25rem; }
-.upt__b { fill: var(--turquesa); stroke: none; }
-/* La incidencia no se pinta de rojo: no hubo caída. Se atenúa. */
-.upt__b--x { fill: rgb(var(--c-acento) / .28); }
-
-/* Capas de defensa. */
-.lyr__r {
-  fill: none;
-  stroke: var(--rule);
-  stroke-width: 1;
-}
-.lyr__r--out { stroke: rgb(var(--c-acento) / .45); stroke-dasharray: 4 4; }
-.lyr__c { fill: var(--turquesa); stroke: none; }
-/* Tinta oscura sobre el relleno turquesa, como en todo el sitio. */
-.lyr__t {
-  fill: var(--bg-dark);
-  font-size: 11px;
-  font-weight: 500;
-  text-anchor: middle;
-}
-
-/* El expediente. */
-.doc__p {
-  fill: var(--bg-dark);
-  stroke: rgb(var(--c-acento) / .35);
-  stroke-width: 1;
-}
-.doc__p--top { fill: var(--bg-dark-alt); stroke: var(--turquesa); }
-.doc__l { fill: none; stroke: rgb(var(--c-acento) / .3); stroke-width: 2; stroke-linecap: round; }
-.doc__s { fill: var(--turquesa); stroke: none; }
-.doc__k { fill: none; stroke: var(--bg-dark); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Las barras de disponibilidad entran en cascada de izquierda a
-     derecha. El retardo se calcula sobre el índice del hermano para
-     no tener que escribir 30 reglas. */
-  .upt__b {
-    opacity: 0;
-    transition: opacity .3s var(--ease-o);
-  }
-  .rv.is-in .upt__b { opacity: 1; }
-  .upt__b:nth-child(3n+1) { transition-delay: .10s; }
-  .upt__b:nth-child(3n+2) { transition-delay: .22s; }
-  .upt__b:nth-child(3n+3) { transition-delay: .34s; }
-}
-
-/* ── Visual 10 · Arquitectura de contenidos ─────────────────────
-   Pilar → clústeres → apoyos, más el enlazado cruzado.
-
-   Jerarquía de peso deliberada: la estructura va en gris y SOLO el
-   enlazado interno va en color de marca. Es lo que distingue una
-   arquitectura de un organigrama, así que es lo único que se resalta.
-   ──────────────────────────────────────────────────────────────── */
-.arq { width: min(100%, 32rem); }
-.arq__svg { display: block; width: 100%; height: auto; }
-
-.arq__ln {
-  fill: none;
-  stroke: var(--rule);
-  stroke-width: 1.5;
-  vector-effect: non-scaling-stroke;
-}
-.arq__ln--fine { stroke-width: 1; }
-
-/* El enlazado interno: el único trazo de marca del dibujo. */
-.arq__x {
-  fill: none;
-  stroke: var(--turquesa);
-  stroke-width: 1.5;
-  stroke-dasharray: 3 3;
-  vector-effect: non-scaling-stroke;
-}
-
-.arq__pil { fill: var(--bg-dark); stroke: none; }
-.arq__pl  { fill: var(--ink-invert); font-size: 12px; font-weight: 500; text-anchor: middle; }
-.arq__cl  { fill: rgb(var(--c-turquesa) / .16); stroke: var(--turquesa); stroke-width: 1; }
-.arq__pg  { fill: rgb(var(--c-dark) / .12); stroke: none; }
-
-/* Leyenda. Cada viñeta reproduce la forma que nombra —relleno sólido,
-   barra clara, trazo punteado—, así que se lee sin cruzar la vista con
-   el gráfico. */
-.arq__key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem 1.25rem;
-  margin-top: 1rem;
-  font-size: .6875rem;
-  color: var(--ink-2);
-}
-.arq__key li { display: flex; align-items: center; gap: .4rem; }
-.arq__key li::before {
-  content: '';
-  width: .75rem; height: .625rem;
-  border-radius: 2px;
-  flex: none;
-}
-.arq__key--cl::before {
-  background: rgb(var(--c-turquesa) / .16);
-  box-shadow: inset 0 0 0 1px var(--turquesa);
-}
-.arq__key--pg::before { background: rgb(var(--c-dark) / .12); }
-.arq__key--x::before {
-  height: 0;
-  border-radius: 0;
-  border-top: 1.5px dashed var(--turquesa);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Solo se anima el enlazado: la estructura ya está, lo que aparece
-     es la relación entre sus partes. */
-  .arq__x {
-    opacity: 0;
-    transition: opacity .6s var(--ease-o) .5s;
-  }
-  .rv.is-in .arq__x { opacity: 1; }
-}
 
 /* ── Visual 3 · Mapa de posicionamiento ─────────────────────────
    Dos ejes, cuatro cuadrantes, cinco marcas. La convención es tan
@@ -1419,101 +1075,15 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   .stall.is-in .stall__pin { opacity: 1; }
 }
 
-/* ── Línea de tiempo del proceso ────────────────────────────────
-   Seis etapas en horizontal. El conector se dibuja de izquierda a
-   derecha con stroke-dashoffset conforme la sección entra en pantalla,
-   y cada etapa aparece escalonada detrás de él.
-
-   El SVG del conector vive por debajo de los nodos y NO recibe
-   puntero: si lo hiciera, se comería el hover de las etapas.
-   ──────────────────────────────────────────────────────────────── */
-.tl { position: relative; margin-top: clamp(2.5rem, 5vw, 4rem); }
-
-.tl__line {
-  position: absolute;
-  top: 1.5rem; left: 0; right: 0;
-  height: 2px;
-  pointer-events: none;
-  overflow: visible;
-}
-.tl__line path {
-  fill: none;
-  stroke: var(--rule);
-  stroke-width: 2;
-}
-.tl__line path + path {
-  stroke: var(--blue);
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  /* pathLength="1" en el marcado permite animar el trazo sin conocer
-     su longitud real, que cambia con el ancho de la ventana. */
-  transition: stroke-dashoffset 1.6s var(--ease-o);
-}
-.tl.is-in .tl__line path + path { stroke-dashoffset: 0; }
-
-.tl__steps {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: clamp(.75rem, 1.6vw, 1.5rem);
-}
-/* La de los estudios tiene cuatro etapas, no seis. Es la única que
-   queda desde que se retiró el proceso de consultoría comercial. */
-.tl__steps--4 { grid-template-columns: repeat(4, 1fr); }
-.tl__i {
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity .7s var(--ease-o) var(--d, 0s),
-    transform .7s var(--ease-o) var(--d, 0s);
-}
-.tl.is-in .tl__i { opacity: 1; transform: none; }
-
-.tl__dot {
-  width: 3rem; height: 3rem;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--canvas);
-  box-shadow: inset 0 0 0 1px var(--rule);
-  color: var(--blue);
-  transition: box-shadow .45s var(--ease), color .45s var(--ease);
-}
-.tl__i:hover .tl__dot { box-shadow: inset 0 0 0 2px var(--blue); }
-.tl__dot svg { width: 1.25rem; height: 1.25rem; }
-
-.tl__n {
-  margin-top: 1rem;
-  font-size: .625rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--sky-ink);
-  font-variant-numeric: tabular-nums;
-}
-.tl__t {
-  margin-top: .3rem;
-  font-size: clamp(.9375rem, 1.3vw, 1.0625rem);
-  font-weight: 500;
-  letter-spacing: -.02em;
-  line-height: 1.25;
-}
-.tl__d {
-  margin-top: .4rem;
-  font-size: .8125rem;
-  line-height: 1.55;
-  color: var(--ink-2);
-}
-
 /* ── Bloque de servicio ─────────────────────────────────────────
    Icono, frase, entregables y metadatos. Es el ladrillo con el que se
    arman marketing digital y tecnología.
    ──────────────────────────────────────────────────────────────── */
-.feat {
-  display: grid;
-  gap: clamp(1.5rem, 3vw, 2.5rem);
-  padding: clamp(1.75rem, 3vw, 2.5rem) 0;
-  border-top: 1px solid var(--rule);
-}
+/* `.feat`, el envoltorio de artículo, se fue el 2026-08-09 con las
+   secciones de marketing y tecnología, que eran las únicas que lo
+   usaban. Lo que queda de la familia —icono, título, frase y lista de
+   entregables— lo siguen usando los tres estudios dentro de `.svc`.
+   Para recuperarlo: git log -S'.feat {' -- assets/css/styles.css */
 .feat__ico {
   width: 2.75rem; height: 2.75rem;
   display: grid;
@@ -1526,7 +1096,6 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    noche da 3.07:1 y el relleno al 7% desaparece del todo. En ámbito
    oscuro el icono va en --acento, que ahí da 12:1. Es la misma regla
    que ya seguían los botones fantasma. */
-.sec--dark .feat__ico { background: rgb(var(--c-acento) / .10); color: var(--acento); }
 .feat__ico svg { width: 1.375rem; height: 1.375rem; }
 .feat__t {
   margin-top: 1.125rem;
@@ -1563,175 +1132,6 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
    de ticket alto no se publican plazos ni estructura de precios, se
    conversan. Se quitó también su CSS porque no quedaba ningún uso.
    Para recuperarlo: git log -S'feat__meta' -- assets/css/styles.css */
-
-/* ── Herramientas ───────────────────────────────────────────────
-   Wordmark tipográfico, no logotipos redibujados: aproximar marcas
-   ajenas a mano se ve barato y además es terreno de marca registrada.
-   Tratamiento uniforme = se leen como un instrumental, no como un
-   collage de logos.
-   ──────────────────────────────────────────────────────────────── */
-.tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .5rem;
-  margin-top: 1.5rem;
-}
-.tools li {
-  padding: .4rem .75rem;
-  border: 1px solid var(--rule);
-  border-radius: .375rem;
-  font-size: .75rem;
-  font-weight: 500;
-  letter-spacing: .01em;
-  color: var(--ink-2);
-  transition: border-color .4s var(--ease), color .4s var(--ease);
-}
-.tools li:hover { border-color: var(--accent); color: var(--ink); }
-
-/* ── Indicadores ────────────────────────────────────────────────
-   Contadores. El valor de partida en el HTML es «0» para que sin JS
-   no quede vacío, y main.js lo anima hasta data-count.
-   ──────────────────────────────────────────────────────────────── */
-.kpis {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  margin-top: 1.75rem;
-  background: var(--rule);
-  border: 1px solid var(--rule);
-}
-.kpi { background: var(--canvas); padding: 1.125rem 1rem; }
-.kpi__v {
-  display: block;
-  font-size: clamp(1.375rem, 2.4vw, 1.875rem);
-  font-weight: 500;
-  letter-spacing: -.035em;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-.kpi__k {
-  display: block;
-  margin-top: .3rem;
-  font-size: .625rem;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-/* ── Mockups ────────────────────────────────────────────────────
-   Dibujados en SVG, no imágenes: escalan sin peso y se recolorean
-   solos con los tokens.
-   ──────────────────────────────────────────────────────────────── */
-.mocks {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(.75rem, 1.5vw, 1.25rem);
-  margin-top: 1.75rem;
-}
-/* La perspectiva vive en el contenedor, no en la tarjeta: si se pone
-   en el propio elemento que rota, el punto de fuga se mueve con él y
-   el giro se ve plano. */
-.mocks { perspective: 1000px; }
-.mock { margin: 0; }
-.mock__img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border: 1px solid var(--rule);
-  border-radius: .5rem;
-  overflow: hidden;
-  box-shadow: 0 1px 2px rgb(var(--c-dark) / .04);
-  transition:
-    transform .45s var(--ease-o),
-    border-color .45s var(--ease),
-    box-shadow .45s var(--ease);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .mock:hover .mock__img,
-  .mock:focus-within .mock__img {
-    transform: perspective(1000px) rotateY(-4deg) translateY(-4px);
-    box-shadow: -12px 14px 32px rgb(var(--c-dark) / .12);
-  }
-}
-.mock:hover .mock__img,
-.mock:focus-within .mock__img { border-color: var(--turquesa); }
-.mock figcaption {
-  margin-top: .75rem;
-  font-size: .8125rem;
-  font-weight: 500;
-  color: var(--ink-2);
-}
-.mock:hover figcaption { color: var(--ink); }
-/* Los rellenos del mockup no heredan el trazo global de `svg use`. */
-.mock__img rect, .mock__img circle { stroke: none; }
-.mock__bg  { fill: var(--canvas); }
-.mock__bar { fill: rgb(var(--c-navy) / .07); }
-.mock__dot { fill: rgb(var(--c-navy) / .22); }
-.mock__hi  { fill: rgb(var(--c-navy) / .55); }
-.mock__ln  { fill: rgb(var(--c-navy) / .16); }
-.mock__bl  { fill: rgb(var(--c-sky) / .18); }
-.mock__cta { fill: var(--blue); }
-
-/* Los mockups se mudaron a Tecnología, que es un bloque oscuro. Sus
-   rellenos son alfas de --c-navy —tinta oscura sobre claro— y sobre el
-   azul noche desaparecían todos: el mockup quedaba en un rectángulo
-   vacío con borde. Aquí se invierten a alfas de la tinta clara.
-
-   No se resuelve con tokens porque --c-navy es un TRIPLETE crudo, no
-   un alias que el ámbito oscuro pueda reasignar. */
-.sec--dark .mock__bg  { fill: var(--bg-dark-alt); }
-.sec--dark .mock__bar { fill: rgb(var(--c-acento) / .09); }
-.sec--dark .mock__dot { fill: rgb(var(--c-acento) / .28); }
-.sec--dark .mock__hi  { fill: rgb(var(--c-acento) / .68); }
-.sec--dark .mock__ln  { fill: rgb(var(--c-acento) / .20); }
-.sec--dark .mock__bl  { fill: rgb(var(--c-celeste) / .26); }
-.sec--dark .mock__cta { fill: var(--turquesa); }
-
-/* ── Web, en Tecnología ─────────────────────────────────────────
-   A todo el ancho y por delante de las cuatro tarjetas: es el
-   servicio más grande de la sección y como quinta celda de una
-   retícula de dos columnas habría quedado igualado con
-   «Cumplimiento digital» y con un hueco al final de la fila.
-   ──────────────────────────────────────────────────────────────── */
-.webs {
-  padding-bottom: clamp(2rem, 4vw, 3rem);
-  margin-bottom: clamp(2rem, 4vw, 3rem);
-  border-bottom: 1px solid var(--rule);
-}
-.webs .mocks { margin-top: clamp(1.75rem, 3vw, 2.5rem); }
-
-/* ── Retícula de cuatro ─────────────────────────────────────────
-   Los cuatro servicios de tecnología.
-   ──────────────────────────────────────────────────────────────── */
-.grid4 {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 2vw, 1.75rem);
-}
-.tcard {
-  padding: clamp(1.5rem, 2.6vw, 2.125rem);
-  background: var(--canvas-2);
-  border: 1px solid var(--rule);
-  transition: border-color .4s var(--ease), background-color .4s var(--ease);
-}
-.tcard:hover { border-color: var(--accent); background: var(--canvas); }
-.tcard__t {
-  margin-top: 1.125rem;
-  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
-  font-weight: 500;
-  letter-spacing: -.028em;
-  line-height: 1.2;
-}
-.tcard__d { margin-top: .625rem; font-size: .875rem; line-height: 1.6; color: var(--ink-2); }
-.tcard__l { margin-top: 1.125rem; font-size: .8125rem; color: var(--ink-2); }
-.tcard__l li { padding: .3rem 0 .3rem 1rem; position: relative; }
-.tcard__l li::before {
-  content: '';
-  position: absolute;
-  left: 0; top: .95em;
-  width: .375rem; height: 1px;
-  background: var(--sky-ink);
-}
 
 /* ── Botones ────────────────────────────────────────────────── */
 .btn {
@@ -2240,6 +1640,12 @@ html:not(.js) .hdr {
   color: var(--ink-2);
 }
 
+/* Los nombres de los tres estudios dentro de la entradilla. Destacan
+   por COLOR y no por grosor: la jerarquía de esta hoja la da el tamaño
+   o el tono, nunca el peso, y además Inter solo está cargada de 300 a
+   600 —un `font-weight: 700` lo sintetizaría el navegador—. */
+.hero__svc { color: var(--ink); }
+
 /* Alcance geográfico: una línea, sin banderas ni lista de países. Va un
    escalón por debajo del lead para que sitúe sin competir con él. */
 .hero__geo {
@@ -2495,13 +1901,9 @@ html:not(.js) .proc__c { opacity: 1; transform: none; }
   background: var(--canvas);
   box-shadow: inset 0 0 0 1.5px var(--teal-deep);
 }
-/* Optimize no cierra puerta: se desvanece porque el ciclo vuelve a
-   empezar. Es máscara de opacidad, no un degradado de color, así que
-   el fondo de la sección sigue siendo el suyo. */
-.proc__bar--loop .proc__seg {
-  -webkit-mask-image: linear-gradient(to right, #000 45%, transparent);
-  mask-image: linear-gradient(to right, #000 45%, transparent);
-}
+/* `.proc__bar--loop` —el tramo que se desvanecía porque el ciclo volvía
+   a empezar— salió el 2026-08-09 con la etapa «Optimize». Un estudio
+   termina: las cinco etapas cierran puerta, incluida la última. */
 
 @media (prefers-reduced-motion: no-preference) {
   .proc__seg {
@@ -2705,7 +2107,7 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
 .ftr__cols {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 /* Mismo motivo que en `.sec__grid > *`: sin min-width:0 la columna no
@@ -2715,6 +2117,20 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
    de recortarse. */
 .ftr__col { min-width: 0; }
 .ftr__col a { overflow-wrap: anywhere; }
+
+/* La dirección de correo va SIEMPRE en una línea. `overflow-wrap` de
+   arriba la partía en dos —«zolezziconsulting@» / «gmail.com»—, que es
+   exactamente lo que no se quiere en un dato de contacto: se lee mal y
+   se copia peor. El `nowrap` lo impide y el ajuste de tamaño la deja
+   caber en la columna más estrecha del pie sin recortarse.
+
+   La columna que la contiene lleva `--wide`, que en móvil la extiende
+   a las dos columnas del pie. Sin eso, ni con este tamaño cabría. */
+.ftr__mail {
+  overflow-wrap: normal;
+  white-space: nowrap;
+  font-size: clamp(.75rem, 2.6vw, .9375rem);
+}
 .ftr__col h2 {
   font-size: .6875rem;
   font-weight: 500;
@@ -2819,19 +2235,6 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   /* La línea de tiempo se vuelve vertical: seis columnas en un móvil
      dejan cada etapa en 50px y el texto ilegible. El conector
      horizontal desaparece porque ya no une nada. */
-  .tl__line { display: none; }
-  .tl__steps { grid-template-columns: 1fr; gap: 1.5rem; }
-  .tl__i {
-    display: grid;
-    grid-template-columns: 3rem minmax(0, 1fr);
-    column-gap: 1rem;
-    align-items: start;
-  }
-  .tl__dot { grid-row: 1 / 4; }
-  .tl__n, .tl__t, .tl__d { margin-top: 0; grid-column: 2; }
-  .tl__t { margin-top: .15rem; }
-  .tl__d { margin-top: .3rem; }
-
   .svc__cols { grid-template-columns: 1fr; }
   .svc__head { grid-template-columns: 1fr; }
 
@@ -2843,15 +2246,10 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
      pista de cada criterio puede crecer. */
   .scr__r { grid-template-columns: minmax(0, 1fr) minmax(4rem, 7rem) 1.5rem; }
 
-  .grid4  { grid-template-columns: 1fr; }
-  .mocks  { grid-template-columns: 1fr; }
   /* Las dos superficies del visual SEO se apilan: a 170px de ancho
      cada caja, las barras no comunican nada. Lo mismo vale para el
      paquete local y la ficha de negocio, que son la misma familia. */
-  .geo    { grid-template-columns: 1fr; }
-  .gbp    { grid-template-columns: 1fr; }
   .trio   { grid-template-columns: 1fr; }
-  .flw__ns { font-size: .625rem; }
 
   /* El texto dentro de un SVG escala con el viewBox, no con la raíz:
      en un móvil de 390px la meseta se dibuja a 0.73 y la matriz a
@@ -2867,8 +2265,6 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .mx__at    { font-size: 12px; }
   .mx__bl    { font-size: 15px; }
   .mx__gl    { font-size: 14px; }
-  .arq__pl   { font-size: 14px; }
-  .lyr__t    { font-size: 13px; }
   /* El plano de la zona apilado se dibuja a ~1.1 de escala en un móvil
      de 375, así que su rótulo casi no necesita compensación. La escala
      de precio, en cambio, cae a 0.78 y sí. */
@@ -2878,13 +2274,16 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   .prc__cl text { font-size: 12px; }
   .prc__rl   { font-size: 13px; }
   .prc__rv   { font-size: 15px; }
-  .kpis   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feat__l { columns: 1; }
 
   .form__row { grid-template-columns: 1fr; }
 
   .ftr__top { grid-template-columns: 1fr; }
   .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
+  /* La columna de contacto ocupa el ancho entero: media columna del pie
+     son unos 150px y ahí la dirección de correo no cabe de ninguna
+     manera en una sola línea. */
+  .ftr__col--wide { grid-column: 1 / -1; }
   /* Los enlaces del pie medían 19px de alto en táctil. Con el hueco de
      10px entre filas pasan la excepción de separación de la WCAG por
      poco; el relleno los sube a ~29px de zona pulsable propia. */
@@ -2915,8 +2314,7 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
      necesitando que el observador le ponga .is-in. Aquí se les da
      directamente el estado final, así que se ven aunque el observador
      no llegue nunca. */
-  .stall__gap, .stall__gl, .stall__pin,
-  .tl__i    { opacity: 1; }
+  .stall__gap, .stall__gl, .stall__pin { opacity: 1; }
   .stall__now  { stroke-dasharray: none; stroke-dashoffset: 0; }
   .stall__pot  { opacity: .75; }
   .stall__lead { opacity: .5; }
@@ -2928,16 +2326,6 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
   /* La barra del score arranca en scaleX(0): sin esto el panel del
      estudio de viabilidad se quedaría con las cuatro pistas vacías. */
   .scr__f { transform: none; }
-  .arq__x { opacity: 1; }
-  .upt__b { opacity: 1; }
-  .tl__i    { transform: none; }
-  .dash__line { stroke-dasharray: none; stroke-dashoffset: 0; }
-  /* El punto que recorre el flujo desaparece: es puro movimiento y sin
-     él la ilustración sigue leyéndose. */
-  .flw__dot { animation: none; opacity: 0; }
-  .mock:hover .mock__img { transform: none; }
-
-  /* La atmósfera se queda: lo que se detiene es su deriva. El color
-     no es decoración prescindible, la animación sí. */
-  body::before, body::after, .aura span { animation: none; }
+  /* La atmósfera se queda: lo que se detiene es su deriva. */
+  body::before, body::after { animation: none; }
 }
