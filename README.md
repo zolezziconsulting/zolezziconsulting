@@ -138,7 +138,7 @@ el nombre** (`og.jpg` → `og-v2.jpg` → …) y actualizar las cuatro referenci
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año y los
 archivos no llevan hash en el nombre. Por eso `index.html` los enlaza con `?v=N`. **Hay que
 subir ese número en cada cambio** o los visitantes recurrentes seguirán con la versión
-vieja. Va por `v=23`.
+vieja. Va por `v=24`.
 
 ## Adaptación a móvil: la trampa del `min-width: auto`
 

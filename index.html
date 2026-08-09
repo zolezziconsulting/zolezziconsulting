@@ -34,10 +34,10 @@
      Subir el número en cada cambio de styles.css o main.js. -->
 <!-- tokens.css va con <link> y no con @import: sin bundler, un @import
      serializa la descarga y bloquea el render. Así bajan en paralelo. -->
-<link rel="stylesheet" href="/assets/css/tokens.css?v=23">
-<link rel="stylesheet" href="/assets/css/styles.css?v=23">
+<link rel="stylesheet" href="/assets/css/tokens.css?v=24">
+<link rel="stylesheet" href="/assets/css/styles.css?v=24">
 <script>document.documentElement.classList.add('js');</script>
-<script src="/assets/js/main.js?v=23" defer></script>
+<script src="/assets/js/main.js?v=24" defer></script>
 
 <script type="application/ld+json">
 {
@@ -68,10 +68,7 @@
     "Willingness to Pay",
     "Consumer Survey"
   ],
-  "areaServed": [
-    { "@type": "Country", "name": "Perú" },
-    { "@type": "Place", "name": "Latinoamérica" }
-  ],
+  "areaServed": { "@type": "Country", "name": "Perú" },
   "address": {
     "@type": "PostalAddress",
     "addressCountry": "PE"
@@ -128,11 +125,6 @@
       "@type": "Question",
       "name": "¿Qué pasa si el estudio concluye que no es viable?",
       "acceptedAnswer": { "@type": "Answer", "text": "Se lo decimos igual. Un estudio que siempre concluye que sí no vale lo que cuesta, y un no a tiempo sale mucho más barato que un alquiler de cinco años. Cuando la zona o el precio no salen, la recomendación explica bajo qué condiciones sí saldrían." }
-    },
-    {
-      "@type": "Question",
-      "name": "¿Nos acompañan después de la entrega?",
-      "acceptedAnswer": { "@type": "Answer", "text": "La sesión de trabajo va incluida y con ella se cierra el estudio. No vendemos la ejecución de lo que recomendamos, y es a propósito: así no tenemos ningún incentivo para que la conclusión apunte a un servicio nuestro. Esa independencia es justamente lo que hace que el informe sirva para decidir." }
     }
   ]
 }
@@ -327,10 +319,8 @@
         zona</span>, <span class="hero__svc">análisis de competencia</span> y
         <span class="hero__svc">estudio de pricing</span>.
         <span class="dim">Cada uno responde una sola pregunta con datos de campo y termina
-        en una recomendación, no en un anexo de tablas.</span>
+        en una recomendación.</span>
       </p>
-
-      <p class="hero__geo rv" style="--d:.52s">Para empresas de Latinoamérica.</p>
 
       <!-- WhatsApp es el ÚNICO camino de captación desde el 2026-08-09.
            Antes el botón principal llevaba al formulario; se retiró por
@@ -358,9 +348,9 @@
          puede hacer es volver a publicar un marcador de posición. -->
     <ul class="hero__meta">
       <li class="rv" style="--d:.70s"><span>Alcance</span>Zona, competencia y precio</li>
-      <li class="rv" style="--d:.76s"><span>Entregable</span>Una recomendación</li>
+      <li class="rv" style="--d:.76s"><span>Entregable</span>Estudio completo</li>
       <li class="rv" style="--d:.82s"><span>Fuentes</span>Campo y datos públicos</li>
-      <li class="rv" style="--d:.88s"><span>Cobertura</span>Latinoamérica</li>
+      <li class="rv" style="--d:.88s"><span>Cobertura</span>Perú</li>
     </ul>
   </section>
 
@@ -390,7 +380,7 @@
            Es el encuadre de toda la sección: la curva real se aplana,
            la punteada es la trayectoria que seguiría sin el freno, y lo
            que se vende es la BANDA entre las dos. Las seis tarjetas de
-           abajo son las seis causas posibles de esa banda; por eso el
+           abajo son las causas posibles de esa banda; por eso el
            gráfico va antes y no después. -->
       <figure class="stall rv" style="--d:.18s">
         <svg class="stall__svg" viewBox="0 0 480 232" role="img" aria-labelledby="stall-t">
@@ -1131,13 +1121,15 @@
            Estas responden a lo que de verdad frena una compra de
            investigación: si se puede llevar uno solo, de dónde salen
            los datos, cuánto tarda, qué pasa si la respuesta es que no
-           —la más importante de las seis— y si el estudio es en
-           realidad un anzuelo para vender la ejecución.
+           —la más importante de las cinco—.
+
+           Eran seis: «¿Nos acompañan después de la entrega?» se retiró
+           el 2026-08-09 a petición del cliente.
 
            NINGUNA habla de precio ni de modelo de cobro: es la misma
            decisión que retiró `.feat__meta` de los servicios.
 
-           El JSON-LD de FAQPage de la cabecera REPLICA estas seis
+           El JSON-LD de FAQPage de la cabecera REPLICA estas cinco
            palabra por palabra. Cambiar una aquí y no allí publica
            datos estructurados que no coinciden con la página. -->
       <div class="sec__body faq" id="faq-list">
@@ -1198,17 +1190,6 @@
           explica bajo qué condiciones sí saldrían.</p></div></div>
         </div>
 
-        <div class="faq__i rv">
-          <h3><button class="faq__q" type="button" aria-expanded="false" aria-controls="a6">
-            <span>¿Nos acompañan después de la entrega?</span>
-            <svg aria-hidden="true"><use href="#i-plus"/></svg>
-          </button></h3>
-          <div class="faq__a" id="a6"><div><p>La sesión de trabajo va incluida y con ella se
-          cierra el estudio. No vendemos la ejecución de lo que recomendamos, y es a
-          propósito: así no tenemos ningún incentivo para que la conclusión apunte a un
-          servicio nuestro. Esa independencia es justamente lo que hace que el informe sirva
-          para decidir.</p></div></div>
-        </div>
       </div>
     </div>
   </section>
