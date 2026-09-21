@@ -71,7 +71,15 @@
 /assets/img/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Las tres páginas HTML. Cloudflare Pages ya las sirve sin caché de
+# navegador, pero declararlo evita depender de un valor por defecto.
 /index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/technology-partners/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/soluciones/*
   Cache-Control: public, max-age=0, must-revalidate
 
 # `_headers` NO se aplica a lo que devuelve una Function: comprobado el

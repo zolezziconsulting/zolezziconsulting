@@ -1,4 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ZOLEZZI">
-  <rect width="64" height="64" fill="#0a0a0a"/>
-  <path fill="#ffffff" d="M18 20h28v5.4L27.4 39H46v5H18v-5.4L36.6 25H18z"/>
+<!-- ZOLEZZI SOLUTIONS — la marca en un glifo.
+     La Z se lee como tres piezas: la barra superior es la tecnología
+     global, la inferior el mercado peruano y la DIAGONAL es el puente
+     entre ambas, que es literalmente el negocio de la empresa.
+     Por eso la diagonal lleva el degradado de la costura y es la única
+     pieza que lo lleva.
+     Los colores van literales y no por token: un favicon se sirve
+     suelto y no puede enlazar la hoja de estilos. Si cambia la paleta
+     de tokens.css, hay que actualizarlos aquí a mano. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Zolezzi Solutions">
+  <defs>
+    <linearGradient id="costura" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8AA6FF"/>
+      <stop offset="1" stop-color="#FF8A4C"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" fill="#070B14"/>
+  <path fill="#8AA6FF" d="M12 14h40v8H12z"/>
+  <path fill="url(#costura)" d="M52 22 39 22 12 42 25 42z"/>
+  <path fill="#FF8A4C" d="M12 42h40v8H12z"/>
 </svg>

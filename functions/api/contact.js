@@ -39,14 +39,33 @@ const FORMSPREE_RESPALDO = 'https://formspree.io/f/mdaqjygn';
 const MAX_CUERPO = 32 * 1024;
 
 /* Los mismos nombres que el marcado. Cualquier campo que no esté aquí
-   se descarta: un atacante no puede inyectar campos extra al correo. */
+   se DESCARTA: es una lista blanca, no una lista negra, así que nadie
+   puede inyectar campos extra en el correo manipulando el formulario.
+
+   Es un superconjunto de los dos formularios del sitio —el de
+   Technology Partners y el de Soluciones— y por eso casi todo es
+   opcional: cada página envía solo los suyos. Lo obligatorio es lo
+   que hace accionable un contacto comercial: quién escribe, de qué
+   organización, cómo responderle y qué necesita. */
 const CAMPOS = {
-  nombre:   { max: 120,  requerido: true },
-  empresa:  { max: 160,  requerido: false },
-  email:    { max: 160,  requerido: true },
-  telefono: { max: 40,   requerido: false },
-  servicio: { max: 90,   requerido: false },
-  mensaje:  { max: 4000, requerido: true }
+  // Discrimina los dos formularios. Va en el asunto del correo, que es
+  // lo que permite triarlos sin abrirlos.
+  tipo:      { max: 40,   requerido: false },
+  empresa:   { max: 160,  requerido: true },
+  nombre:    { max: 120,  requerido: true },
+  cargo:     { max: 120,  requerido: false },
+  email:     { max: 160,  requerido: true },
+  telefono:  { max: 40,   requerido: false },
+  // Solo Technology Partners
+  pais:      { max: 80,   requerido: false },
+  web:       { max: 200,  requerido: false },
+  categoria: { max: 120,  requerido: false },
+  presencia: { max: 120,  requerido: false },
+  // Solo Soluciones
+  sector:    { max: 120,  requerido: false },
+  area:      { max: 120,  requerido: false },
+
+  mensaje:   { max: 4000, requerido: true }
 };
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -87,13 +106,13 @@ function json(estado, cuerpo) {
 function pagina(estado, titulo, texto) {
   const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${titulo} · ZOLEZZI Consulting</title>
+<title>${titulo} · Zolezzi Solutions</title>
 <link rel="stylesheet" href="/assets/css/tokens.css">
 <link rel="stylesheet" href="/assets/css/styles.css">
-</head><body><main class="sec"><div class="sec__grid"><div class="sec__head">
-<h1 class="h2">${titulo}</h1><p class="sec__note">${texto}</p>
-<p class="sec__note"><a class="lnk" href="/">Volver al inicio</a></p>
-</div></div></main></body></html>`;
+</head><body class="night"><main class="band"><div class="shell">
+<h1 class="d2">${titulo}</h1><p class="lead" style="margin-top:1.5rem">${texto}</p>
+<p style="margin-top:2rem"><a class="lnk" href="/">Volver al inicio</a></p>
+</div></main></body></html>`;
   return new Response(html, {
     status: estado,
     headers: { ...SEGURIDAD, 'content-type': 'text/html; charset=utf-8' }
@@ -183,7 +202,13 @@ export async function onRequestPost(context) {
         ...datos,
         // Formspree usa `_replyto` para que «Responder» vaya al remitente.
         _replyto: datos.email,
-        _subject: 'Consulta desde zolezziconsulting.com' + (datos.servicio ? ' · ' + datos.servicio : '')
+        /* El asunto lleva el tipo de formulario y la empresa: son los
+           dos datos con los que se tría la bandeja sin abrir el
+           correo, y los dos públicos exigen respuestas muy distintas. */
+        _subject:
+          '[' + (datos.tipo || 'Contacto') + '] ' +
+          (datos.empresa || datos.nombre || 'Nueva consulta') +
+          ' — zolezziconsulting.com'
       })
     });
   } catch {

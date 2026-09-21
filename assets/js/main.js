@@ -1,44 +1,38 @@
 /* ================================================================
-   ZOLEZZI Consulting — Concepto «Monolito»
-   Sin dependencias. Un solo manejador de scroll, throttled con rAF:
-   cabecera, barra de progreso, inversión sobre bloques negros y
-   relleno del raíl del proceso comparten el mismo frame.
+   ZOLEZZI SOLUTIONS — Sistema «Doble Puerta»
+   ----------------------------------------------------------------
+   Sin dependencias. Un solo manejador de scroll, limitado con rAF:
+   la cabecera, la barra de progreso y la inversión sobre los bloques
+   de noche comparten el mismo frame.
+
+   El mismo archivo sirve a las tres páginas. Todo lo que pueda no
+   existir en una de ellas se comprueba antes de usarlo.
    ================================================================ */
 (function () {
   'use strict';
 
-  // Número de WhatsApp Business, cambiado el 2026-08-09. El anterior
-  // (…954715846) era la línea personal y ya no atiende.
-  //
-  // El mensaje viaja precargado en el enlace a propósito: quien pulsa
-  // llega a la conversación con el texto ya escrito y solo tiene que
-  // darle a enviar. Es una fricción menos, y la que más se nota.
+  /* ── WhatsApp ────────────────────────────────────────────────
+     El mensaje viaja precargado en el enlace: quien pulsa llega a la
+     conversación con el texto escrito y solo tiene que darle a
+     enviar. Vive aquí y no en el marcado para no repetirlo en las
+     tres páginas y que acaben desincronizándose. */
   var WA_NUM = '51941519053';
   var WA_MSG = 'Hola, quisiera información sobre sus servicios.';
   var WA = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_MSG);
 
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var clamp = function (n) { return n < 0 ? 0 : n > 1 ? 1 : n; };
-
-  /* ── Enlaces de WhatsApp ─────────────────────────────────── */
   Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'), function (a) {
     a.href = WA;
   });
 
-  /* ── Scroll: cabecera, progreso, inversión y raíl ────────── */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp = function (n) { return n < 0 ? 0 : n > 1 ? 1 : n; };
+
+  /* ── Scroll: cabecera, inversión y progreso ──────────────────── */
   var hdr = document.getElementById('hdr');
   var bar = document.getElementById('hdr-bar');
-  // Raíles que se llenan con el scroll: la metodología y el diagrama
-  // del enfoque comparten el mismo mecanismo (--p sobre el contenedor).
-  var rails = [document.getElementById('proc')].filter(Boolean);
-  // EL HERO TIENE QUE ESTAR EN ESTA LISTA. Es un bloque oscuro como los
-  // demás —la hoja le da los mismos tokens en `.hero, .sec--dark, .cta,
-  // .ftr`— pero no lleva la clase .sec--dark, así que se quedaba fuera
-  // del selector y la cabecera nunca se invertía nada más cargar.
-  // Resultado medido: la marca «ZOLEZZI» salía en #0C1A22 sobre el
-  // #0A1720 del hero, 1.03:1, y el hover del menú igual. Invisibles
-  // justo en el primer pantallazo de la página.
-  var darks = document.querySelectorAll('.hero, .sec--dark, .cta, .ftr');
+  // Los bloques de ámbito oscuro. Incluye el pie: la cabecera también
+  // tiene que invertirse cuando se llega al final de la página.
+  var darks = document.querySelectorAll('.night');
   var ticking = false;
 
   function frame() {
@@ -47,12 +41,12 @@
     /* Primero todas las lecturas del DOM y después todas las
        escrituras. Intercalarlas obliga al navegador a recalcular el
        estilo en mitad de cada frame de scroll. */
-
     var y = window.scrollY || window.pageYOffset;
     var vh = window.innerHeight;
     var scrollable = document.documentElement.scrollHeight - vh;
 
-    // La cabecera se invierte cuando su línea media cae sobre un bloque negro.
+    // La cabecera se invierte cuando su línea media cae sobre un
+    // bloque de noche.
     var mid = hdr.getBoundingClientRect().height / 2;
     var inv = false;
     for (var i = 0; i < darks.length; i++) {
@@ -60,19 +54,11 @@
       if (r.top <= mid && r.bottom >= mid) { inv = true; break; }
     }
 
-    // Cada raíl se llena según avanza su lista por la línea de foco
-    // (60% de la altura de ventana).
-    var fills = rails.map(function (el) {
-      var r = el.getBoundingClientRect();
-      return clamp((vh * 0.6 - r.top) / r.height).toFixed(4);
-    });
-
-    // 80px: por debajo de eso la cabecera sigue transparente sobre el
-    // hero, que es lo que da la sensación de que flota.
-    hdr.classList.toggle('is-scrolled', y > 80);
-    hdr.classList.toggle('is-inv', inv);
-    bar.style.setProperty('--p', scrollable > 0 ? clamp(y / scrollable).toFixed(4) : '0');
-    rails.forEach(function (el, i) { el.style.setProperty('--p', fills[i]); });
+    hdr.classList.toggle('is-stuck', y > 60);
+    hdr.classList.toggle('is-night', inv);
+    if (bar) {
+      bar.style.setProperty('--p', scrollable > 0 ? clamp(y / scrollable).toFixed(4) : '0');
+    }
   }
 
   function onScroll() {
@@ -85,301 +71,182 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
 
-  /* ── Menú móvil ──────────────────────────────────────────── */
+  /* ── Menú móvil ──────────────────────────────────────────────── */
   var burger = document.getElementById('burger');
   var drawer = document.getElementById('drawer');
 
-  function setDrawer(open) {
-    burger.setAttribute('aria-expanded', String(open));
-    burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
-    document.body.style.overflow = open ? 'hidden' : '';
-    if (open) {
-      drawer.hidden = false;
-      requestAnimationFrame(function () {
-        // El rAF puede llegar muy tarde si la pestaña no está pintando o si
-        // hay un doble toque. Sin esta comprobación la clase acabaría sobre
-        // un cajón que ya se mandó cerrar.
-        if (burger.getAttribute('aria-expanded') === 'true') drawer.classList.add('is-open');
-      });
-    } else {
-      drawer.classList.remove('is-open');
-      window.setTimeout(function () {
-        if (burger.getAttribute('aria-expanded') === 'false') drawer.hidden = true;
-      }, reduce ? 0 : 350);
-    }
+  if (burger && drawer) {
+    var setDrawer = function (open) {
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      document.body.style.overflow = open ? 'hidden' : '';
+      if (open) {
+        drawer.hidden = false;
+        requestAnimationFrame(function () {
+          // El rAF puede llegar tarde si la pestaña no está pintando o
+          // si hay un doble toque. Sin esta comprobación la clase
+          // acabaría sobre un cajón que ya se mandó cerrar.
+          if (burger.getAttribute('aria-expanded') === 'true') drawer.classList.add('is-open');
+        });
+      } else {
+        drawer.classList.remove('is-open');
+        window.setTimeout(function () {
+          if (burger.getAttribute('aria-expanded') === 'false') drawer.hidden = true;
+        }, reduce ? 0 : 300);
+      }
+    };
+
+    burger.addEventListener('click', function () {
+      setDrawer(burger.getAttribute('aria-expanded') !== 'true');
+    });
+    drawer.addEventListener('click', function (e) {
+      if (e.target.closest('a')) setDrawer(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+        setDrawer(false);
+        burger.focus();
+      }
+    });
   }
 
-  burger.addEventListener('click', function () {
-    setDrawer(burger.getAttribute('aria-expanded') !== 'true');
-  });
-  drawer.addEventListener('click', function (e) {
-    if (e.target.closest('a')) setDrawer(false);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
-      setDrawer(false);
-      burger.focus();
-    }
-  });
+  /* ── Revelado progresivo ─────────────────────────────────────
+     Un solo observador para los cuatro mecanismos de entrada: el
+     bloque que se desvanece, el titular que sube por línea, el raíl
+     del corredor y el filete superior de cada puerta. */
 
-  /* ── Revelado progresivo ─────────────────────────────────── */
-
-  // El hero entra siempre al cargar. Confiarlo al observador dejaba la
-  // fila inferior invisible en pantallas altas, donde cae fuera del
+  // El hero entra siempre al cargar. Confiarlo al observador dejaba
+  // la parte baja invisible en pantallas altas, donde cae fuera del
   // rootMargin negativo y parece que falta contenido.
   requestAnimationFrame(function () {
     Array.prototype.forEach.call(
-      document.querySelectorAll('.hero .rv, .hero .mask'),
-      function (el) { el.classList.add('is-in'); }
+      document.querySelectorAll('.hero .rev, .hero .rev-lines'),
+      function (el) { el.classList.add('in'); }
     );
   });
 
-  // .stall, .zon y .prc entran por su clase .rv, así que no necesitan
-  // mención aparte. .fnl y .rad salieron con el embudo y el radial;
-  // .tl y .dash, con la línea de tiempo y el panel de campaña.
-  var revealables = document.querySelectorAll('.rv, .mask, .proc__i');
+  var revealables = document.querySelectorAll('.rev, .rev-lines, .flow, .door');
 
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-in');
+        entry.target.classList.add('in');
         io.unobserve(entry.target);
       });
-      // El margen superior enorme da por revelado todo lo que queda por
-      // encima de la ventana. Sin él, saltar con un enlace de anclaje y
-      // volver hacia arriba dejaba secciones enteras en blanco: el
+      // El margen superior enorme da por revelado todo lo que queda
+      // por encima de la ventana. Sin él, llegar con un enlace de
+      // anclaje y volver hacia arriba dejaba secciones en blanco: el
       // observador nunca las vio intersecar.
-    }, { rootMargin: '9999px 0px -10% 0px', threshold: 0.1 });
+    }, { rootMargin: '9999px 0px -8% 0px', threshold: 0.08 });
     Array.prototype.forEach.call(revealables, function (el) { io.observe(el); });
   } else {
-    Array.prototype.forEach.call(revealables, function (el) { el.classList.add('is-in'); });
+    Array.prototype.forEach.call(revealables, function (el) { el.classList.add('in'); });
   }
 
-  /* El manejador del radial de go-to-market vivía aquí. Salió el
-     2026-08-07 con el servicio que ilustraba, junto con el embudo
-     comercial. Para recuperarlo: git log -S'rad-gtm' -- assets/js/main.js */
+  /* ── Formulario → /api/contact ───────────────────────────────
+     Genérico: sirve al de Technology Partners y al de Soluciones sin
+     saber cuál es cuál. Los campos concretos los valida el servidor;
+     aquí solo se comprueba lo imprescindible para no hacer viajar un
+     envío que va a rebotar.
 
-  /* Los contadores animados vivían aquí: los del embudo comercial y
-     los del panel de campaña de Google Ads. No queda ningún
-     [data-count] en la página desde el 2026-08-09, así que se retiran
-     junto con su observador. Para recuperarlos:
-     git log -S"runCount" -- assets/js/main.js */
+     El `action` apunta a una Cloudflare Pages Function, NO al
+     proveedor de correo: el endpoint real nunca se sirve al cliente. */
+  var form = document.querySelector('form[data-contact]');
 
-  /* ── Desplegable «Servicios» ─────────────────────────────────
-     Se abre al pasar el puntero y también al pulsar, porque en táctil
-     y con teclado no hay hover. El <button> lleva aria-expanded y el
-     panel se oculta con [hidden], no solo con CSS: así el contenido no
-     existe para el lector de pantalla mientras está cerrado. */
-  var srvBtn = document.getElementById('nav-srv');
-  var srvMenu = document.getElementById('nav-srv-menu');
+  if (form) {
+    var submit = document.getElementById('submit');
+    // La etiqueta vive en su propio span: escribir sobre el botón
+    // entero se llevaría por delante el svg de la flecha.
+    var submitT = document.getElementById('submit-t');
+    var msg = document.getElementById('form-msg');
+    var sending = false;
+    // La etiqueta original del botón, guardada para restaurarla al
+    // terminar el envío sin tenerla escrita dos veces en el archivo.
+    var label = submitT ? submitT.textContent : 'Enviar';
 
-  if (srvBtn && srvMenu) {
-    var srvGrp = srvBtn.parentNode;
-    var hoverable = window.matchMedia('(hover: hover)');
-
-    var setSrv = function (open) {
-      srvBtn.setAttribute('aria-expanded', String(open));
-      srvMenu.hidden = !open;
+    var fieldError = function (input, show) {
+      var wrap = input.closest('.f');
+      if (!wrap) return;
+      var box = wrap.querySelector('.err');
+      wrap.classList.toggle('is-bad', show);
+      if (box) box.hidden = !show;
+      input.setAttribute('aria-invalid', String(show));
     };
 
-    srvBtn.addEventListener('click', function () {
-      setSrv(srvBtn.getAttribute('aria-expanded') !== 'true');
-    });
+    var isValid = function (input) {
+      var v = input.value.trim();
+      if (!input.required) return true;
+      if (input.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+      return v.length > 1;
+    };
 
-    // Solo con puntero real. En táctil, `pointerenter` llega junto al
-    // toque y el par enter+click abriría y cerraría en el mismo gesto.
-    srvGrp.addEventListener('pointerenter', function (e) {
-      if (e.pointerType === 'touch' || !hoverable.matches) return;
-      setSrv(true);
-    });
-    srvGrp.addEventListener('pointerleave', function (e) {
-      if (e.pointerType === 'touch' || !hoverable.matches) return;
-      setSrv(false);
-    });
+    var say = function (text, bad) {
+      msg.textContent = text;
+      msg.classList.toggle('form__msg--bad', !!bad);
+      msg.hidden = false;
+    };
 
-    // Un enlace del panel cierra el menú; si no, al volver de la
-    // sección el panel seguiría desplegado sobre el contenido.
-    srvMenu.addEventListener('click', function (e) {
-      if (e.target.closest('a')) setSrv(false);
-    });
+    form.addEventListener('submit', function (e) {
+      // Sin fetch dejamos que el navegador haga el POST nativo: la
+      // Function responde con una página de confirmación.
+      if (!window.fetch) return;
+      e.preventDefault();
 
-    document.addEventListener('keydown', function (e) {
-      if (e.key !== 'Escape' || srvBtn.getAttribute('aria-expanded') !== 'true') return;
-      setSrv(false);
-      srvBtn.focus();
-    });
+      // Corta el reenvío por doble clic o por Enter mientras la
+      // petición está en vuelo.
+      if (sending) return;
 
-    // Pulsar fuera cierra. Con focusin se cubre además el tabulado:
-    // al salir del grupo con el teclado el panel se recoge solo.
-    document.addEventListener('pointerdown', function (e) {
-      if (!srvGrp.contains(e.target)) setSrv(false);
-    });
-    document.addEventListener('focusin', function (e) {
-      if (!srvGrp.contains(e.target)) setSrv(false);
-    });
-  }
+      var fields = Array.prototype.slice.call(form.querySelectorAll('.f input, .f textarea'));
+      var invalid = null;
 
-  /* ── Sección activa en el menú ───────────────────────────────
-     El vigía se guía por `data-spy` y no por el href, porque
-     «Servicios» es un botón sin destino que representa TRES secciones.
-     Cada entrada declara qué ids ilumina y aquí solo se comprueba
-     pertenencia. */
-  var links = Array.prototype.slice.call(document.querySelectorAll('.nav__link[data-spy]'));
-  var ids = [];
-  links.forEach(function (a) {
-    a.getAttribute('data-spy').split(/\s+/).forEach(function (id) {
-      if (id && ids.indexOf(id) === -1) ids.push(id);
-    });
-  });
-  var targets = ids
-    .map(function (id) { return document.getElementById(id); })
-    .filter(Boolean);
-
-  if ('IntersectionObserver' in window && targets.length) {
-    var visible = new Map();
-    var subLinks = srvMenu
-      ? Array.prototype.slice.call(srvMenu.querySelectorAll('a'))
-      : [];
-
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { visible.set(e.target.id, e.intersectionRatio); });
-
-      var top = '';
-      var best = 0;
-      visible.forEach(function (ratio, id) {
-        if (ratio > best) { best = ratio; top = id; }
+      fields.forEach(function (input) {
+        var bad = !isValid(input);
+        fieldError(input, bad);
+        if (bad && !invalid) invalid = input;
       });
 
-      links.forEach(function (a) {
-        var on = a.getAttribute('data-spy').split(/\s+/).indexOf(top) !== -1;
-        a.classList.toggle('is-active', on);
-        // aria-current solo en enlaces: en el botón del grupo no
-        // designa una página y sobra.
-        if (on && a.tagName === 'A') { a.setAttribute('aria-current', 'true'); }
-        else { a.removeAttribute('aria-current'); }
-      });
-
-      // Dentro del panel se marca además el servicio concreto.
-      subLinks.forEach(function (a) {
-        a.classList.toggle('is-active', a.getAttribute('href') === '#' + top);
-      });
-    }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
-    targets.forEach(function (s) { spy.observe(s); });
-  }
-
-  /* El manejador de pestañas de «Casos de uso» vivía aquí. La sección
-     no existe en el marcado desde hace varias fases —querySelectorAll
-     devolvía siempre cero— así que se retiró junto con su CSS. */
-
-  /* ── Preguntas frecuentes ────────────────────────────────── */
-  var faqs = Array.prototype.slice.call(document.querySelectorAll('.faq__q'));
-
-  faqs.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var item = btn.closest('.faq__i');
-      var open = btn.getAttribute('aria-expanded') === 'true';
-
-      // Acordeón de una sola respuesta abierta.
-      faqs.forEach(function (other) {
-        other.setAttribute('aria-expanded', 'false');
-        other.closest('.faq__i').classList.remove('is-open');
-      });
-
-      if (!open) {
-        btn.setAttribute('aria-expanded', 'true');
-        item.classList.add('is-open');
+      if (invalid) {
+        say('Revise los campos marcados antes de enviar.', true);
+        invalid.focus();
+        return;
       }
-    });
-  });
 
-  /* ── Formulario → Formspree ──────────────────────────────── */
-  var form = document.getElementById('form');
-  var submit = document.getElementById('submit');
-  // La etiqueta vive en su propio span: escribir sobre el botón entero
-  // se llevaría por delante el svg de la flecha.
-  var submitT = document.getElementById('submit-t');
-  var msg = document.getElementById('form-msg');
+      sending = true;
+      msg.hidden = true;
+      submit.disabled = true;
+      submit.setAttribute('aria-busy', 'true');
+      submitT.textContent = 'Enviando…';
 
-  function fieldError(input, show) {
-    var wrap = input.closest('.f');
-    var box = wrap.querySelector('.err');
-    wrap.classList.toggle('is-err', show);
-    if (box) box.hidden = !show;
-    input.setAttribute('aria-invalid', String(show));
-  }
-
-  function isValid(input) {
-    var v = input.value.trim();
-    if (!input.required) return true;
-    if (input.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-    return v.length > 1;
-  }
-
-  function say(text, bad) {
-    msg.textContent = text;
-    msg.classList.toggle('form__msg--ko', !!bad);
-    msg.hidden = false;
-  }
-
-  var sending = false;
-
-  form.addEventListener('submit', function (e) {
-    // Sin fetch disponible dejamos que el navegador haga el POST nativo a Formspree.
-    if (!window.fetch) return;
-    e.preventDefault();
-
-    // Corta el reenvío por doble clic o por Enter mientras la petición está en vuelo.
-    if (sending) return;
-
-    var fields = Array.prototype.slice.call(form.querySelectorAll('.f input, .f textarea'));
-    var invalid = null;
-
-    fields.forEach(function (input) {
-      var bad = !isValid(input);
-      fieldError(input, bad);
-      if (bad && !invalid) invalid = input;
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error(String(res.status));
+          form.reset();
+          say('Gracias. Hemos recibido su mensaje y le responderemos en un día hábil.');
+        })
+        .catch(function () {
+          say('No pudimos enviar su mensaje. Vuelva a intentarlo o escríbanos por WhatsApp.', true);
+        })
+        .then(function () {
+          sending = false;
+          submit.disabled = false;
+          submit.removeAttribute('aria-busy');
+          submitT.textContent = label;
+        });
     });
 
-    if (invalid) {
-      say('Revise los campos marcados antes de enviar.', true);
-      invalid.focus();
-      return;
-    }
+    form.addEventListener('input', function (e) {
+      var el = e.target;
+      var wrap = el.closest('.f');
+      if (wrap && wrap.classList.contains('is-bad')) fieldError(el, !isValid(el));
+    });
+  }
 
-    sending = true;
-    msg.hidden = true;
-    submit.disabled = true;
-    submit.setAttribute('aria-busy', 'true');
-    submitT.textContent = 'Enviando…';
-
-    fetch(form.action, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { Accept: 'application/json' }
-    })
-      .then(function (res) {
-        if (!res.ok) throw new Error(String(res.status));
-        form.reset();
-        say('Gracias. Hemos recibido su mensaje y le responderemos en un día hábil.');
-      })
-      .catch(function () {
-        say('No pudimos enviar su mensaje. Vuelva a intentarlo o escríbanos por WhatsApp.', true);
-      })
-      .then(function () {
-        sending = false;
-        submit.disabled = false;
-        submit.removeAttribute('aria-busy');
-        submitT.textContent = 'Enviar mensaje';
-      });
-  });
-
-  form.addEventListener('input', function (e) {
-    var el = e.target;
-    var wrap = el.closest('.f');
-    if (wrap && wrap.classList.contains('is-err')) fieldError(el, !isValid(el));
-  });
-
-  /* ── Año en el footer ────────────────────────────────────── */
-  document.getElementById('year').textContent = String(new Date().getFullYear());
+  /* ── Año en el pie ───────────────────────────────────────────── */
+  var year = document.getElementById('year');
+  if (year) year.textContent = String(new Date().getFullYear());
 })();

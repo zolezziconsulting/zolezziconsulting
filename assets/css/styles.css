@@ -1,405 +1,167 @@
 /* ================================================================
-   ZOLEZZI Consulting — Concepto «Documento»
-   Blanco dominante · bloques de azul noche a sangre · Inter monumental
+   ZOLEZZI SOLUTIONS — Sistema «Doble Puerta»
    ----------------------------------------------------------------
-   Los bloques oscuros no redefinen componentes: reasignan los
-   tokens de color en su propio ámbito y todo lo de dentro se
-   invierte solo. Cualquier componente nuevo debe usar los tokens,
-   nunca colores literales, o romperá esa inversión.
+   Sustituye por completo al sistema «Documento» de la etapa como
+   consultora. No queda nada de aquel: ni componentes, ni escala, ni
+   tipografía, ni retícula.
 
-   El azul --accent SÍ puede ser tinta (10.3:1 sobre blanco), a
-   diferencia de la gama cálida anterior. Se reserva para estructura
-   —numerales, foco, estado activo, filete de énfasis—, nunca para
-   texto corrido ni para rellenos decorativos.
+   EL PRINCIPIO. La empresa es bilateral y el diseño lo es también.
+   Cada bloque pertenece a un ámbito —global u local— y el ámbito se
+   declara con una clase que REASIGNA LOS TOKENS, no con colores
+   sueltos. Cualquier componente escrito contra los tokens se adapta
+   solo al caer dentro de un ámbito u otro. Si un componente declara
+   un color literal, romperá esa inversión.
+
+   TRES DEUDAS HEREDADAS que este archivo paga de entrada, porque
+   costaron sesiones enteras de depuración en la versión anterior:
+
+   1. `min-width: 0` en los hijos de toda rejilla. Un ítem de rejilla
+      nace con min-width:auto y no puede encogerse por debajo del
+      min-content de su contenido; basta una tabla ancha o una palabra
+      larga para ensanchar la pista, luego la rejilla y luego el
+      documento, hasta que el móvil enseña la página al 75%.
+   2. Techo proporcional `min(clamp(...), Nvw)` en todo titular de
+      display. El clamp deja de encoger por debajo de ~420px mientras
+      el contenedor sigue estrechándose, y la línea más larga se parte
+      en dos, lo que rompe el recorte por línea de `.rev-line`.
+   3. `position: relative` en todo contenedor con scroll propio. Un
+      absoluto anclado fuera de él no lo recorta y se lleva el ancho
+      del documento por delante.
    ================================================================ */
 
+/* ── Tipografías ────────────────────────────────────────────────
+   Dos familias y ninguna más.
+
+   Archivo es una grotesca de rejilla estrecha pensada para titulares
+   de alto impacto: a cuerpo grande y con el tracking cerrado tiene la
+   densidad institucional que pide un interlocutor enterprise, sin el
+   aire de startup que dan las geométricas.
+
+   Inter va en todo lo demás. Es la que mejor se comporta en tamaños
+   de interfaz y en tablas, y es lo que espera leer alguien que pasa
+   el día en paneles de control.
+
+   Ambas autoalojadas y con subset latin, por rendimiento y porque un
+   tercero menos es un vector de seguimiento menos. */
+@font-face {
+  font-family: 'Archivo';
+  src: url('/assets/fonts/archivo-latin.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face {
   font-family: 'Inter';
   src: url('/assets/fonts/inter-latin.woff2') format('woff2');
-  font-weight: 300 600;
+  font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 
-/* ── Tokens ─────────────────────────────────────────────────── */
+/* ── Alias y escala ─────────────────────────────────────────────
+   Los componentes se escriben contra estos nombres genéricos
+   —--canvas, --fg, --rule— y NUNCA contra los de tokens.css. Es lo
+   que permite que un mismo componente funcione en los dos ámbitos
+   sin escribirlo dos veces. */
 :root {
   color-scheme: light;
 
-  /* ── Capa de alias ───────────────────────────────────────────
-     Los componentes de esta hoja están escritos contra nombres
-     internos (--canvas, --rule, --accent…). En lugar de renombrar
-     unos 200 usos repartidos por todo el archivo, se mapean aquí
-     contra los tokens de tokens.css, que es la única fuente de
-     verdad. Ningún componente ha tenido que tocarse.
+  --canvas:    var(--bone);
+  --canvas-2:  var(--surface);
+  --fg:        var(--ink);
+  --fg-2:      var(--ink-2);
+  --fg-3:      var(--ink-3);
+  --rule:      var(--line);
+  --rule-str:  var(--line-str);
+  --accent:    var(--signal-ink);
+  --accent-fill: var(--signal);
+  --accent-on-fill: #FFFFFF;
 
-     --ink NO se declara: viene tal cual de tokens.css. */
-  --canvas:   var(--bg-base);
-  --canvas-2: var(--bg-surface);
-  /* La paleta define dos niveles de tinta sobre claro, no tres. Los
-     antiguos --ink-2 y --ink-3 colapsan ambos en --ink-soft: se
-     pierde un escalón de jerarquía en antetítulos y metadatos, pero
-     no se inventa ningún color fuera de la paleta. */
-  --ink-2:    var(--ink-soft);
-  --ink-3:    var(--ink-soft);
-  --rule:     var(--borde);
-  --rule-2:   var(--borde);
+  --display: 'Archivo', 'Segoe UI', system-ui, sans-serif;
+  --ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
-  /* Sobre fondo claro, todo lo que sea tinta o enlace va en
-     --teal-deep. Turquesa y celeste están prohibidos ahí. */
-  --accent:   var(--teal-deep);
-  --navy:     var(--bg-dark);
-  --blue:     var(--teal-deep);
-  --sky:      var(--celeste);
-  --teal:     var(--turquesa);
-  --sky-ink:  var(--teal-deep);
-  --teal-ink: var(--teal-deep);
+  --gutter: clamp(1.25rem, 5vw, 5.5rem);
+  --maxw: 1280px;
+  --shell: calc(var(--maxw) + var(--gutter) * 2);
+  --band: clamp(5rem, 11vh, 9rem);
 
-  --c-navy: var(--c-dark);
-  --c-blue: var(--c-teal);
-  --c-sky:  var(--c-celeste);
-
-  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-
-  --margin: clamp(1.25rem, 5.5vw, 7.5rem);
-  /* --maxw es el ancho del CONTENIDO. --shell le suma los márgenes,
-     porque con box-sizing:border-box un max-width a secas se los come
-     y en pantallas grandes la retícula quedaba 200px más estrecha. */
-  --maxw:   1340px;
-  --shell:  calc(var(--maxw) + var(--margin) * 2);
-  --gap:    clamp(2rem, 4vw, 5rem);
-
-  --hdr-h: 76px;
-  --ease:  cubic-bezier(.22, .61, .36, 1);
+  --hdr: 72px;
+  --ease: cubic-bezier(.22, .61, .36, 1);
   --ease-o: cubic-bezier(.16, 1, .3, 1);
 }
 
-/* Ámbito oscuro. Solo cambia el significado de los tokens y todo lo de
-   dentro se adapta solo. El hero entra aquí: en el ritmo nuevo abre en
-   oscuro.
+/* ── Ámbito global: la noche ────────────────────────────────────
+   Reasigna los alias y todo lo de dentro se invierte solo. */
+.night {
+  --canvas:   var(--night);
+  --canvas-2: var(--night-2);
+  --fg:       var(--on-night);
+  --fg-2:     var(--on-night-2);
+  --fg-3:     var(--on-night-3);
+  --rule:     var(--line-night);
+  --rule-str: var(--line-night-str);
+  --accent:   var(--signal-soft);
+  --accent-fill: var(--signal);
+  --accent-on-fill: #FFFFFF;
 
-   Los tonos intermedios se DERIVAN de --ink-invert con color-mix, no
-   se inventan: la paleta define un solo tono de tinta sobre oscuro y
-   hacen falta dos escalones más para antetítulos y filetes. El valor
-   estático que precede a cada color-mix es el respaldo para navegadores
-   que no lo soportan. */
-.hero,
-.sec--dark,
-.cta,
-.ftr {
-  --canvas:   var(--bg-dark);
-  --canvas-2: var(--bg-dark-alt);
-  --ink:      var(--ink-invert);
-
-  --ink-2: #a7b2b6;
-  --ink-2: color-mix(in srgb, var(--ink-invert) 70%, var(--bg-dark));
-  --ink-3: #859196;
-  --ink-3: color-mix(in srgb, var(--ink-invert) 55%, var(--bg-dark));
-  --rule: rgba(234, 244, 246, .20);
-  --rule: color-mix(in srgb, var(--ink-invert) 20%, transparent);
-  --rule-2: rgba(234, 244, 246, .10);
-  --rule-2: color-mix(in srgb, var(--ink-invert) 10%, transparent);
-
-  /* Sobre oscuro el acento sí puede ser de marca: 12:1. */
-  --accent: var(--acento);
-
-  position: relative;
   background: var(--canvas);
-  color: var(--ink);
+  color: var(--fg);
 }
 
-/* Los otros dos fondos claros del ritmo. --bg-base es el de por
-   defecto y no necesita modificador.
-
-   Ojo con --canvas-2 (el fondo de las tarjetas): sobre una sección
-   blanca, una tarjeta blanca es invisible. Ahí las tarjetas bajan a
-   --bg-tint, que es el único par que mantiene la separación sin
-   depender solo del filete. */
-.sec--surface {
-  --canvas:   var(--bg-surface);
-  --canvas-2: var(--bg-tint);
-  background: var(--canvas);
+/* Ámbito local acentuado. Mismo lienzo claro, pero el acento pasa a
+   ámbar: es el lado del comprador peruano. */
+.local {
+  --accent: var(--ember);
+  --accent-fill: var(--ember);
+  /* Tinta OSCURA sobre el relleno ámbar: en blanco daría 4.13 y no
+     pasa. Es la regla 3 de tokens.css. */
+  --accent-on-fill: var(--night);
 }
-.sec--tint {
-  --canvas:   var(--bg-tint);
-  --canvas-2: var(--bg-surface);
-  background: var(--canvas);
+.night.local {
+  --accent: var(--ember-soft);
+  --accent-fill: var(--ember-glow);
+  --accent-on-fill: var(--night);
 }
 
-/* ── Reset ──────────────────────────────────────────────────── */
+/* ── Reset ──────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--hdr-h) + 2rem);
+  scroll-padding-top: calc(var(--hdr) + 2rem);
 }
 
 body {
   margin: 0;
   background: var(--canvas);
-  color: var(--ink);
-  font-family: var(--sans);
+  color: var(--fg);
+  font-family: var(--ui);
   font-size: 1.0625rem;
   font-weight: 400;
-  line-height: 1.65;
-  letter-spacing: -.005em;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
+h1, h2, h3, h4, h5, p, ul, ol, dl, dd, figure, fieldset { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
+fieldset { border: 0; padding: 0; min-width: 0; }
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
-button { background: none; border: 0; padding: 0; cursor: pointer; }
-button, input, textarea, select { font: inherit; color: inherit; }
-
-.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
-svg use, .sprite symbol * { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; }
+button { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+input, textarea, select { font: inherit; color: inherit; }
 
 :focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
-  border-radius: 1px;
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
-.skip {
-  position: fixed; top: .75rem; left: .75rem; z-index: 300;
-  transform: translateY(-200%);
-  background: var(--ink); color: var(--canvas);
-  padding: .75rem 1.25rem;
-  font-size: .8125rem; letter-spacing: .01em;
-  transition: transform .25s var(--ease);
-}
-.skip:focus { transform: none; }
-
-/* ── Tipografía compartida ──────────────────────────────────── */
-.eyebrow {
-  font-size: .6875rem;
-  font-weight: 500;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-/* El numeral en azul es la aparición más constante del acento como
-   tinta: marca la estructura del documento sección a sección. */
-.eyebrow__n { color: var(--accent); }
-
-/* ── El techo proporcional de los titulares ─────────────────────
-   Los tres display (.h2, .hero__title y .cta__t) llevan
-   `min(clamp(…), Nvw)`. El clamp resuelve el tamaño; el `min` con vw
-   es un TECHO que solo actúa en pantallas estrechas.
-
-   Sin él, por debajo de unos 420px el clamp se queda clavado en su
-   mínimo mientras el contenedor sigue encogiendo, y la línea más
-   larga se parte en dos. Eso no es solo feo: `.mask` recorta y anima
-   UNA línea por `.ln`, así que una línea partida se revela entera de
-   golpe y con la mitad asomando por debajo del recorte. Medido: «Un
-   solo responsable.» ya se partía en 375px antes de esta sesión.
-
-   El coeficiente sale de medir la línea más larga de cada bloque
-   contra el ancho disponible en 320px, que es el peor caso. Si se
-   escribe un titular MÁS LARGO que los actuales, hay que volver a
-   medir y bajar el coeficiente. Los actuales son:
-     .h2          «¿Qué problema necesita»  cabe hasta 8.15vw → 7.9vw
-     .hero__title «Un solo responsable.»    cabe hasta  9.6vw → 9.2vw
-     .cta__t      «Empecemos por ahí.»      cabe hasta  9.8vw → 9.4vw
-   ──────────────────────────────────────────────────────────────── */
-
-/* El tope de 2.875rem no es estético: es lo que cabe en la columna
-   pegajosa sin que la palabra más larga («reconocibles.») se salga.
-   Si se amplía el cuerpo, hay que ampliar antes .sec__head. */
-.h2 {
-  font-size: min(clamp(1.875rem, 3.2vw, 2.875rem), 7.9vw);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -.038em;
-  margin-top: 1.5rem;
-}
-
-.lead {
-  font-size: clamp(1.25rem, 2.1vw, 1.875rem);
-  font-weight: 400;
-  line-height: 1.42;
-  letter-spacing: -.024em;
-  text-wrap: balance;
-}
-
-/* El texto atenuado da jerarquía dentro de un mismo bloque sin
-   recurrir a otro peso ni a otro color de marca. */
-.dim { color: var(--ink-3); }
-/* La línea que carga el mensaje. Es el otro destino de --gradiente.
-   El respaldo va PRIMERO: si el navegador no soporta background-clip
-   sobre texto, `color: transparent` dejaría el titular invisible. */
-.hl { color: var(--acento); }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .hl {
-    background-image: var(--gradiente);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    /* Sin esto, el degradado se recorta contra la caja de la línea y
-       las colas de las letras pierden color. */
-    -webkit-text-fill-color: transparent;
-  }
-}
-
-/* Rótulo obligatorio en cualquier gráfico o contador: lo que muestran
-   es la forma de nuestros indicadores, NO un resultado de cliente.
-   Ninguna cifra de la página puede ir sin esto. */
-.ilus {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  margin-top: .875rem;
-  font-size: .6875rem;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.ilus::before {
-  content: '';
-  width: .3rem; height: .3rem;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: .55;
-}
-
-.sec__note {
-  margin-top: 1.75rem;
-  max-width: 34ch;
-  color: var(--ink-2);
-  font-size: .9375rem;
-  line-height: 1.6;
-}
-
-/* ── Animación ──────────────────────────────────────────────── */
-
-/* Revelado: 20px, 500ms, ease-out. --d escalona hermanos sin JS.
-   Fuera de no-preference no hay desplazamiento ninguno: el bloque
-   aparece ya colocado. */
-.rv { opacity: 1; }
-@media (prefers-reduced-motion: no-preference) {
-  .rv {
-    opacity: 0;
-    transform: translateY(20px);
-    transition:
-      opacity .5s var(--ease-o) var(--d, 0s),
-      transform .5s var(--ease-o) var(--d, 0s);
-  }
-  .rv.is-in { opacity: 1; transform: none; }
-}
-
-/* Titulares: cada línea sube desde debajo de su propia máscara.
-   El clip-path enmascara solo en vertical —a diferencia de
-   overflow:hidden, que además recortaba en silencio las palabras más
-   anchas que la columna y parecía un error de contenido. */
-.mask .ln {
-  display: block;
-  padding-bottom: .04em;
-  /* El recorte se abre .11em por debajo de la caja para que quepan los
-     descendentes: con line-height .94 la cola de la «g» sobresale .077em
-     y quedaba cortada. El texto en espera se aleja abajo lo mismo. */
-  clip-path: inset(0 -100vw -.11em 0);
-}
-.mask .ln > i {
-  display: block;
-  font-style: normal;
-  /* 124% y no 108%: el recorte llega ahora más abajo y con el valor
-     anterior la línea siguiente asomaba antes de tiempo. */
-  transform: translateY(124%);
-  transition: transform 1.05s var(--ease-o) var(--d, 0s);
-}
-.mask.is-in .ln > i { transform: none; }
-.mask .ln:nth-child(2) > i { --d: .09s; }
-.mask .ln:nth-child(3) > i { --d: .18s; }
-
-/* Sin JS no hay observador que añada .is-in: todo visible. */
-html:not(.js) .rv,
-html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
-
-/* ── La onda ────────────────────────────────────────────────────
-   Ya NO hay ningún fondo con degradado en toda la hoja. En su lugar
-   entra el dispositivo gráfico del Brand Book: un haz de líneas finas
-   paralelas que ondulan, presente en casi todas sus páginas.
-
-   Se dibuja con una sola trayectoria repetida por <use>, cada copia
-   desplazada y con la amplitud ligeramente escalada. Eso reproduce el
-   morfeo del book sin 40 trayectorias distintas: un único path en el
-   sprite y ~48 referencias, que pesan casi nada.
-
-   El desvanecido de los extremos no se hace con degradado de color
-   sino con máscara de opacidad sobre el trazo, así que el fondo sigue
-   siendo blanco puro.
-   ──────────────────────────────────────────────────────────────── */
-.wave {
-  position: absolute;
-  left: 0; right: 0;
-  width: 100%;
-  z-index: 0;
-  pointer-events: none;
-  overflow: visible;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 28%, #000 72%, transparent);
-}
-.wave use {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1;
-  /* Sin esto, el escalado vertical de cada copia engordaría el trazo
-     y el haz perdería la finura que lo define. */
-  vector-effect: non-scaling-stroke;
-  stroke-opacity: .55;
-}
-
-/* En el hero la onda se apoya abajo, bajo el titular. */
-.wave--hero { bottom: 0; height: clamp(14rem, 26vw, 24rem); }
-/* En los bloques de azul pleno las líneas van en blanco. */
-.sec--dark .wave use,
-.cta .wave use,
-.ftr .wave use { stroke: var(--ink-invert); stroke-opacity: .28; }
-.wave--foot { bottom: 0; height: clamp(10rem, 18vw, 17rem); }
-
-/* ── Servicio desarrollado ──────────────────────────────────────
-   El bloque largo de consultoría: cabecera con icono, dos columnas
-   (qué resuelve / qué recibe), proceso visual y metadatos.
-   ──────────────────────────────────────────────────────────────── */
-.svc { padding: clamp(2.5rem, 5vw, 4rem) 0; border-top: 1px solid var(--rule); }
-.svc:first-child { border-top: 0; padding-top: 0; }
-
-.svc__head {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(1rem, 2vw, 1.75rem);
-  align-items: start;
-}
-.svc__head .feat__t { margin-top: 0; }
-
-.svc__cols {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1.5rem, 3vw, 3rem);
-  margin-top: clamp(1.75rem, 3vw, 2.5rem);
-}
-.svc__k {
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--sky-ink);
-  padding-bottom: .625rem;
-  border-bottom: 1px solid var(--rule);
-}
-.svc__k--wide { display: block; margin-top: clamp(2rem, 4vw, 3rem); }
-/* Dentro de las columnas el inventario va a una sola columna: a dos
-   quedaría de una línea por celda y parecería roto. */
-.feat__l--one { columns: 1; margin-top: .5rem; }
-
-/* Texto solo para lectores de pantalla: equivalentes de los gráficos,
-   leyendas de tabla y todo lo que se comunica visualmente por forma o
-   por color y no tendría traducción sin esto. */
+/* Texto solo para lectores de pantalla: equivalentes de gráficos y
+   todo lo que se comunica por forma o color. */
 .vh {
   position: absolute;
   width: 1px; height: 1px;
@@ -410,792 +172,195 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   border: 0;
 }
 
-/* El embudo comercial (.fnl) y el radial de go-to-market (.rad) vivían
-   aquí. Se retiraron el 2026-08-07 con los dos servicios que ilustraban.
-   Para recuperarlos: git log -S'.rad__core' -- assets/css/styles.css */
+.skip {
+  position: fixed; top: .75rem; left: .75rem; z-index: 300;
+  transform: translateY(-200%);
+  background: var(--signal); color: #fff;
+  padding: .75rem 1.25rem;
+  font-size: .875rem; font-weight: 500;
+  transition: transform .2s var(--ease);
+}
+.skip:focus { transform: none; }
 
-/* ── Los tres estudios ──────────────────────────────────────────
-   Piezas comunes a los tres bloques de consultoría. La pareja
-   «Qué incluye / Qué no incluye» es lo que impide que los tres
-   estudios se lean como el mismo servicio contado tres veces, así que
-   el lado negativo tiene tratamiento propio y no es una nota al pie.
-   ──────────────────────────────────────────────────────────────── */
-.svc__num {
-  font-size: .625rem;
-  font-weight: 500;
+/* ── Retícula ───────────────────────────────────────────────────── */
+.shell {
+  width: 100%;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+/* Ver deuda 1 de la cabecera: sin esto una sola pieza ancha deforma
+   el documento entero en móvil. */
+.shell > *, .grid > *, .cols > * { min-width: 0; }
+
+.band { padding-block: var(--band); position: relative; }
+.band--tight { padding-block: clamp(3.5rem, 7vh, 6rem); }
+.band--flush { padding-block: 0; }
+
+/* Cabecera de sección: numeral, título y entradilla. */
+.lede { max-width: 62ch; }
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-size: .6875rem;
+  font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--sky-ink);
+  color: var(--fg-3);
   font-variant-numeric: tabular-nums;
-  margin-bottom: .5rem;
 }
-
-.svc__ql {
-  margin-top: 1.125rem;
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-/* La pregunta pesa casi como el titular del servicio a propósito: es
-   lo que el visitante está buscando y lo que decide si sigue leyendo. */
-.svc__q {
-  margin-top: .375rem;
-  max-width: 32ch;
-  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
-  font-weight: 500;
-  line-height: 1.25;
-  letter-spacing: -.028em;
-  color: var(--ink);
-  text-wrap: balance;
-}
-
-/* El rótulo del lado negativo va en gris y no en azul: el azul marca
-   estructura afirmativa en toda la hoja. */
-.svc__k--out { color: var(--ink-3); }
-
-.svc__no {
-  margin-top: .5rem;
-  font-size: .875rem;
-  line-height: 1.55;
-  color: var(--ink-3);
-}
-.svc__no li { position: relative; padding: .4rem 0 .4rem 1rem; }
-.svc__no li::before {
+.eyebrow::before {
   content: '';
-  position: absolute;
-  left: 0; top: 1.05em;
-  width: .375rem; height: 1px;
-  background: var(--ink-3);
-}
-.svc__no a {
-  color: var(--teal-deep);
-  text-decoration: underline;
-  text-underline-offset: .18em;
-  text-decoration-thickness: 1px;
-  text-decoration-color: rgb(var(--c-teal) / .4);
-  transition: text-decoration-color .3s var(--ease);
-}
-.svc__no a:hover { text-decoration-color: var(--teal-deep); }
-
-.svc__nn {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule-2);
-  font-size: .8125rem;
-  line-height: 1.6;
-  color: var(--ink-3);
+  width: 1.75rem; height: 1px;
+  background: var(--accent);
+  flex: none;
 }
 
-/* El entregable. Es lo único que el cliente se lleva a casa, así que
-   es el único bloque de la sección con relleno. */
-.svc__deliv {
-  margin-top: clamp(1.5rem, 3vw, 2.25rem);
-  max-width: 72ch;
-  padding: 1.125rem 1.375rem;
-  border-left: 2px solid var(--turquesa);
-  background: rgb(var(--c-turquesa) / .07);
-  font-size: .9375rem;
-  line-height: 1.6;
-  color: var(--ink);
+/* ── Escala tipográfica ─────────────────────────────────────────
+   Los tres tamaños de display llevan techo en vw. Ver deuda 2.
+   Los coeficientes salen de medir la línea más larga de cada bloque
+   contra el ancho disponible a 320px, que es el peor caso. Si se
+   escribe un titular MÁS LARGO que los actuales hay que volver a
+   medir y bajar el coeficiente, o la línea se partirá en dos y
+   romperá la animación de revelado. */
+.d1 {
+  font-family: var(--display);
+  font-size: min(clamp(2.5rem, 7vw, 5.75rem), 9.3vw);
+  font-weight: 700;
+  line-height: .95;
+  letter-spacing: -.035em;
 }
-.svc__dk {
-  display: block;
-  margin-bottom: .375rem;
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--teal-deep);
+.d2 {
+  font-family: var(--display);
+  /* El tope de 3.25rem NO es estético. Los titulares de sección
+     viven en la columna estrecha de `.cols--head`, que a 1440px mide
+     503px, no los 1280 del carril. Medido: la línea más exigente del
+     sitio necesita bajar de 53.7px para caber en esa columna, y con
+     3.5rem se partía en dos. El techo en vw protege el móvil; este
+     máximo protege el escritorio. */
+  font-size: min(clamp(2rem, 4.4vw, 3.25rem), 8.6vw);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -.03em;
 }
-
-/* Los dos bloques de cierre son `.svc` y heredan su filete superior,
-   pero abren con un rótulo, no con una cabecera de servicio: ahí el
-   margen de `--wide` sobra. */
-.svc__k--first { margin-top: 0; }
-
-/* ── Visual 1 · La zona ─────────────────────────────────────────
-   Plano y score dentro de UN solo panel: son las dos mitades del
-   mismo entregable —dónde se mide y qué sale de medirlo— y separarlos
-   en dos tarjetas rompería esa lectura.
-
-   Las coordenadas del plano son abstractas a propósito. Un mapa
-   reconocible se leería como el caso de un cliente real.
-   ──────────────────────────────────────────────────────────────── */
-.zon {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
-  gap: clamp(1.25rem, 2.5vw, 2rem);
-  align-items: center;
-  padding: clamp(1rem, 2vw, 1.5rem);
-  background: var(--canvas-2);
-  border: 1px solid var(--borde);
-  border-radius: .625rem;
+.d3 {
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 2vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -.02em;
 }
-.zon__map { margin: 0; }
-.zon__svg { display: block; width: 100%; height: auto; }
-
-/* El viario no puede ir en --rule: sobre el fondo teñido del panel
-   quedaría en 1.05:1 e invisible. Va en alfa de tinta. */
-.zon__st path { fill: none; stroke: rgb(var(--c-dark) / .10); stroke-width: 1; }
-.zon__av { fill: none; stroke: rgb(var(--c-dark) / .16); stroke-width: 3.5; }
-
-.zon__ring { fill: none; stroke: var(--turquesa); stroke-width: 1.25; stroke-dasharray: 5 4; opacity: .8; }
-.zon__ring--o { opacity: .45; }
-
-.zon__pt circle { fill: rgb(var(--c-teal) / .55); stroke: none; }
-.zon__cmp rect {
-  fill: var(--canvas-2);
-  stroke: var(--ink-3);
-  stroke-width: 1.25;
-  stroke-dasharray: 2.5 2;
+.lead {
+  font-size: clamp(1.0625rem, 1.5vw, 1.375rem);
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-width: 54ch;
 }
-
-.zon__halo { fill: rgb(var(--c-turquesa) / .25); stroke: none; }
-.zon__pin  { fill: var(--bg-dark); stroke: none; }
-.zon__pd   { fill: var(--acento); stroke: none; }
-
-/* paint-order dibuja primero el trazo y encima el relleno, así que el
-   halo del color del panel recorta el anillo punteado por debajo del
-   rótulo. Sin él, la línea de puntos cruza las letras. */
-.zon__rl {
-  fill: var(--teal-deep);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-anchor: middle;
-  paint-order: stroke;
-  stroke: var(--canvas-2);
-  stroke-width: 5px;
-  stroke-linejoin: round;
-}
-
-.zon__key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem 1.125rem;
-  margin-top: .75rem;
+.body { color: var(--fg-2); max-width: 66ch; }
+.small { font-size: .875rem; line-height: 1.6; color: var(--fg-2); }
+.micro {
   font-size: .6875rem;
-  color: var(--ink-2);
-}
-.zon__key li { display: flex; align-items: center; gap: .4rem; }
-.zon__key li::before { content: ''; flex: none; }
-.zon__key--pt::before {
-  width: .4375rem; height: .4375rem;
-  border-radius: 50%;
-  background: rgb(var(--c-teal) / .55);
-}
-.zon__key--cmp::before {
-  width: .5rem; height: .5rem;
-  border: 1.25px dashed var(--ink-3);
-}
-.zon__key--ring::before {
-  width: .75rem; height: 0;
-  border-top: 1.25px dashed var(--turquesa);
-}
-
-/* El score: el entregable dibujado. Sin él el plano sería ambiente. */
-.scr__h {
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  color: var(--teal-deep);
-  padding-bottom: .625rem;
-  border-bottom: 1px solid var(--rule);
-}
-.scr__rows { margin-top: .75rem; }
-.scr__r {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(2.5rem, 5rem) 1.5rem;
-  align-items: center;
-  gap: .625rem;
-  padding: .3125rem 0;
-}
-.scr__k { font-size: .8125rem; line-height: 1.35; color: var(--ink-2); }
-.scr__t { height: 5px; border-radius: 3px; background: rgb(var(--c-dark) / .10); }
-.scr__f {
-  display: block;
-  height: 100%;
-  width: var(--v);
-  border-radius: 3px;
-  background: var(--turquesa);
-}
-/* El criterio que baja el score va en gris, no en rojo: no es un
-   error, es el dato que obliga a diferenciarse. */
-.scr__r--low .scr__f { background: var(--ink-3); }
-.scr__v {
-  font-size: .8125rem;
-  font-weight: 500;
-  text-align: right;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-
-.scr__tot {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: .25rem .5rem;
-  margin-top: .875rem;
-  padding-top: .875rem;
-  border-top: 1px solid var(--rule);
-}
-.scr__n {
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -.04em;
-  color: var(--teal-deep);
-  font-variant-numeric: tabular-nums;
-}
-.scr__d { font-size: .9375rem; color: var(--ink-3); }
-.scr__vd { flex-basis: 100%; font-size: .8125rem; color: var(--ink-2); }
-
-@media (prefers-reduced-motion: no-preference) {
-  .scr__f {
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .7s var(--ease-o) calc(var(--i) * 90ms + .25s);
-  }
-  .rv.is-in .scr__f { transform: scaleX(1); }
-}
-
-/* ── Visual 2 · Matriz comparativa ──────────────────────────────
-   Tabla de verdad. Los círculos son la valoración y su equivalente en
-   palabra viaja al lado en `.vh`: un punto relleno no significa nada
-   para quien no lo ve.
-   ──────────────────────────────────────────────────────────────── */
-/* Cualquier contenido más ancho que la columna se desplaza DENTRO de
-   su caja. Es lo que impide que una tabla obligue a desplazar la
-   página entera en horizontal.
-
-   `position: relative` es IMPRESCINDIBLE y no es un resto. Los `.vh`
-   de las celdas son `position: absolute`, y sin esto su bloque
-   contenedor es el `.sec__grid` de la sección, que sí está
-   posicionado. Un absoluto anclado FUERA del contenedor de scroll no
-   lo recorta: cada equivalente textual conservaba su posición estática
-   dentro de la tabla de 480px y las de más a la derecha caían más allá
-   del borde. El documento se iba a 429px en una pantalla de 375 y la
-   cabecera fija —que se dimensiona contra el bloque contenedor
-   inicial— sacaba el botón del menú fuera de la pantalla.
-   Con esto los absolutos se anclan aquí y se recortan aquí. */
-.tscroll { position: relative; overflow-x: auto; overscroll-behavior-x: contain; }
-
-.cmat {
-  width: 100%;
-  min-width: 30rem;
-  border-collapse: collapse;
-  font-size: .8125rem;
-  text-align: left;
-}
-.cmat th,
-.cmat td {
-  padding: .75rem .875rem;
-  border-bottom: 1px solid var(--rule);
-  vertical-align: middle;
-}
-.cmat thead th {
-  font-size: .625rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  border-bottom-color: var(--ink-3);
+  color: var(--fg-3);
 }
-.cmat tbody th { font-weight: 500; color: var(--ink); white-space: nowrap; }
-.cmat tbody tr:last-child th,
-.cmat tbody tr:last-child td { border-bottom: 0; }
-.cmat__p { color: var(--ink-2); }
+.dim { color: var(--fg-3); }
 
-/* La fila del cliente se tiñe: es la única referencia que le importa
-   al que lee, y sin marcarla la tabla es un listado de terceros. */
-.cmat__me th,
-.cmat__me td { background: rgb(var(--c-turquesa) / .09); }
-.cmat__me th { color: var(--teal-deep); }
-
-.cmat__d { display: inline-flex; gap: .3rem; align-items: center; }
-.cmat__d i {
-  width: .4375rem; height: .4375rem;
-  border-radius: 50%;
-  background: rgb(var(--c-dark) / .18);
+/* El único uso de la costura como tinta: la palabra que carga el
+   mensaje. El respaldo va PRIMERO por si el navegador no soporta
+   background-clip sobre texto, o el titular saldría invisible. */
+.seam-text { color: var(--accent); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .seam-text {
+    background-image: var(--seam);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }
-.cmat__d i.on { background: var(--teal-deep); }
-.cmat__me .cmat__d i.on { background: var(--turquesa); }
 
-/* ── Movimiento de botones y tarjetas ───────────────────────────
-   200ms en transform y sombra. Nada rebota y nada pasa de 1.02: por
-   encima de eso deja de leerse como respuesta y empieza a leerse como
-   truco. Solo dentro de no-preference.
-   ──────────────────────────────────────────────────────────────── */
+/* ── Revelado ───────────────────────────────────────────────────
+   Un solo mecanismo para toda la página: `.rev` aparece al entrar en
+   pantalla y `--d` escalona hermanos sin JavaScript.
+   Fuera de no-preference no hay desplazamiento: el bloque aparece ya
+   colocado. */
+.rev { opacity: 1; }
 @media (prefers-reduced-motion: no-preference) {
-  .btn, .chal__i {
-    transition-duration: .2s;
-    transition-property: transform, box-shadow, background-color, border-color, color;
-    transition-timing-function: var(--ease-o);
+  .rev {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity .6s var(--ease-o) var(--d, 0s),
+      transform .6s var(--ease-o) var(--d, 0s);
   }
-  .btn:hover, .chal__i:hover { transform: translateY(-2px); }
-  .btn:active, .chal__i:active { transform: translateY(0); }
-  /* El barrido interno del botón conserva su propia duración: es el
-     gesto de marca, no una microinteracción de hover. */
-  .btn::before { transition-duration: .5s; }
+  .rev.in { opacity: 1; transform: none; }
 }
 
-/* ── Envoltorio de los visuales de servicio ─────────────────────
-   `.svis` se usaba en los seis visuales desde la fase 4 y NO tenía
-   ni una regla: era un gancho sin estilo. El resultado medido era el
-   espaciado justo al revés de lo que pide la lectura —los visuales
-   que van tras su propio rótulo tenían 13px de aire y los que van
-   tras una lista, CERO, pegados al último elemento—.
-
-   Un rótulo nombra al objeto que tiene debajo, así que va junto. Una
-   lista es otro bloque y necesita separación. De ahí las dos reglas.
-   ──────────────────────────────────────────────────────────────── */
-.svis { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
-.svc__k--wide + .svis { margin-top: .75rem; }
-
-/* ── Visual 3 · Mapa de posicionamiento ─────────────────────────
-   Dos ejes, cuatro cuadrantes, cinco marcas. La convención es tan
-   conocida que el gráfico no necesita explicarse; lo único que hay
-   que resolver es que CONCLUYA algo, y de eso se encarga el relleno:
-   sólido = la marca del cliente, perfilado = los competidores.
-
-   Nació como matriz de priorización de segmentos y se reconvirtió el
-   2026-08-07 al análisis de competencia. Las clases se conservaron
-   —resuelven ejes, burbujas y rótulos— y lo que cambió es qué
-   significan; solo hizo falta añadir el hueco.
-   ──────────────────────────────────────────────────────────────── */
-.mx { width: min(100%, 34rem); margin-inline: auto; }
-.mx__svg { display: block; width: 100%; height: auto; }
-
-.mx__ax  { stroke: var(--ink-3); stroke-width: 1; }
-.mx__tip { fill: var(--ink-3); stroke: none; }
-.mx__div { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 3 3; }
-.mx__q   { fill: rgb(var(--c-turquesa) / .08); stroke: none; }
-
-.mx__ql {
-  fill: var(--ink-3);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.mx__ql--end { text-anchor: end; }
-.mx__ql--on  { fill: var(--teal-deep); }
-
-/* Perfilados por defecto; el relleno se reserva a los que entran. */
-.mx__b {
-  fill: none;
-  stroke: var(--ink-3);
-  stroke-width: 1.25;
-  stroke-dasharray: 3 3;
-}
-.mx__b--on { fill: var(--turquesa); stroke: none; }
-
-.mx__bl {
-  fill: var(--ink-2);
-  font-size: 12px;
-  font-weight: 600;
-  text-anchor: middle;
-}
-/* Sobre el relleno turquesa la tinta va OSCURA: en blanco daría
-   2.54:1. Es la misma regla que gobierna la pill de desafíos. */
-.mx__bl--on { fill: var(--bg-dark); }
-
-.mx__at {
-  fill: var(--ink-3);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  text-anchor: middle;
-}
-
-/* El hueco: el cuadrante que nadie ocupa. Es la conclusión del
-   gráfico, así que es lo único punteado en color de marca y lo último
-   que aparece. */
-.mx__gap {
-  fill: none;
-  stroke: var(--turquesa);
-  stroke-width: 1.5;
-  stroke-dasharray: 5 4;
-}
-.mx__gl {
-  fill: var(--teal-deep);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-anchor: middle;
-}
-
-.mx__key {
-  margin-top: .5rem;
-  text-align: center;
-  font-size: .6875rem;
-  color: var(--ink-3);
-}
-
+/* Titulares por línea: cada línea sube desde debajo de su máscara.
+   clip-path y no overflow:hidden, que además recortaría en horizontal
+   las palabras más anchas que la columna y parecería un error de
+   contenido. El recorte se abre por debajo para los descendentes. */
+.rev-line { display: block; clip-path: inset(0 -100vw -.14em 0); }
+.rev-line > span { display: block; }
 @media (prefers-reduced-motion: no-preference) {
-  /* El escalonado se declara con --d en el marcado y NO con
-     nth-of-type: los rótulos de cuadrante son <text> igual que las
-     etiquetas de burbuja, así que la numeración por tipo contaba
-     primero los cuatro cuadrantes y ninguna regla llegaba a acertar.
-     Estuvo así desde que se dibujó el gráfico. */
-  .mx__b, .mx__bl {
-    opacity: 0;
-    transition: opacity .5s var(--ease-o) var(--d, 0s);
+  .rev-line > span {
+    transform: translateY(110%);
+    transition: transform 1s var(--ease-o) var(--d, 0s);
   }
-  .rv.is-in .mx__b,
-  .rv.is-in .mx__bl { opacity: 1; }
-
-  .mx__gap, .mx__gl {
-    opacity: 0;
-    transition: opacity .6s var(--ease-o) .6s;
-  }
-  .rv.is-in .mx__gap,
-  .rv.is-in .mx__gl { opacity: 1; }
+  .in .rev-line > span, .rev-line.in > span { transform: none; }
+  .rev-line:nth-child(2) > span { --d: .08s; }
+  .rev-line:nth-child(3) > span { --d: .16s; }
 }
+/* Sin JS no hay observador que ponga `.in`, así que TODO lo que
+   arranque oculto tiene que declararse visible aquí. La lista debe
+   cubrir los cuatro mecanismos de entrada; comprobado quitando la
+   clase `js` en caliente, que es la única forma de verlo: si se añade
+   un quinto mecanismo y se olvida esta regla, su contenido queda
+   invisible para quien navegue sin JavaScript y nadie lo nota. */
+html:not(.js) .rev,
+html:not(.js) .rev-line > span,
+html:not(.js) .flow__i,
+html:not(.js) .flow__rail,
+html:not(.js) .door::before { opacity: 1; transform: none; }
 
-/* ── Visual 4 · La escala de precio ─────────────────────────────
-   Todo sobre una sola recta: dónde cobra cada competidor, hasta dónde
-   llega la disposición a pagar y qué franja se recomienda.
-
-   El argumento del servicio es que esas tres capas casi nunca
-   coinciden, y en una recta única eso se ve sin explicarlo. Si algún
-   día se cambian las cifras, hay que recalcular las coordenadas: la
-   escala es x = 40 + (precio − 20) × 3.0833.
-   ──────────────────────────────────────────────────────────────── */
-.prc { width: min(100%, 34rem); margin-inline: auto; }
-.prc__svg { display: block; width: 100%; height: auto; overflow: visible; }
-
-.prc__band {
-  fill: rgb(var(--c-turquesa) / .10);
-  stroke: rgb(var(--c-turquesa) / .40);
-  stroke-width: 1;
-  stroke-dasharray: 4 3;
-}
-.prc__bl {
-  fill: var(--teal-deep);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  text-anchor: middle;
-}
-
-.prc__ax { stroke: var(--ink-3); stroke-width: 1; }
-.prc__tick path { fill: none; stroke: var(--ink-3); stroke-width: 1; }
-.prc__sl text {
-  fill: var(--ink-3);
-  font-size: 10px;
-  text-anchor: middle;
-  font-variant-numeric: tabular-nums;
-}
-
-.prc__c path { fill: none; stroke: var(--ink-2); stroke-width: 1.5; }
-.prc__cl text { fill: var(--ink-2); font-size: 10px; font-weight: 600; text-anchor: middle; }
-
-.prc__rec { fill: var(--turquesa); stroke: none; }
-.prc__lead { fill: none; stroke: var(--teal-deep); stroke-width: 1; stroke-dasharray: 3 3; }
-.prc__rl { fill: var(--teal-deep); font-size: 11px; font-weight: 500; text-anchor: middle; }
-.prc__rv {
-  fill: var(--ink);
-  font-size: 13px;
-  font-weight: 600;
-  text-anchor: middle;
-  font-variant-numeric: tabular-nums;
-}
-
-.prc__key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem 1.125rem;
-  margin-top: 1rem;
-  font-size: .6875rem;
-  color: var(--ink-2);
-}
-.prc__key li { display: flex; align-items: center; gap: .4rem; }
-.prc__key li::before { content: ''; flex: none; }
-.prc__key--c::before { width: 1.5px; height: .75rem; background: var(--ink-2); }
-.prc__key--b::before {
-  width: .75rem; height: .625rem;
-  background: rgb(var(--c-turquesa) / .12);
-  box-shadow: inset 0 0 0 1px rgb(var(--c-turquesa) / .45);
-}
-.prc__key--r::before { width: .875rem; height: .5rem; border-radius: 2px; background: var(--turquesa); }
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Orden de lectura: primero el mercado, después lo que el cliente
-     acepta pagar y solo al final la recomendación. Ese orden ES el
-     razonamiento del estudio. */
-  .prc__band, .prc__bl { opacity: 0; transition: opacity .6s var(--ease-o) .35s; }
-  .prc__rec, .prc__lead, .prc__rl, .prc__rv {
-    opacity: 0;
-    transition: opacity .6s var(--ease-o) .85s;
-  }
-  .rv.is-in .prc__band,
-  .rv.is-in .prc__bl,
-  .rv.is-in .prc__rec,
-  .rv.is-in .prc__lead,
-  .rv.is-in .prc__rl,
-  .rv.is-in .prc__rv { opacity: 1; }
-}
-
-/* ── Cómo se combinan ───────────────────────────────────────────
-   El argumento comercial de la sección: tres preguntas distintas,
-   tres compras posibles. El filete superior en turquesa de las dos
-   últimas celdas es lo único que dibuja la relación entre ellas —el
-   02 levanta la lista de competidores y el 03 la reutiliza—, y por
-   eso no lleva flecha: una flecha implicaría secuencia obligatoria,
-   que es justo lo contrario de lo que se vende.
-   ──────────────────────────────────────────────────────────────── */
-.trio {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(.75rem, 1.5vw, 1.125rem);
-  margin-top: 1.25rem;
-}
-.trio__i {
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-  padding: clamp(1.25rem, 2.2vw, 1.75rem);
-  background: var(--canvas-2);
-  border: 1px solid var(--rule);
-}
-.trio__q {
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -.04em;
-  color: var(--teal-deep);
-}
-.trio__n { font-size: .9375rem; font-weight: 500; color: var(--ink); }
-.trio__u { font-size: .8125rem; line-height: 1.6; color: var(--ink-2); }
-.trio__x {
-  margin-top: auto;
-  padding-top: .75rem;
-  border-top: 1px solid var(--rule);
-  font-size: .6875rem;
-  letter-spacing: .04em;
-  color: var(--ink-3);
-}
-.trio__x--out,
-.trio__x--in { color: var(--teal-deep); border-top-color: var(--turquesa); }
-
-.trio__note {
-  margin-top: 1.25rem;
-  max-width: 78ch;
-  font-size: .875rem;
-  line-height: 1.6;
-  color: var(--ink-2);
-}
-
-/* ── Visual 7 · La meseta ───────────────────────────────────────
-   El encuadre de la sección de desafíos. Vive en el hueco que dejaba
-   la columna del titular, así que no cuesta altura de página.
-
-   Lo que comunica no es ninguna de las dos curvas: es la BANDA entre
-   ellas. Por eso el relleno lleva más peso visual que los trazos y la
-   etiqueta va dentro, no en una leyenda aparte.
-   ──────────────────────────────────────────────────────────────── */
-.stall { margin: 0; }
-.stall__svg { display: block; width: 100%; height: auto; overflow: visible; }
-
-.stall__ax { stroke: var(--rule); stroke-width: 1; }
-
-.stall__gap { fill: rgb(var(--c-turquesa) / .14); stroke: none; }
-
-/* La trayectoria real, en degradado de marca: es la única línea que
-   describe un hecho. */
-.stall__now {
-  fill: none;
-  stroke: url(#stall-g);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-}
-/* La potencial va punteada y en tinta, no en color de marca: es una
-   hipótesis, y pintarla como la real sería venderla como un dato. */
-.stall__pot {
-  fill: none;
-  stroke: var(--teal-deep);
-  stroke-width: 1.5;
-  stroke-dasharray: 4 4;
-  vector-effect: non-scaling-stroke;
-  opacity: .75;
-}
-
-.stall__mark { stroke: var(--rule); stroke-width: 1; stroke-dasharray: 3 3; }
-.stall__pin  { fill: var(--turquesa); stroke: none; }
-
-.stall__lb {
-  fill: var(--ink-3);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-}
-.stall__lb--end { text-anchor: end; }
-.stall__lb--mid { text-anchor: middle; }
-
-.stall__gl {
-  fill: var(--teal-deep);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: -.01em;
-}
-.stall__gl--end { text-anchor: end; }
-.stall__lead { stroke: var(--teal-deep); stroke-width: 1; opacity: .5; }
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Primero se dibuja el hecho —la curva real—, después aparecen la
-     hipótesis y el hueco entre ambas. Ese orden ES el argumento.
-
-     Solo se dibuja la curva sólida. La punteada NO se anima con
-     stroke-dashoffset: su dasharray forma parte de su significado y
-     animar el trazado obligaría a pisarlo, así que entra fundiéndose. */
-  .stall__now {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 1.5s var(--ease-o) .2s;
-  }
-  .stall.is-in .stall__now { stroke-dashoffset: 0; }
-
-  .stall__pot, .stall__gap, .stall__gl, .stall__lead, .stall__pin {
-    opacity: 0;
-    transition: opacity .6s var(--ease-o) 1.5s;
-  }
-  .stall__pot { transition-delay: 1.3s; }
-  .stall.is-in .stall__pot  { opacity: .75; }
-  .stall.is-in .stall__lead { opacity: .5; }
-  .stall.is-in .stall__gap,
-  .stall.is-in .stall__gl,
-  .stall.is-in .stall__pin { opacity: 1; }
-}
-
-/* ── Bloque de servicio ─────────────────────────────────────────
-   Icono, frase, entregables y metadatos. Es el ladrillo con el que se
-   arman marketing digital y tecnología.
-   ──────────────────────────────────────────────────────────────── */
-/* `.feat`, el envoltorio de artículo, se fue el 2026-08-09 con las
-   secciones de marketing y tecnología, que eran las únicas que lo
-   usaban. Lo que queda de la familia —icono, título, frase y lista de
-   entregables— lo siguen usando los tres estudios dentro de `.svc`.
-   Para recuperarlo: git log -S'.feat {' -- assets/css/styles.css */
-.feat__ico {
-  width: 2.75rem; height: 2.75rem;
-  display: grid;
-  place-items: center;
-  border-radius: .625rem;
-  background: rgb(var(--c-blue) / .07);
-  color: var(--blue);
-}
-/* --blue es --teal-deep, que nació para fondo claro: sobre el azul
-   noche da 3.07:1 y el relleno al 7% desaparece del todo. En ámbito
-   oscuro el icono va en --acento, que ahí da 12:1. Es la misma regla
-   que ya seguían los botones fantasma. */
-.feat__ico svg { width: 1.375rem; height: 1.375rem; }
-.feat__t {
-  margin-top: 1.125rem;
-  font-size: clamp(1.25rem, 2vw, 1.625rem);
-  font-weight: 500;
-  letter-spacing: -.03em;
-  line-height: 1.15;
-}
-.feat__s { margin-top: .75rem; color: var(--ink-2); max-width: 54ch; }
-
-/* Entregables: dos columnas de filetes finos, sin viñetas de disco. */
-.feat__l {
-  margin-top: 1.25rem;
-  columns: 2;
-  column-gap: clamp(1.25rem, 2.5vw, 2.5rem);
-  font-size: .875rem;
-  color: var(--ink-2);
-}
-.feat__l li {
-  break-inside: avoid;
-  padding: .4rem 0 .4rem 1rem;
-  position: relative;
-}
-.feat__l li::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 1.05em;
-  width: .375rem; height: 1px;
-  background: var(--sky-ink);
-}
-
-/* `.feat__meta` —duración, modelo de cobro y recompra del mandato—
-   se retiró el 2026-08-01 por decisión comercial: al vender consultoría
-   de ticket alto no se publican plazos ni estructura de precios, se
-   conversan. Se quitó también su CSS porque no quedaba ningún uso.
-   Para recuperarlo: git log -S'feat__meta' -- assets/css/styles.css */
-
-/* ── Botones ────────────────────────────────────────────────── */
+/* ── Botones ────────────────────────────────────────────────────── */
 .btn {
-  --btn-bg: var(--ink);
-  --btn-fg: var(--canvas);
-  position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: .625rem;
-  padding: 1.0625rem 1.75rem;
-  background: var(--btn-bg);
-  color: var(--btn-fg);
+  padding: 1rem 1.625rem;
   font-size: .9375rem;
-  font-weight: 500;
-  letter-spacing: -.01em;
-  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: -.005em;
+  background: var(--accent-fill);
+  color: var(--accent-on-fill);
+  border: 1px solid var(--accent-fill);
+  position: relative;
   overflow: hidden;
-  transition: color .4s var(--ease), background-color .4s var(--ease);
+  transition: background-color .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .2s var(--ease-o);
 }
-/* Barrido de relleno desde abajo, en lugar de un cambio de color seco. */
-.btn::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: var(--ink-2);
-  transform: translateY(101%);
-  transition: transform .5s var(--ease-o);
-}
-.btn > * { position: relative; z-index: 1; }
-.btn:hover::before { transform: none; }
-
-.btn svg { width: 1.0625rem; height: 1.0625rem; position: relative; z-index: 1; transition: transform .45s var(--ease-o); }
+.btn svg { width: 1.0625rem; height: 1.0625rem; flex: none; transition: transform .35s var(--ease-o); }
 .btn:hover svg { transform: translateX(4px); }
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: none; }
 
 .btn--ghost {
-  --btn-bg: transparent;
-  --btn-fg: var(--ink);
-  box-shadow: inset 0 0 0 1px var(--rule);
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--rule-str);
 }
-.btn--ghost::before { background: var(--ink); }
-.btn--ghost:hover { color: var(--canvas); }
+.btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Sobre oscuro el secundario va en --acento (12:1). --teal-deep, que
-   es el token de tinta de marca, ahí solo da 3.07:1 porque nació para
-   fondo claro. El borde sí se queda en --borde: 13.9:1 sobre oscuro. */
-.hero .btn--ghost,
-.sec--dark .btn--ghost,
-.cta .btn--ghost { --btn-fg: var(--acento); box-shadow: inset 0 0 0 1px var(--borde); }
-
-/* Botón principal: uno de los dos únicos destinos de --gradiente.
-   La tinta va OSCURA a propósito. Blanco sobre este gradiente da
-   2.28-2.54:1 y sería ilegible; el oscuro da 6.96-7.96:1. */
-.btn--grad {
-  /* --bg-dark y NO --ink: dentro del hero el ámbito oscuro reasigna
-     --ink a --ink-invert, y el botón salía con tinta clara sobre el
-     gradiente (2.28:1). --bg-dark no se voltea nunca: 7.14-7.96:1. */
-  --btn-fg: var(--bg-dark);
-  background: var(--gradiente);
+.btn--plain {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent);
+  padding-inline: 0;
 }
-/* El barrido de relleno no puede taparlo con un color plano: se hace
-   con un velo oscuro translúcido que oscurece el propio gradiente. */
-.btn--grad::before { background: rgb(var(--c-dark) / .22); }
-.btn--grad:hover { color: var(--bg-dark); }
-
-.btn--sm { padding: .6875rem 1.125rem; font-size: .875rem; }
 
 /* Enlace de texto con subrayado que crece desde la izquierda. */
 .lnk {
@@ -1203,9 +368,9 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   align-items: center;
   gap: .5rem;
   position: relative;
-  font-size: .9375rem;
   font-weight: 500;
-  padding-bottom: .25rem;
+  color: var(--accent);
+  padding-bottom: .2rem;
 }
 .lnk::after {
   content: '';
@@ -1214,258 +379,159 @@ html:not(.js) .mask .ln > i { opacity: 1; transform: none; }
   background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform .5s var(--ease-o);
+  transition: transform .45s var(--ease-o);
 }
 .lnk:hover::after { transform: none; transform-origin: left; }
-.lnk svg { width: 1rem; height: 1rem; transition: transform .45s var(--ease-o); }
-.lnk:hover svg { transform: translateX(4px); }
+.lnk svg { width: 1rem; height: 1rem; transition: transform .35s var(--ease-o); }
+.lnk:hover svg { transform: translateX(3px); }
 
-/* ── Cabecera ───────────────────────────────────────────────── */
+/* ── Cabecera ───────────────────────────────────────────────────── */
 .hdr {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 100;
-  height: var(--hdr-h);
-  transition: background-color .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease);
+  height: var(--hdr);
+  transition: background-color .3s var(--ease), box-shadow .3s var(--ease);
 }
-/* Sólida a partir de 80px de scroll, con blur y una sombra discreta.
-   Transición de 300ms, como el resto de la interfaz. */
-.hdr {
-  transition:
-    background-color .3s var(--ease),
-    color .3s var(--ease),
-    box-shadow .3s var(--ease);
-}
-.hdr.is-scrolled {
-  background: var(--bg-surface); /* respaldo si no hay color-mix */
-  background: color-mix(in srgb, var(--bg-surface) 88%, transparent);
-  backdrop-filter: saturate(180%) blur(18px);
-  -webkit-backdrop-filter: saturate(180%) blur(18px);
-  box-shadow: 0 1px 3px rgb(var(--c-dark) / .07);
-}
-/* Sobre el hero, que es oscuro, la cabecera sólida sería un parche
-   claro. Ahí conserva su propio lienzo. */
-.hdr.is-scrolled.is-inv {
-  background: var(--bg-dark);
-  background: color-mix(in srgb, var(--bg-dark) 88%, transparent);
-  box-shadow: 0 1px 3px rgb(0 0 0 / .3);
-}
-/* Sobre un bloque oscuro la cabecera se invierte reasignando tokens.
-   Estos valores se habían quedado en el negro de dos paletas atrás:
-   ahora salen de los tokens, como el resto. */
-.hdr.is-inv {
-  --canvas: var(--bg-dark);
-  --ink:    var(--ink-invert);
-  --ink-2:  #a7b2b6;
-  --ink-2:  color-mix(in srgb, var(--ink-invert) 70%, var(--bg-dark));
-  --ink-3:  #859196;
-  --ink-3:  color-mix(in srgb, var(--ink-invert) 55%, var(--bg-dark));
-  --rule:   rgba(234, 244, 246, .20);
-  --rule:   color-mix(in srgb, var(--ink-invert) 20%, transparent);
-  --accent: var(--acento);
-  color: var(--ink);
-}
-
-/* Respaldo sin JS: la página SIEMPRE abre sobre el hero, que es
-   oscuro. Si `main.js` no llega a ejecutarse, nadie pone `.is-inv` y la
-   cabecera se quedaría en tinta oscura sobre fondo oscuro. Con esto la
-   marca sigue siendo legible aunque el script falle. */
-html:not(.js) .hdr {
-  --ink:   var(--ink-invert);
-  --ink-2: #a7b2b6;
-  --ink-3: #859196;
-  color: var(--ink);
-}
-
 .hdr__in {
   max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 var(--margin);
-  height: var(--hdr-h);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  height: var(--hdr);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 1.5rem;
+}
+/* Sólida a partir de 60px de scroll. El color lo toma del ámbito en
+   el que esté: `is-night` la pone en noche sobre los bloques
+   oscuros, y lo gobierna main.js midiendo qué hay bajo la cabecera. */
+.hdr.is-stuck {
+  background: color-mix(in srgb, var(--bone) 88%, transparent);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  box-shadow: 0 1px 0 var(--line);
+}
+.hdr.is-night {
+  --fg: var(--on-night);
+  --fg-2: var(--on-night-2);
+  --fg-3: var(--on-night-3);
+  --rule: var(--line-night);
+  --rule-str: var(--line-night-str);
+  --accent: var(--signal-soft);
+  color: var(--on-night);
+}
+.hdr.is-stuck.is-night {
+  background: color-mix(in srgb, var(--night) 88%, transparent);
+  box-shadow: 0 1px 0 var(--line-night);
+}
+/* Respaldo sin JS: la portada y las dos páginas de público abren
+   SIEMPRE sobre un hero en noche. Si main.js no llega a ejecutarse,
+   nadie pone `is-night` y el logotipo quedaría en tinta oscura sobre
+   fondo oscuro. */
+html:not(.js) .hdr {
+  --fg: var(--on-night);
+  --fg-2: var(--on-night-2);
+  --fg-3: var(--on-night-3);
+  color: var(--on-night);
 }
 
-/* Barra de progreso de scroll: 2px con --gradiente. Va fija arriba,
-   no pegada al borde inferior de la cabecera, para que se lea como
-   progreso de página y no como subrayado del menú. */
+/* Barra de progreso de lectura. */
 .hdr__bar {
   position: fixed;
   left: 0; top: 0;
   z-index: 120;
   height: 2px;
   width: 100%;
-  background: var(--gradiente);
+  background: var(--seam);
   transform: scaleX(var(--p, 0));
   transform-origin: left;
 }
 
-.brand { display: flex; align-items: baseline; gap: .625rem; }
-.brand__mark {
+.brand { display: inline-flex; align-items: center; gap: .625rem; }
+.brand__mark { width: 1.75rem; height: 1.75rem; flex: none; }
+.brand__txt { display: flex; flex-direction: column; line-height: 1; }
+.brand__name {
+  font-family: var(--display);
   font-size: 1.0625rem;
-  font-weight: 600;
-  letter-spacing: .06em;
+  font-weight: 700;
+  letter-spacing: .01em;
 }
 .brand__sub {
-  font-size: .6875rem;
-  letter-spacing: .14em;
+  font-size: .5625rem;
+  font-weight: 600;
+  letter-spacing: .26em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  transition: color .4s var(--ease);
+  color: var(--fg-3);
+  margin-top: .22rem;
 }
 
-.nav { display: flex; gap: clamp(1.25rem, 2.2vw, 2.25rem); }
+.nav { display: flex; align-items: center; gap: clamp(1rem, 2vw, 2rem); }
 .nav__link {
   position: relative;
   font-size: .9375rem;
-  color: var(--ink-2);
-  transition: color .3s var(--ease);
+  font-weight: 500;
+  color: var(--fg-2);
+  transition: color .25s var(--ease);
 }
 .nav__link::after {
   content: '';
-  position: absolute; left: 0; right: 0; bottom: -.375rem;
-  height: 1px;
-  background: currentColor;
+  position: absolute; left: 0; right: 0; bottom: -.4rem;
+  height: 2px;
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform .45s var(--ease-o);
+  transition: transform .35s var(--ease-o);
 }
-.nav__link:hover { color: var(--ink); }
-.nav__link:hover::after { transform: none; transform-origin: left; }
-.nav__link.is-active { color: var(--ink); }
+.nav__link:hover { color: var(--fg); }
+.nav__link.is-here { color: var(--fg); }
+.nav__link.is-here::after { transform: none; transform-origin: left; }
 
-/* ── Grupo «Servicios» ────────────────────────────────────────── */
-.nav__grp { position: relative; display: flex; }
-
-.nav__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: .3rem;
-  font: inherit;
-  font-size: .9375rem;
-  cursor: pointer;
-}
-.nav__chev {
-  width: .75rem; height: .75rem;
-  transition: transform .3s var(--ease);
-}
-.nav__btn[aria-expanded="true"] .nav__chev { transform: rotate(180deg); }
-
-.nav__menu {
-  position: absolute;
-  top: 100%; left: 50%;
-  transform: translateX(-50%);
-  margin-top: .875rem;
-  min-width: 13rem;
-  display: flex;
-  flex-direction: column;
-  padding: .5rem;
-  background: var(--bg-surface);
-  border: 1px solid var(--borde);
-  border-radius: .625rem;
-  box-shadow: 0 12px 32px rgb(var(--c-dark) / .12);
-}
-
-/* PUENTE SOBRE EL HUECO. Entre el borde inferior del botón y el panel
-   hay 14px de `margin-top`, y ese margen queda FUERA de la caja del
-   panel: al bajar el ratón hacia el menú el puntero cruzaba 14px de
-   tierra de nadie, `pointerleave` saltaba en el grupo y el panel se
-   cerraba antes de llegar. El desplegable era inservible con ratón.
-
-   Este pseudoelemento extiende el área sensible del panel hacia arriba
-   justo esos 14px. Es invisible y, al ser parte de `.nav__menu`, el
-   puntero nunca sale del grupo. Si se cambia el `margin-top` de arriba,
-   hay que cambiar aquí `top` y `height` al mismo valor. */
-.nav__menu::before {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  top: -.875rem;
-  height: .875rem;
-}
-/* IMPRESCINDIBLE, no redundante: `[hidden]{display:none}` del navegador
-   tiene especificidad casi nula y lo pisa cualquier regla de clase que
-   declare `display` —aquí, el `display:flex` de arriba—. Sin esta línea
-   el panel quedaría siempre abierto. Es la misma trampa documentada
-   para `.drawer[hidden]`, y ya costó un fallo una vez. */
-.nav__menu[hidden] { display: none; }
-
-/* El panel es una tarjeta CLARA siempre, también cuando la cabecera
-   está invertida sobre el hero. Ojo: dentro de `.hdr.is-inv` los alias
-   --ink, --ink-2 y --ink-3 apuntan a la gama invertida, así que aquí no
-   se pueden usar o el texto saldría casi blanco sobre blanco.
-
-   Se tira de tokens que NO se voltean nunca: --ink-soft (tokens.css no
-   lo redefine en ningún ámbito) y --bg-dark, que es el mismo recurso
-   que ya usa `.btn--grad` para su tinta por este mismo motivo. */
-.nav__menu a {
-  padding: .5rem .625rem;
-  border-radius: .375rem;
-  font-size: .875rem;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  transition: background-color .2s var(--ease), color .2s var(--ease);
-}
-.nav__menu a:hover,
-.nav__menu a:focus-visible { background: var(--bg-tint); color: var(--bg-dark); }
-.nav__menu a.is-active { color: var(--teal-deep); font-weight: 500; }
-/* La sección visible se subraya en turquesa, no en currentColor: es
-   la única señal de «dónde estoy» y tiene que distinguirse del hover. */
-.nav__link.is-active::after {
-  transform: none;
-  transform-origin: left;
-  background: var(--turquesa);
-  height: 2px;
-}
-
-.hdr__end { display: flex; align-items: center; gap: 1rem; }
+.hdr__end { display: flex; align-items: center; gap: .875rem; }
+.hdr__end .btn { padding: .625rem 1.125rem; font-size: .875rem; }
 
 .burger {
   display: none;
-  width: 2.25rem; height: 2.25rem;
+  width: 2.5rem; height: 2.5rem;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  gap: .375rem;
+  gap: .35rem;
 }
 .burger span {
   display: block;
-  height: 1px;
+  height: 1.5px;
   width: 1.375rem;
-  background: var(--ink);
-  transition: transform .4s var(--ease), width .4s var(--ease), opacity .3s var(--ease);
+  background: currentColor;
+  transition: transform .35s var(--ease), opacity .25s var(--ease), width .35s var(--ease);
 }
-.burger span:last-child { width: .875rem; }
+.burger span:last-child { width: .9rem; }
 .burger[aria-expanded="true"] span { width: 1.375rem; }
-.burger[aria-expanded="true"] span:first-child { transform: translateY(3.5px) rotate(45deg); }
-.burger[aria-expanded="true"] span:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+.burger[aria-expanded="true"] span:first-child { transform: translateY(4.25px) rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { transform: translateY(-4.25px) rotate(-45deg); }
 
-/* ── Cajón móvil ────────────────────────────────────────────── */
+/* ── Cajón móvil ────────────────────────────────────────────────── */
 .drawer {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: var(--canvas); /* respaldo si no hay color-mix */
-  background: color-mix(in srgb, var(--canvas) 86%, transparent);
-  backdrop-filter: saturate(180%) blur(22px);
-  -webkit-backdrop-filter: saturate(180%) blur(22px);
-  padding: calc(var(--hdr-h) + 3rem) var(--margin) 3rem;
+  background: var(--night);
+  color: var(--on-night);
+  padding: calc(var(--hdr) + 2.5rem) var(--gutter) 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   opacity: 0;
-  transition: opacity .35s var(--ease);
+  transition: opacity .3s var(--ease);
 }
 .drawer.is-open { opacity: 1; }
-
-/* El [hidden]{display:none} del navegador tiene especificidad casi nula y pierde
-   contra .drawer{display:flex}. Sin esta regla el cajón queda invisible pero
-   clicable, fijo sobre toda la ventana, y se come cada clic de la página. */
+/* `[hidden]{display:none}` del navegador tiene especificidad casi nula
+   y pierde contra `.drawer{display:flex}`. Sin esta línea el cajón
+   queda invisible pero clicable sobre toda la ventana y se come cada
+   clic de la página. */
 .drawer[hidden] { display: none; }
-/* Durante los 350 ms del cierre `hidden` todavía es false: sin esto sigue
-   interceptando clics mientras se desvanece. */
+/* Durante el desvanecido `hidden` todavía es false: sin esto sigue
+   interceptando clics mientras se cierra. */
 .drawer:not(.is-open) { pointer-events: none; }
 
 .drawer__nav { display: flex; flex-direction: column; }
@@ -1474,533 +540,387 @@ html:not(.js) .hdr {
   align-items: baseline;
   gap: 1rem;
   padding: 1.125rem 0;
-  border-top: 1px solid var(--rule);
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
-  font-weight: 500;
-  letter-spacing: -.035em;
+  border-top: 1px solid var(--line-night);
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--on-night);
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity .5s var(--ease-o), transform .5s var(--ease-o);
+  transform: translateY(10px);
+  transition: opacity .45s var(--ease-o), transform .45s var(--ease-o);
 }
-.drawer.is-open .drawer__nav a,
-.drawer.is-open .drawer__grp { opacity: 1; transform: none; }
-
-/* El escalonado va sobre los HIJOS DIRECTOS del cajón, no sobre los
-   enlaces: desde que «Servicios» es un grupo, uno de esos hijos es un
-   <div> con tres enlaces dentro y `a:nth-child(n)` ya no numeraba las
-   filas que se ven. */
-.drawer__nav > * { transition-delay: calc(.06s + var(--i, 0) * .05s); }
-.drawer__nav > :nth-child(1) { --i: 0; }
-.drawer__nav > :nth-child(2) { --i: 1; }
-.drawer__nav > :nth-child(3) { --i: 2; }
-.drawer__nav > :nth-child(4) { --i: 3; }
-.drawer__nav > :nth-child(5) { --i: 4; }
-
-/* El grupo entra como un bloque y sus enlaces no se escalonan aparte:
-   son una sola unidad de lectura. */
-.drawer__grp {
-  border-top: 1px solid var(--rule);
-  padding: 1.125rem 0 .25rem;
-  opacity: 0;
-  transform: translateY(12px);
-  transition: opacity .5s var(--ease-o), transform .5s var(--ease-o);
-}
-.drawer__gt {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  font-size: clamp(1.75rem, 8vw, 2.5rem);
-  font-weight: 500;
-  letter-spacing: -.035em;
-}
-/* Los hijos ya no llevan filete ni retardo propio: los hereda el grupo. */
-.drawer__nav .drawer__sub {
-  border-top: 0;
-  padding: .5rem 0 .5rem 2.5rem;
-  font-size: clamp(1rem, 4.5vw, 1.25rem);
-  font-weight: 400;
-  letter-spacing: -.02em;
-  color: var(--ink-2);
-  opacity: 1;
-  transform: none;
-  transition-delay: 0s;
-}
-.drawer__nav .drawer__sub:hover { color: var(--ink); }
-
+.drawer.is-open .drawer__nav a { opacity: 1; transform: none; }
+.drawer__nav a:nth-child(1) { transition-delay: .05s; }
+.drawer__nav a:nth-child(2) { transition-delay: .1s; }
+.drawer__nav a:nth-child(3) { transition-delay: .15s; }
+.drawer__nav a:nth-child(4) { transition-delay: .2s; }
+.drawer__nav a:nth-child(5) { transition-delay: .25s; }
 .drawer__n {
+  font-family: var(--ui);
   font-size: .6875rem;
+  font-weight: 600;
   letter-spacing: .16em;
-  color: var(--ink-3);
+  color: var(--on-night-3);
   font-variant-numeric: tabular-nums;
 }
-.drawer__foot { display: flex; gap: 1.75rem; padding-top: 2rem; border-top: 1px solid var(--rule); }
-
-/* ── Retícula de sección ────────────────────────────────────── */
-.sec { padding: clamp(6rem, 13vh, 11rem) 0; }
-.sec--dark { padding: clamp(7rem, 15vh, 13rem) 0; }
-
-/* z-index sube el contenido por encima del rescoldo de los bloques
-   oscuros, que es un ::before posicionado y si no lo taparía. */
-.sec__grid {
-  position: relative;
-  z-index: 1;
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 var(--margin);
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  column-gap: var(--gap);
-  row-gap: clamp(2.5rem, 5vw, 4rem);
+.drawer__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line-night);
+  font-size: .875rem;
+  color: var(--on-night-2);
 }
 
-/* min-width:0 en los hijos NO es defensivo por gusto. Un ítem de
-   rejilla nace con `min-width: auto`, es decir, no puede encogerse por
-   debajo del min-content de lo que lleva dentro. Basta un solo
-   descendiente ancho —una tabla con min-width, un <pre>, una palabra
-   larguísima— para que ensanche su pista, después la rejilla, después
-   el documento, y el móvil acabe mostrando la página al 75%.
-
-   Pasó exactamente eso con la matriz comparativa: sus 480px de
-   min-width atravesaron el contenedor de scroll, `.sec__body` y la
-   rejilla hasta empujar el documento a 502px en una pantalla de 375.
-   Con esta línea, el que se pasa de ancho se desborda solo. */
-.sec__grid > * { min-width: 0; }
-
-/* El titular se queda fijo mientras el contenido de la derecha
-   pasa por delante. Es el gesto que sostiene el ritmo del sitio. */
-.sec__head {
-  grid-column: 1 / 5;
-  position: sticky;
-  top: calc(var(--hdr-h) + clamp(2rem, 6vh, 4.5rem));
-  align-self: start;
-}
-.sec__body { grid-column: 5 / 13; }
-
-/* ── 01 · Hero ──────────────────────────────────────────────── */
-/* Los márgenes verticales están calculados para que la fila de
-   posicionamiento quede dentro de la ventana en un portátil de 880px
-   de alto: es lo que ancla el hero y evita que parezca inacabado. */
+/* ── Hero ───────────────────────────────────────────────────────
+   Abre en noche —el visitante entra por el lado global— y termina
+   entregando las dos puertas, que es donde se bifurca. */
 .hero {
   position: relative;
-  min-height: 100svh;
-  padding-top: calc(var(--hdr-h) + clamp(2.5rem, 5vh, 4.5rem));
-  padding-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: clamp(2rem, 4vh, 3.5rem);
+  padding-top: calc(var(--hdr) + clamp(3rem, 9vh, 7rem));
+  padding-bottom: clamp(2.5rem, 6vh, 5rem);
   overflow: hidden;
 }
-
-/* Halo detrás del titular: --acento al 8%, disuelto sin bordes duros.
-   No usa --gradiente (ese tiene solo dos destinos), es un campo radial.
-   z-index 0 y pointer-events:none para que no se coma ningún clic, que
-   es el fallo que ya ocurrió una vez con el cajón móvil. */
-.hero__glow {
+/* Campo luminoso detrás del titular. No es un degradado de marca: es
+   un campo radial difuso del azul señal, sin bordes duros.
+   pointer-events:none o se comería los clics del contenido. */
+.hero__field {
   position: absolute;
   z-index: 0;
   pointer-events: none;
-  left: clamp(-14rem, -6vw, -4rem);
-  top: clamp(4rem, 16vh, 12rem);
-  width: min(72rem, 120%);
-  aspect-ratio: 3 / 2;
-  background: radial-gradient(
-    closest-side,
-    rgb(var(--c-acento) / .08),
-    rgb(var(--c-acento) / .03) 55%,
-    transparent 78%
-  );
+  top: -18%; left: 50%;
+  width: min(80rem, 150%);
+  aspect-ratio: 2 / 1;
+  transform: translateX(-58%);
+  background:
+    radial-gradient(closest-side, rgb(var(--c-signal) / .20), rgb(var(--c-signal) / .05) 58%, transparent 76%);
 }
-/* El contenido va por encima del halo. */
-.hero__in,
-.hero__meta { position: relative; z-index: 1; }
-.hero__in {
-  max-width: var(--shell);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--margin);
+.hero__field--warm {
+  top: auto; bottom: -34%; left: auto; right: -14%;
+  transform: none;
+  width: min(48rem, 100%);
+  background:
+    radial-gradient(closest-side, rgb(var(--c-glow) / .16), rgb(var(--c-glow) / .04) 58%, transparent 76%);
 }
-
-/* El techo de 9.2vw es lo que impide que «Un solo responsable.» se
-   parta en dos líneas por debajo de 413px. Ver la nota del bloque de
-   titulares más arriba. */
-.hero__title {
-  font-size: min(clamp(2.375rem, 8.4vw, 8.5rem), 9.2vw);
-  font-weight: 500;
-  line-height: .94;
-  letter-spacing: -.048em;
-  margin-top: clamp(1.25rem, 2vw, 2rem);
-}
-
-.hero__lead {
-  margin-top: clamp(1.5rem, 2.6vw, 2.25rem);
-  max-width: 50ch;
-  font-size: clamp(1.0625rem, 1.35vw, 1.3125rem);
-  line-height: 1.6;
-  color: var(--ink-2);
-}
-
-/* Los nombres de los tres estudios dentro de la entradilla. Destacan
-   por COLOR y no por grosor: la jerarquía de esta hoja la da el tamaño
-   o el tono, nunca el peso, y además Inter solo está cargada de 300 a
-   600 —un `font-weight: 700` lo sintetizaría el navegador—. */
-.hero__svc { color: var(--ink); }
-
-/* `.hero__geo` —la línea «Para empresas de Latinoamérica.» bajo la
-   entradilla— salió el 2026-08-09. El alcance geográfico lo declara
-   ahora una sola vez la celda «Cobertura» de la fila de abajo, y
-   decirlo dos veces con distinto ámbito era una contradicción a dos
-   líneas de distancia.
-   Para recuperarlo: git log -S'.hero__geo' -- assets/css/styles.css */
-
-.hero__cta {
-  margin-top: clamp(1.75rem, 2.8vw, 2.5rem);
-  display: flex;
-  flex-wrap: wrap;
-  gap: .875rem;
-}
-
+.hero__in { position: relative; z-index: 1; }
+/* Sin `max-width` en ch. Estos titulares llevan sus saltos de línea
+   escritos a mano en `.rev-line`, así que una medida máxima no ayuda a
+   la legibilidad y sí puede estrechar la caja por debajo de lo que
+   necesita la línea, provocando justo el salto que se quiere evitar.
+   Quien controla el ancho aquí es el techo en vw del tamaño. */
+.hero__lead { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
 .hero__meta {
-  max-width: var(--shell);
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 var(--margin);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
 }
-/* Los filetes son bordes, no huecos sobre un fondo: las celdas tienen
-   que ser transparentes para que la atmósfera pase por debajo. Un
-   fondo opaco aquí abre un rectángulo blanco en mitad del color. */
-.hero__meta li {
-  border-top: 1px solid var(--rule);
-  padding: 1.5rem 1.5rem 0 0;
-  font-size: .9375rem;
-  color: var(--ink);
+.hero__meta > div {
+  background: var(--canvas);
+  padding: 1.25rem 1.25rem 1.25rem 0;
 }
-.hero__meta li + li {
-  border-left: 1px solid var(--rule);
-  padding-left: clamp(1rem, 2vw, 1.5rem);
-}
-.hero__meta span {
-  display: block;
-  margin-bottom: .5rem;
-  font-size: .6875rem;
+.hero__meta > div:not(:first-child) { padding-left: clamp(1rem, 2vw, 1.75rem); }
+.hero__meta dt {
+  font-size: .625rem;
+  font-weight: 600;
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--fg-3);
+  margin-bottom: .4rem;
 }
+.hero__meta dd { margin: 0; font-size: .9375rem; color: var(--fg); }
 
-/* ── 02 · Desafíos ──────────────────────────────────────────────
-   La sección que abre la página. En vez de la columna pegajosa, aquí
-   el titular va arriba y la retícula ocupa las doce columnas: el
-   visitante tiene que poder barrer los nueve desafíos de un vistazo y
-   reconocerse en uno. Sin sombras —una tarjeta elevada lee como
-   producto; un filete fino, como documento—.
-   ──────────────────────────────────────────────────────────────── */
-.sec__grid--wide .sec__head { grid-column: 1 / 13; position: static; max-width: 46ch; }
-.sec__grid--wide .sec__body { grid-column: 1 / 13; }
+/* ── Las dos puertas ────────────────────────────────────────────
+   El componente firma del sistema y la decisión de UX más
+   importante de la portada: los dos públicos se separan ANTES de
+   que ninguno tenga que leer el contenido del otro.
 
-/* Titular a la izquierda y una pieza visual ocupando el hueco de la
-   derecha, que en --wide se quedaba vacío. El cuerpo sigue a todo
-   ancho por debajo. Gana composición sin gastar altura. */
-.sec__grid--wide.sec__grid--split .sec__head { grid-column: 1 / 6; max-width: 38ch; }
-.sec__grid--split .stall { grid-column: 7 / 13; align-self: center; }
-
-.chal {
+   El hueco de 1px sobre el filete es la costura: las dos mitades se
+   tocan pero no se mezclan. */
+.doors {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(.75rem, 1.3vw, 1.125rem);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
 }
-
-.chal__i {
+.door {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
-  padding: clamp(1.5rem, 2.5vw, 2.125rem);
-  background: var(--canvas-2);
-  border: 1px solid var(--rule);
-  transition:
-    border-color .4s var(--ease),
-    background-color .4s var(--ease);
+  gap: .875rem;
+  padding: clamp(1.75rem, 3.5vw, 3rem);
+  min-height: clamp(18rem, 30vw, 24rem);
+  overflow: hidden;
+  transition: background-color .35s var(--ease);
 }
-.chal__i:hover { background: var(--canvas); border-color: var(--turquesa); }
-
-/* Etiqueta del servicio que resuelve el desafío. Es lo que convierte
-   la sección en enrutador: la tarjeta dice el problema, la pill dice
-   a dónde lleva. margin-top:auto la ancla al pie aunque los textos
-   tengan distinta longitud. */
-.chal__tag {
-  align-self: flex-start;
-  margin-top: auto;
-  padding: .3rem .625rem;
-  border-radius: 999px;
-  background: var(--bg-tint);
-  color: var(--teal-deep);
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  transition: background-color .3s var(--ease), color .3s var(--ease);
+.door--global {
+  background: var(--night-2);
+  color: var(--on-night);
+  --fg: var(--on-night);
+  --fg-2: var(--on-night-2);
+  --fg-3: var(--on-night-3);
+  --accent: var(--signal-soft);
+  --rule: var(--line-night);
 }
-/* Tinta OSCURA sobre el turquesa, no blanca: el blanco ahí da 2.54:1
-   y no pasa AA. Con --bg-dark queda en 7.14:1 y se conserva el mismo
-   golpe de color. */
-.chal__i:hover .chal__tag {
-  background: var(--turquesa);
-  color: var(--bg-dark);
-}
-/* La tarjeta de contacto no lleva pill; su flecha ya hace de remate. */
-.chal__i--cta:hover .chal__tag { background: var(--bg-tint); }
-
-.chal__t {
-  font-size: clamp(1.0625rem, 1.55vw, 1.3125rem);
-  font-weight: 500;
-  letter-spacing: -.028em;
-  line-height: 1.2;
-}
-.chal__d { font-size: .875rem; line-height: 1.6; color: var(--ink-2); }
-
-/* La novena cierra la retícula invirtiéndose. Reasigna tokens en su
-   propio ámbito, igual que las secciones oscuras, así que el texto de
-   dentro se adapta solo. */
-.chal__i--cta {
-  --ink:    var(--ink-invert);
-  --ink-2:  #a7b2b6;
-  --ink-2:  color-mix(in srgb, var(--ink-invert) 70%, var(--bg-dark));
-  --accent: var(--acento);
-  background: var(--bg-dark);
-  border-color: var(--bg-dark);
+.door--local {
+  background: var(--surface);
   color: var(--ink);
+  --fg: var(--ink);
+  --fg-2: var(--ink-2);
+  --fg-3: var(--ink-3);
+  --accent: var(--ember);
+  --rule: var(--line);
 }
-.chal__i--cta:hover { background: var(--bg-dark-alt); border-color: var(--accent); }
-.chal__i--cta svg {
-  width: 1.125rem; height: 1.125rem;
-  margin-top: auto;
-  transition: transform .45s var(--ease-o);
-}
-.chal__i--cta:hover svg { transform: translateX(5px); }
-
-/* ── 05 · Proceso ───────────────────────────────────────────── */
-
-/* La escala del roadmap. Va fuera de la <ol> y alineada con los
-   tramos: comparte su sangrado izquierdo, o los extremos no
-   coincidirían con el principio y el final de las barras. */
-.proc__scale {
-  display: flex;
-  justify-content: space-between;
-  margin-left: clamp(2rem, 4vw, 3.5rem);
-  padding-bottom: .5rem;
-  margin-bottom: clamp(1.5rem, 3vw, 2.25rem);
-  border-bottom: 1px solid var(--rule);
-  font-size: .625rem;
-  font-weight: 500;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.proc {
-  position: relative;
-  padding-left: clamp(2rem, 4vw, 3.5rem);
-}
-/* Raíl gris de fondo y raíl de tinta que se llena con el scroll. */
-.proc::before,
-.proc::after {
+.door--global:hover { background: var(--night-3); }
+.door--local:hover { background: var(--bone); }
+/* Filete de ámbito en el borde superior: azul arriba a la izquierda,
+   ámbar arriba a la derecha. Es la lectura de un vistazo de qué
+   puerta es cuál, antes de leer una sola palabra. */
+.door::before {
   content: '';
   position: absolute;
-  left: 4px; top: .75rem; bottom: .75rem;
-  width: 1px;
-}
-.proc::before { background: var(--rule); }
-/* La línea que avanza va en --gradiente y se revela con scaleY según
-   el progreso de scroll. Es el equivalente de stroke-dashoffset para
-   un elemento que no es SVG: mismo efecto de «trazo que se dibuja»,
-   sin añadir un SVG solo para esto. */
-.proc::after {
-  background: var(--gradiente);
-  transform: scaleY(var(--p, 0));
-  transform-origin: top;
-}
-
-/* El aire entre etapas se apretó al entrar los tramos: un diagrama de
-   fases solo se lee como UN gráfico si sus filas están cerca. Con la
-   separación anterior (hasta 5rem) los seis tramos parecían seis
-   barras sueltas en vez de una escala continua. */
-.proc__i { position: relative; padding: 0 0 clamp(2.25rem, 4vw, 3.25rem); }
-.proc__i:last-child { padding-bottom: 0; }
-
-.proc__rail { position: absolute; left: calc(-1 * clamp(2rem, 4vw, 3.5rem)); top: .5rem; }
-.proc__dot {
-  display: block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--canvas);
-  box-shadow: inset 0 0 0 1px var(--ink-3);
-  transition: box-shadow .6s var(--ease), background-color .6s var(--ease), transform .6s var(--ease-o);
-}
-/* La etapa alcanzada se pinta en turquesa y crece 1.3. */
-.proc__i.is-in .proc__dot {
-  background: var(--turquesa);
-  box-shadow: inset 0 0 0 1px var(--turquesa);
-  transform: scale(1.3);
-}
-
-.proc__c {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity .8s var(--ease-o), transform .8s var(--ease-o);
-}
-.proc__i.is-in .proc__c { opacity: 1; transform: none; }
-html:not(.js) .proc__c { opacity: 1; transform: none; }
-
-.proc__n {
-  font-size: .6875rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-.proc__t {
-  font-size: clamp(1.875rem, 4vw, 3.25rem);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -.042em;
-  margin: .75rem 0 1rem;
-}
-.proc__d { color: var(--ink-2); max-width: 54ch; }
-
-/* El tramo de cada etapa sobre una escala común. Comparte el
-   max-width de .proc__d: si las pistas no midieran todas lo mismo, la
-   comparación entre etapas —que es el único punto del gráfico— sería
-   falsa. Cualquier cambio a uno de los dos hay que hacerlo a los dos. */
-.proc__bar {
-  position: relative;
-  height: 6px;
-  max-width: 54ch;
-  margin-top: 1.5rem;
-  border-radius: 3px;
-  background: var(--rule);
-}
-.proc__seg {
-  position: absolute;
-  top: 0; bottom: 0;
-  left: var(--a);
-  width: var(--b);
-  border-radius: 3px;
-  background: var(--turquesa);
-}
-/* La puerta: rombo hueco al final del tramo. Se rellena con --canvas
-   para que recorte la pista en lugar de posarse encima. */
-.proc__gate {
-  position: absolute;
-  top: 50%;
-  left: calc(var(--a) + var(--b));
-  width: 9px; height: 9px;
-  transform: translate(-50%, -50%) rotate(45deg);
-  background: var(--canvas);
-  box-shadow: inset 0 0 0 1.5px var(--teal-deep);
-}
-/* `.proc__bar--loop` —el tramo que se desvanecía porque el ciclo volvía
-   a empezar— salió el 2026-08-09 con la etapa «Optimize». Un estudio
-   termina: las cinco etapas cierran puerta, incluida la última. */
-
-@media (prefers-reduced-motion: no-preference) {
-  .proc__seg {
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .7s var(--ease-o) .15s;
-  }
-  .proc__i.is-in .proc__seg { transform: scaleX(1); }
-  .proc__gate { opacity: 0; transition: opacity .4s var(--ease) .75s; }
-  .proc__i.is-in .proc__gate { opacity: 1; }
-}
-
-/* ── 08 · FAQ ───────────────────────────────────────────────── */
-.faq { display: flex; flex-direction: column; }
-.faq__i { border-top: 1px solid var(--rule); }
-.faq > :last-child { border-bottom: 1px solid var(--rule); }
-.faq__i h3 { font: inherit; }
-
-.faq__q {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  text-align: left;
-  padding: clamp(1.375rem, 2.4vw, 1.875rem) 0;
-  font-size: clamp(1.0625rem, 1.7vw, 1.375rem);
-  font-weight: 500;
-  letter-spacing: -.025em;
-  line-height: 1.35;
-  color: var(--ink-2);
-  transition: color .35s var(--ease);
-}
-.faq__q:hover { color: var(--ink); }
-.faq__i.is-open .faq__q { color: var(--ink); }
-.faq__q svg {
-  flex: none;
-  width: 1.25rem; height: 1.25rem;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
   transition: transform .5s var(--ease-o);
 }
-.faq__i.is-open .faq__q svg { transform: rotate(135deg); }
-
-/* grid-template-rows anima la altura sin conocerla de antemano. */
-.faq__a {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows .55s var(--ease-o);
+.door.in::before { transform: none; }
+.door__kind {
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
-.faq__i.is-open .faq__a { grid-template-rows: 1fr; }
-.faq__a > div { overflow: hidden; }
-.faq__a p {
-  padding-bottom: clamp(1.5rem, 2.4vw, 2rem);
-  padding-right: clamp(0rem, 6vw, 5rem);
-  color: var(--ink-2);
-  max-width: 62ch;
+.door__t {
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  max-width: 18ch;
 }
-html:not(.js) .faq__a { grid-template-rows: 1fr; }
+.door__d { font-size: .9375rem; line-height: 1.6; color: var(--fg-2); max-width: 42ch; }
+.door__go {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: .625rem;
+  font-weight: 600;
+  font-size: .9375rem;
+  color: var(--accent);
+}
+.door__go svg { width: 1.125rem; height: 1.125rem; transition: transform .35s var(--ease-o); }
+.door:hover .door__go svg { transform: translateX(5px); }
 
-/* ── 09 · CTA final ─────────────────────────────────────────── */
-.cta { padding: clamp(7rem, 18vh, 15rem) 0; }
-.cta__in {
+/* ── El corredor: entrada al mercado ────────────────────────────
+   El diagrama conceptual de la empresa. Cinco estaciones sobre un
+   raíl que va del azul al ámbar: la tecnología entra global y sale
+   convertida en negocio local. El degradado NO es decorativo, es el
+   argumento entero en una línea.
+
+   El raíl se dibuja con scaleX al entrar en pantalla, así que se lee
+   en el orden en que ocurre. */
+.flow { position: relative; margin-top: clamp(2.5rem, 5vw, 4rem); }
+.flow__rail {
+  position: absolute;
+  top: 1.0625rem; left: 0; right: 0;
+  height: 2px;
+  background: var(--seam);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.4s var(--ease-o) .2s;
+}
+.flow.in .flow__rail { transform: none; }
+.flow__steps {
   position: relative;
-  z-index: 1;
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 var(--margin);
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.6vw, 1.5rem);
 }
-.cta__t {
-  font-size: min(clamp(2.5rem, 8vw, 8rem), 9.4vw);
-  font-weight: 500;
-  line-height: .94;
-  letter-spacing: -.048em;
+/* Cuatro estaciones en las dos páginas de público; cinco en el
+   corredor de la portada. Va como CLASE y no como estilo en línea: un
+   estilo en línea gana a cualquier regla de la hoja sin !important, y
+   la variante en línea impedía que el media query volviera vertical el
+   diagrama en móvil. Medido a 320px: el documento se iba a 386 y la
+   hamburguesa quedaba fuera de la pantalla. */
+.flow__steps--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.flow__i {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .6s var(--ease-o) var(--d, 0s), transform .6s var(--ease-o) var(--d, 0s);
 }
-.cta__d {
-  margin-top: clamp(2rem, 4vw, 2.75rem);
-  max-width: 44ch;
-  color: var(--ink-2);
-  font-size: clamp(1rem, 1.3vw, 1.1875rem);
-  line-height: 1.6;
+.flow.in .flow__i { opacity: 1; transform: none; }
+.flow__dot {
+  width: 2.125rem; height: 2.125rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1.5px var(--rule-str);
+  color: var(--fg);
+  font-size: .6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
-.cta__btns { margin-top: clamp(2.25rem, 4vw, 3rem); display: flex; flex-wrap: wrap; gap: .875rem; }
+.flow__i:nth-child(1) .flow__dot { box-shadow: inset 0 0 0 1.5px var(--signal); color: var(--accent); }
+.flow__i:nth-child(5) .flow__dot { box-shadow: inset 0 0 0 1.5px var(--ember-glow); color: var(--ember-soft); }
+.flow__t {
+  margin-top: 1rem;
+  font-size: .9375rem;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  line-height: 1.25;
+}
+.flow__d { margin-top: .4rem; font-size: .8125rem; line-height: 1.55; color: var(--fg-2); }
 
-/* ── 10 · Formulario ────────────────────────────────────────── */
+/* ── Rejillas de contenido ──────────────────────────────────────── */
+.grid {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+.grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+.cols--head { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+
+/* Tarjeta base. Sin sombras: un filete fino lee como documento
+   técnico y una sombra lee como producto de consumo. */
+.card {
+  padding: clamp(1.5rem, 2.6vw, 2rem);
+  background: var(--canvas-2);
+  border: 1px solid var(--rule);
+  transition: border-color .3s var(--ease), background-color .3s var(--ease);
+}
+.card:hover { border-color: var(--rule-str); }
+.card__k {
+  font-family: var(--display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -.015em;
+  margin-bottom: .5rem;
+}
+.card__d { font-size: .875rem; line-height: 1.6; color: var(--fg-2); }
+
+/* Inventario de capacidades: filete y texto, sin viñeta de disco. */
+.inv { display: grid; gap: 0; }
+.inv li {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: .5rem;
+  align-items: baseline;
+  padding: .875rem 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: .9375rem;
+}
+.inv li:first-child { border-top: 1px solid var(--rule); }
+.inv__n {
+  font-size: .6875rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .06em;
+}
+.inv__d { color: var(--fg-2); font-size: .8125rem; display: block; margin-top: .2rem; }
+
+/* Etiquetas de categoría y sector. */
+.tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+.tags li {
+  padding: .5rem .875rem;
+  border: 1px solid var(--rule);
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--fg-2);
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+}
+.tags li:hover { border-color: var(--accent); color: var(--fg); }
+
+/* ── Technology Partners ────────────────────────────────────────
+   Estado inicial honesto. La firma representa tecnología real pero
+   todavía no hay datos publicables de ninguna marca, así que aquí NO
+   se inventa ningún logotipo: la retícula enseña la forma que tendrá
+   una ficha y un hueco explícitamente preparado.
+
+   Cuando lleguen nombre, país, categoría y descripción, se rellena
+   `.partner` y se borra `.partner--slot`. */
+/* Cada ficha lleva su propio borde y la rejilla un hueco real. La
+   alternativa elegante —hueco de 1px sobre un contenedor teñido, que
+   es lo que hacen `.doors` y `.contact`— NO sirve aquí: con tres
+   fichas en dos columnas, la cuarta celda queda vacía y el fondo del
+   contenedor la pinta como un rectángulo macizo que parece un error.
+   Y el número de partners va a cambiar, que es justamente el punto.
+
+   `.doors` y `.contact` sí pueden usar aquel truco porque su número de
+   celdas es fijo y siempre llena las filas. */
+.partners {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(.75rem, 1.5vw, 1.125rem);
+}
+.partners > * { min-width: 0; }
+.partner {
+  background: var(--canvas-2);
+  border: 1px solid var(--rule);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  min-height: 15rem;
+  transition: border-color .3s var(--ease);
+}
+.partner:hover { border-color: var(--rule-str); }
+.partner__logo {
+  width: 3.25rem; height: 3.25rem;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--rule-str);
+  color: var(--fg-3);
+}
+.partner__logo svg { width: 1.375rem; height: 1.375rem; }
+.partner__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .75rem;
+  font-size: .6875rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+/* El hueco todavía sin partner: borde punteado para que se lea como
+   espacio reservado y no como una ficha a medio cargar. */
+.partner--slot { border-style: dashed; }
+.partner--slot .partner__t { color: var(--fg-2); }
+
+/* ── Formularios ────────────────────────────────────────────────── */
 .form { max-width: 46rem; }
 .form__row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: var(--gap);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2.5vw, 2rem);
 }
-
 .f { position: relative; padding-bottom: 1.75rem; }
 .f label {
   display: block;
   margin-bottom: .5rem;
   font-size: .6875rem;
-  letter-spacing: .16em;
+  font-weight: 600;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--fg-3);
 }
 .f input,
 .f textarea,
@@ -2008,294 +928,192 @@ html:not(.js) .faq__a { grid-template-rows: 1fr; }
   width: 100%;
   background: transparent;
   border: 0;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule-str);
   border-radius: 0;
-  padding: .625rem 0;
-  font-size: 1.0625rem;
-  transition: border-color .35s var(--ease);
+  padding: .75rem 0;
+  font-size: 1rem;
+  transition: border-color .25s var(--ease);
   appearance: none;
 }
-.f textarea { resize: vertical; min-height: 7rem; line-height: 1.6; }
+.f textarea { resize: vertical; min-height: 6.5rem; line-height: 1.6; }
 .f select {
   cursor: pointer;
-  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-image:
+    linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
   background-position: right 6px center, right 1px center;
   background-size: 5px 5px, 5px 5px;
   background-repeat: no-repeat;
+  padding-right: 1.5rem;
 }
+/* El desplegable nativo pinta su lista con el color del sistema. En
+   ámbito oscuro hay que devolverle un fondo o las opciones salen
+   blancas sobre blanco en Windows. */
+.night .f select option { background: var(--night-2); color: var(--on-night); }
 .f input::placeholder,
-.f textarea::placeholder { color: var(--ink-3); }
-.f input:hover, .f textarea:hover, .f select:hover { border-color: var(--ink-3); }
-.f input:focus, .f textarea:focus, .f select:focus {
-  outline: none;
-  border-color: var(--ink);
-}
-.f.is-err input,
-.f.is-err textarea { border-color: var(--ink); border-bottom-width: 2px; }
+.f textarea::placeholder { color: var(--fg-3); }
+.f input:hover, .f textarea:hover, .f select:hover { border-color: var(--fg-3); }
+.f input:focus, .f textarea:focus, .f select:focus { outline: none; border-color: var(--accent); }
+.f.is-bad input, .f.is-bad textarea, .f.is-bad select { border-color: var(--ember); border-bottom-width: 2px; }
 
-.err {
-  position: absolute;
-  bottom: .375rem; left: 0;
-  font-size: .8125rem;
-  color: var(--ink-2);
-}
-
+.err { position: absolute; bottom: .35rem; left: 0; font-size: .8125rem; color: var(--fg-2); }
+/* Trampa antirrobots. Fuera de pantalla y con tabindex -1: ningún
+   visitante la rellena y la Function descarta el envío si llega con
+   contenido. */
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 .form__foot {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1.25rem 1.75rem;
+  gap: 1rem 1.5rem;
 }
-.form__fine { font-size: .8125rem; color: var(--ink-3); max-width: 30ch; }
-
+.form__fine { font-size: .8125rem; color: var(--fg-3); max-width: 34ch; }
 .form__msg {
-  margin-top: 1.75rem;
-  padding: 1.125rem 1.25rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
   font-size: .9375rem;
-  background: rgb(255 255 255 / .5);
-  box-shadow: inset 0 0 0 1px var(--rule);
+  border-left: 3px solid var(--accent);
+  background: var(--canvas-2);
 }
-.form__msg--ko { box-shadow: inset 0 0 0 1px var(--ink); }
-
+.form__msg--bad { border-left-color: var(--ember); }
 button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
-/* ── 11 · Pie ───────────────────────────────────────────────── */
-.ftr { padding: clamp(4rem, 8vw, 6.5rem) 0 2.5rem; }
-.ftr__in {
-  position: relative;
-  z-index: 1;
-  max-width: var(--shell);
-  margin: 0 auto;
-  padding: 0 var(--margin);
+/* ── Contacto ───────────────────────────────────────────────────── */
+.contact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
 }
+.contact > * { min-width: 0; }
+.contact__i {
+  background: var(--canvas-2);
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.contact__k {
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+/* La dirección de correo NUNCA se parte en dos líneas: se lee mal y
+   se copia peor. El tamaño cede antes que el salto de línea. */
+.contact__v { font-size: clamp(.8125rem, 2.2vw, 1rem); font-weight: 500; white-space: nowrap; }
+
+/* ── Pie ────────────────────────────────────────────────────────── */
+.ftr { padding-block: clamp(3.5rem, 7vw, 5.5rem) 2rem; }
 .ftr__top {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  column-gap: var(--gap);
-  row-gap: 3.5rem;
-  padding-bottom: clamp(3rem, 6vw, 5rem);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
 }
-.ftr__mark {
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: .06em;
-}
-.ftr__tag {
-  margin-top: .5rem;
-  font-size: .9375rem;
-  letter-spacing: -.015em;
-  color: var(--ink);
-}
-.ftr__caps {
-  margin-top: .875rem;
-  font-size: .6875rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.ftr__claim {
-  margin-top: 1.5rem;
-  max-width: 30ch;
-  font-size: .9375rem;
-  line-height: 1.6;
-  color: var(--ink-3);
-}
-
-.ftr__cols {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-}
-/* Mismo motivo que en `.sec__grid > *`: sin min-width:0 la columna no
-   baja del min-content de su hijo más ancho, y aquí ese hijo es la
-   dirección de correo. En tablet empujaba el pie 100px fuera de la
-   pantalla. El `overflow-wrap` le da además por dónde partirse en vez
-   de recortarse. */
-.ftr__col { min-width: 0; }
-.ftr__col a { overflow-wrap: anywhere; }
-
-/* La dirección de correo va SIEMPRE en una línea. `overflow-wrap` de
-   arriba la partía en dos —«zolezziconsulting@» / «gmail.com»—, que es
-   exactamente lo que no se quiere en un dato de contacto: se lee mal y
-   se copia peor. El `nowrap` lo impide y el ajuste de tamaño la deja
-   caber en la columna más estrecha del pie sin recortarse.
-
-   La columna que la contiene lleva `--wide`, que en móvil la extiende
-   a las dos columnas del pie. Sin eso, ni con este tamaño cabría. */
-.ftr__mail {
-  overflow-wrap: normal;
-  white-space: nowrap;
-  font-size: clamp(.75rem, 2.6vw, .9375rem);
-}
+.ftr__claim { margin-top: 1.25rem; max-width: 34ch; font-size: .9375rem; line-height: 1.6; color: var(--fg-2); }
+.ftr__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+.ftr__col > *, .ftr__cols > * { min-width: 0; }
 .ftr__col h2 {
-  font-size: .6875rem;
-  font-weight: 500;
+  font-size: .625rem;
+  font-weight: 600;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: var(--ink-3);
-  margin-bottom: 1.25rem;
+  color: var(--fg-3);
+  margin-bottom: 1.125rem;
 }
 .ftr__col li { margin-bottom: .625rem; }
-.ftr__col a, .ftr__col span {
-  font-size: .9375rem;
-  color: var(--ink-2);
-  transition: color .3s var(--ease);
-}
-.ftr__col a:hover { color: var(--ink); }
-
+.ftr__col a, .ftr__col span { font-size: .9375rem; color: var(--fg-2); transition: color .25s var(--ease); }
+.ftr__col a:hover { color: var(--fg); }
+.ftr__mail { white-space: nowrap; font-size: clamp(.75rem, 2.4vw, .9375rem); }
 .ftr__bot {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--rule-2);
+  gap: .75rem 1.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
   font-size: .8125rem;
-  color: var(--ink-3);
+  color: var(--fg-3);
 }
-.ftr__up a { display: inline-flex; align-items: center; gap: .5rem; transition: color .3s var(--ease); }
-.ftr__up a:hover { color: var(--ink); }
-.ftr__up svg { width: .875rem; height: .875rem; transform: rotate(-90deg); transition: transform .45s var(--ease-o); }
-.ftr__up a:hover svg { transform: rotate(-90deg) translateX(3px); }
 
-/* ── Adaptación ─────────────────────────────────────────────── */
-@media (max-width: 1180px) {
+/* ── Adaptación ─────────────────────────────────────────────────── */
+@media (max-width: 1040px) {
   .nav { display: none; }
   .burger { display: flex; }
+  .cols, .cols--head { grid-template-columns: minmax(0, 1fr); }
+  .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .partners { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ftr__top { grid-template-columns: minmax(0, 1fr); }
 }
 
-@media (max-width: 1024px) {
-  /* column-gap a cero NO es cosmético, es la red de seguridad de toda
-     la adaptación. `grid-template-columns: 1fr` declara UNA pista, pero
-     cualquier hijo que conserve un `grid-column: 1 / 13` obliga al
-     navegador a crear once pistas implícitas, y entre ellas sigue
-     habiendo hueco: 11 × 32px = 352px dentro de un contenedor de 334.
-     El documento medía 504px de ancho en una pantalla de 375 y el
-     navegador respondía encogiendo LA PÁGINA ENTERA al 74%. Era el
-     fallo de móvil. Con el hueco a cero, un span perdido descoloca esa
-     sección; sin él, deforma el sitio completo. */
-  .sec__grid { grid-template-columns: 1fr; column-gap: 0; }
-  .sec__head,
-  .sec__body { grid-column: 1; }
-  .sec__head { position: static; }
-  .sec__note { max-width: 52ch; }
-
-  /* En una columna el reparto izquierda/derecha ya no existe. Y estos
-     selectores hay que anularlos CON SU MISMO PESO: los de arriba son
-     (0,1,0) y los de --wide y --split, (0,2,0) y (0,3,0). El media
-     query no añade especificidad, así que perdían.
-     Era justo el origen del desbordamiento descrito arriba: --split ya
-     estaba cubierto, --wide se había quedado fuera y son cuatro de las
-     cinco secciones de la página. */
-  .sec__grid--wide .sec__head,
-  .sec__grid--wide .sec__body { grid-column: 1; }
-  .sec__grid--wide .sec__head { max-width: 52ch; }
-  .sec__grid--wide.sec__grid--split .sec__head { grid-column: 1; max-width: 46ch; }
-  .sec__grid--split .stall { grid-column: 1; max-width: 34rem; }
-
-  /* Cuatro columnas de pie dentro de la pista de 2fr dejan unos 100px
-     por columna en una tablet: ahí no cabe ni «Google Business
-     Profile». La marca pasa arriba y las columnas se reparten el
-     ancho completo de dos en dos. */
-  .ftr__top  { grid-template-columns: 1fr; }
-  .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 2rem; }
-
-  /* A dos columnas el filete vertical solo separa la segunda de cada
-     fila, no cada celda de la anterior. */
-  .hero__meta { grid-template-columns: repeat(2, 1fr); }
-  .hero__meta li { padding: 1.25rem 1.25rem 1.25rem 0; }
-  .hero__meta li + li { border-left: 0; padding-left: 0; }
-  .hero__meta li:nth-child(even) {
-    border-left: 1px solid var(--rule);
-    padding-left: clamp(1rem, 2vw, 1.5rem);
+@media (max-width: 860px) {
+  /* El corredor se vuelve vertical. Cinco estaciones en un móvil
+     dejan cada una en 60px y el texto ilegible; y el raíl horizontal
+     desaparece porque ya no une nada. */
+  .flow__rail { display: none; }
+  .flow__steps { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .flow__i {
+    display: grid;
+    grid-template-columns: 2.125rem minmax(0, 1fr);
+    column-gap: 1rem;
+    padding: 1.125rem 0;
+    border-top: 1px solid var(--rule);
   }
+  .flow__i:last-child { border-bottom: 1px solid var(--rule); }
+  .flow__dot { grid-row: 1 / 3; }
+  .flow__t, .flow__d { grid-column: 2; margin-top: 0; }
+  .flow__d { margin-top: .3rem; }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 720px) {
   body { font-size: 1rem; }
-
-  /* El descriptor parte la marca en dos líneas y revienta el alto de
-     la cabecera. En móvil basta con el logotipo. */
-  .brand__sub { display: none; }
-
-  .hero { min-height: 0; gap: 3.5rem; }
-  /* En una sola columna no hay nada que separar en horizontal: el
-     filete vertical quedaría como una línea suelta. */
-  .hero__meta { grid-template-columns: 1fr; }
-  .hero__meta li { padding: 1rem 0; }
-  .hero__meta li:nth-child(even) { border-left: 0; padding-left: 0; }
-  .hero__cta .btn { flex: 1 1 100%; justify-content: center; }
-
-  .chal { grid-template-columns: 1fr; }
-
-  /* La línea de tiempo se vuelve vertical: seis columnas en un móvil
-     dejan cada etapa en 50px y el texto ilegible. El conector
-     horizontal desaparece porque ya no une nada. */
-  .svc__cols { grid-template-columns: 1fr; }
-  .svc__head { grid-template-columns: 1fr; }
-
-  /* El plano y su score se apilan. A dos columnas en un móvil el plano
-     cae por debajo de 170px y los anillos dejan de distinguirse del
-     viario. */
-  .zon { grid-template-columns: 1fr; }
-  /* El score deja de competir por el ancho con el plano, así que la
-     pista de cada criterio puede crecer. */
-  .scr__r { grid-template-columns: minmax(0, 1fr) minmax(4rem, 7rem) 1.5rem; }
-
-  /* Las dos superficies del visual SEO se apilan: a 170px de ancho
-     cada caja, las barras no comunican nada. Lo mismo vale para el
-     paquete local y la ficha de negocio, que son la misma familia. */
-  .trio   { grid-template-columns: 1fr; }
-
-  /* El texto dentro de un SVG escala con el viewBox, no con la raíz:
-     en un móvil de 390px la meseta se dibuja a 0.73 y la matriz a
-     0.79, así que un rótulo de 9px acaba renderizado a 6.5px reales
-     —ilegible—. Aquí se compensa la escala para que TODOS caigan
-     alrededor de 10-11px de pantalla.
-
-     Si algún día cambia el viewBox de uno de estos gráficos, hay que
-     recalcular su factor o el rótulo volverá a encogerse. */
-  .stall__lb { font-size: 14px; }
-  .stall__gl { font-size: 13px; }
-  .mx__ql    { font-size: 12px; }
-  .mx__at    { font-size: 12px; }
-  .mx__bl    { font-size: 15px; }
-  .mx__gl    { font-size: 14px; }
-  /* El plano de la zona apilado se dibuja a ~1.1 de escala en un móvil
-     de 375, así que su rótulo casi no necesita compensación. La escala
-     de precio, en cambio, cae a 0.78 y sí. */
-  .zon__rl   { font-size: 11px; }
-  .prc__bl   { font-size: 12px; }
-  .prc__sl text { font-size: 12px; }
-  .prc__cl text { font-size: 12px; }
-  .prc__rl   { font-size: 13px; }
-  .prc__rv   { font-size: 15px; }
-  .feat__l { columns: 1; }
-
-  .form__row { grid-template-columns: 1fr; }
-
-  .ftr__top { grid-template-columns: 1fr; }
-  .ftr__cols { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
-  /* La columna de contacto ocupa el ancho entero: media columna del pie
-     son unos 150px y ahí la dirección de correo no cabe de ninguna
-     manera en una sola línea. */
+  .doors { grid-template-columns: minmax(0, 1fr); }
+  .door { min-height: 0; }
+  .grid--3, .grid--2 { grid-template-columns: minmax(0, 1fr); }
+  .partners, .contact { grid-template-columns: minmax(0, 1fr); }
+  .hero__meta { grid-template-columns: minmax(0, 1fr); }
+  /* Hay que anular con la MISMA especificidad que la regla de
+     escritorio: `.hero__meta > div:not(:first-child)` es (0,2,1) y le
+     ganaba a un `.hero__meta > div` (0,1,1) aunque este viniera
+     después y dentro de un media query. Resultado medido: en una sola
+     columna la primera celda quedaba alineada al margen y las otras
+     dos sangradas 17px. Los media queries no añaden especificidad. */
+  .hero__meta > div,
+  .hero__meta > div:not(:first-child) { padding: 1rem 0; }
+  .form__row { grid-template-columns: minmax(0, 1fr); }
+  .ftr__cols { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 1.5rem; }
+  /* La columna de contacto ocupa el ancho entero: en media columna la
+     dirección de correo no cabe en una línea de ninguna manera. */
   .ftr__col--wide { grid-column: 1 / -1; }
-  /* Los enlaces del pie medían 19px de alto en táctil. Con el hueco de
-     10px entre filas pasan la excepción de separación de la WCAG por
-     poco; el relleno los sube a ~29px de zona pulsable propia. */
-  .ftr__col a,
-  .ftr__up a { display: inline-block; padding: .3125rem 0; }
-  .ftr__up a { display: inline-flex; }
+  /* Los enlaces del pie median 19px de alto en táctil. Con el hueco
+     entre filas pasan la excepción de separación de la WCAG por poco;
+     el relleno los sube a ~29px de zona pulsable propia. */
+  .ftr__col a { display: inline-block; padding-block: .3125rem; }
+  .btn { width: 100%; }
+  /* El botón de la cabecera desaparece en móvil. Medido a 390px: la
+     marca más «Plantear mi caso» más la hamburguesa suman 406px en un
+     carril de 350 y la cabecera desbordaba. Encogerlo lo dejaría
+     ilegible, y la acción no se pierde: el cajón se abre de un toque y
+     lleva WhatsApp, y cada página tiene su llamada principal en el
+     hero, a una pantalla de distancia. */
+  .hdr__end .btn { display: none; }
 }
 
-@media (max-width: 420px) {
-  .ftr__cols { grid-template-columns: 1fr; }
+@media (max-width: 430px) {
+  .ftr__cols { grid-template-columns: minmax(0, 1fr); }
 }
 
-/* ── Movimiento reducido ────────────────────────────────────── */
+/* ── Movimiento reducido ────────────────────────────────────────
+   La regla `*` deja las transiciones en .01ms, pero eso las hace
+   instantáneas, NO inexistentes: un elemento que arranca en opacity:0
+   seguiría necesitando que el observador le ponga `.in`. Por eso cada
+   estado inicial se anula aquí explícitamente: así se ve aunque el
+   observador no llegue nunca. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
@@ -2303,28 +1121,10 @@ button[aria-busy="true"] { opacity: .6; pointer-events: none; }
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
   }
-  .rv, .proc__c { opacity: 1; transform: none; }
-  .mask .ln > i { transform: none; }
-  .proc::after { transform: scaleY(1); }
-
-  /* Estado final de los visuales de la fase 4. La regla `*` de arriba
-     deja las transiciones en .01ms, pero eso las hace instantáneas, no
-     inexistentes: un elemento que arranca en opacity:0 seguiría
-     necesitando que el observador le ponga .is-in. Aquí se les da
-     directamente el estado final, así que se ven aunque el observador
-     no llegue nunca. */
-  .stall__gap, .stall__gl, .stall__pin { opacity: 1; }
-  .stall__now  { stroke-dasharray: none; stroke-dashoffset: 0; }
-  .stall__pot  { opacity: .75; }
-  .stall__lead { opacity: .5; }
-  .proc__seg   { transform: none; }
-  .proc__gate  { opacity: 1; }
-  .mx__b, .mx__bl, .mx__gap, .mx__gl { opacity: 1; }
-  .prc__band, .prc__bl,
-  .prc__rec, .prc__lead, .prc__rl, .prc__rv { opacity: 1; }
-  /* La barra del score arranca en scaleX(0): sin esto el panel del
-     estudio de viabilidad se quedaría con las cuatro pistas vacías. */
-  .scr__f { transform: none; }
-  /* La atmósfera se queda: lo que se detiene es su deriva. */
-  body::before, body::after { animation: none; }
+  .rev { opacity: 1; transform: none; }
+  .rev-line > span { transform: none; }
+  .flow__rail { transform: none; }
+  .flow__i { opacity: 1; transform: none; }
+  .door::before { transform: none; }
+  .drawer__nav a { opacity: 1; transform: none; }
 }

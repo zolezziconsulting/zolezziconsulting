@@ -1,57 +1,97 @@
 /* ================================================================
-   ZOLEZZI Consulting — Tokens de color
+   ZOLEZZI SOLUTIONS — Identidad «Doble Puerta»
    ----------------------------------------------------------------
-   ÚNICA fuente de verdad del color. Ningún componente debe declarar
-   un color literal: si hace falta uno nuevo, se añade aquí.
+   ÚNICA fuente de verdad del color. Ningún componente declara un
+   color literal: si hace falta uno nuevo, se añade aquí.
 
-   Se enlaza con <link> antes de styles.css, NO con @import: sin
-   bundler, un @import obliga al navegador a descargar y parsear
-   styles.css antes de siquiera pedir este archivo, y eso bloquea el
-   render en serie. Con dos <link> bajan en paralelo.
+   LA IDEA: la paleta codifica el modelo de negocio. La empresa es
+   bilateral —tecnología internacional de un lado, mercado peruano
+   del otro— y el color dice de qué lado está cada cosa:
 
-   styles.css mapea sus nombres internos (--canvas, --rule…) contra
-   estos, de modo que los componentes no tuvieron que tocarse.
+     · ÁMBITO GLOBAL   fondo noche + azul señal.  Frío, profundo.
+                       Es el lado del fabricante de tecnología.
+     · ÁMBITO LOCAL    fondo hueso + ámbar.       Cálido, claro.
+                       Es el lado del comprador peruano.
+     · LA COSTURA      donde ambos se tocan. Es el negocio.
+
+   Si algún día se usa el ámbar para hablar de tecnología global o
+   el azul para hablar del mercado local, el sistema deja de
+   significar y pasa a ser decoración.
+
+   TODOS los pares de este archivo están medidos contra la WCAG con
+   el comprobador del scratchpad. Las tres reglas que NO se pueden
+   romper están marcadas abajo; en la versión anterior de este sitio
+   se rompieron y hubo texto a 1.03:1 en producción.
    ================================================================ */
 :root {
-  /* ── Fondos ──────────────────────────────────────────────────
-     El fondo de página NUNCA es blanco puro; el blanco queda
-     reservado a las tarjetas. Es lo que quita el brillo excesivo. */
-  --bg-base:     #F1F5F7;
-  --bg-surface:  #FFFFFF;
-  --bg-tint:     #E8F4F6;
-  --bg-dark:     #0A1720;
-  --bg-dark-alt: #12242F;
+  /* ── Ámbito global: la noche ─────────────────────────────────
+     Tres profundidades. --night es el lienzo; --night-2 las
+     superficies elevadas sobre él; --night-3 las que van encima de
+     esas. No hay una cuarta: a partir de ahí el escalón deja de
+     percibirse y solo añade confusión. */
+  --night:    #070B14;
+  --night-2:  #0F1626;
+  --night-3:  #16203A;
 
-  /* ── Tinta ───────────────────────────────────────────────── */
-  --ink:        #0C1A22;
-  --ink-soft:   #47606D;
-  --ink-invert: #EAF4F6;
+  /* Tinta sobre noche. 16.60 / 8.87 / 5.62 : 1 */
+  --on-night:   #E8ECF2;
+  --on-night-2: #A3AFC2;
+  --on-night-3: #7C8AA0;
 
-  /* ── Marca ───────────────────────────────────────────────────
-     PROHIBIDO como texto sobre fondo claro:
-       --turquesa  2.26–2.54 : 1
-       --celeste   2.03–2.28 : 1
-     Ambos quedan por debajo incluso del 3:1 que la WCAG exige a un
-     elemento gráfico portador de significado. Sobre claro, el texto
-     y los enlaces de marca usan --teal-deep (5.27–5.91 : 1).
-     Sobre oscuro sí son legibles: turquesa 6.26–7.14, celeste
-     6.98–7.96, acento 10.55–12.03. */
-  --turquesa:  #10B5B0;
-  --celeste:   #3BB8E8;
-  --teal-deep: #0B6E7F;
-  --acento:    #7DE3DE;
+  /* Filetes sobre noche. El decorativo es deliberadamente tenue;
+     el fuerte es para bordes de campo de formulario, que sí tienen
+     que verse para poder operar el control. */
+  --line-night:     #1C2740;
+  --line-night-str: #54658C;
 
-  --borde: #D7E3E8;
+  /* ── Ámbito local: el hueso ──────────────────────────────────
+     El fondo de página NUNCA es blanco puro: el blanco queda para
+     las tarjetas, que es lo que les da elevación sin sombras. */
+  --bone:     #F4F3EF;
+  --surface:  #FFFFFF;
+  --line:     #DEDCD5;
+  --line-str: #C8C5BB;
 
-  /* Solo dos destinos: las cursivas de los titulares y el botón CTA
-     principal. En ningún otro sitio. */
-  --gradiente: linear-gradient(100deg, #3BB8E8, #10B5B0);
+  /* Tinta sobre hueso. 17.07 / 5.75 / 4.64 : 1 */
+  --ink:   #0A1020;
+  --ink-2: #55606F;
+  --ink-3: #656E7C;
 
-  /* Tripletes RGB de los mismos valores, para poder darles alfa:
-     rgb(var(--c-turquesa) / .18). No son colores nuevos. */
-  --c-dark:     10 23 32;
-  --c-turquesa: 16 181 176;
-  --c-celeste:  59 184 232;
-  --c-teal:     11 110 127;
-  --c-acento:   125 227 222;
+  /* ── Azul señal · tecnología global ──────────────────────────
+     REGLA 1. Sobre un relleno de --signal la tinta va BLANCA
+     (5.17:1). En noche daría 3.81 y no pasa.
+     REGLA 2. Como TEXTO sobre fondo claro se usa --signal-ink
+     (6.39:1), no --signal, que se queda en 4.66 y no deja margen.
+     Sobre noche, el que lee es --signal-soft (8.42:1). */
+  --signal:      #2F5BFF;
+  --signal-ink:  #1D46DC;
+  --signal-soft: #8AA6FF;
+
+  /* ── Ámbar · mercado peruano ─────────────────────────────────
+     REGLA 3. Sobre un relleno de --ember la tinta va OSCURA
+     (4.76:1); en blanco se queda en 4.13.
+     --ember pasa 3.72:1 sobre hueso, así que sirve como elemento
+     gráfico portador de significado. --ember-glow es MÁS brillante
+     y solo vale sobre noche: sobre hueso cae a 2.57 y es el error
+     que cometió la paleta anterior con su turquesa. */
+  --ember:      #DC4C08;
+  --ember-glow: #FF6A2C;
+  --ember-soft: #FFA173;
+
+  /* Tripletes RGB de los mismos valores, para poder darles alfa
+     con rgb(var(--c-signal) / .12). No son colores nuevos. */
+  --c-night:  7 11 20;
+  --c-ink:    10 16 32;
+  --c-signal: 47 91 255;
+  --c-ember:  220 76 8;
+  --c-glow:   255 106 44;
+  --c-light:  232 236 242;
+
+  /* ── La costura ──────────────────────────────────────────────
+     El único degradado del sistema, y tiene un solo significado:
+     el punto donde la tecnología global se convierte en negocio
+     local. Se usa en el raíl del diagrama de entrada al mercado,
+     en el filete de la costura y en el trazo diagonal del
+     logotipo. En ningún otro sitio. */
+  --seam: linear-gradient(90deg, var(--signal) 0%, #7B4FB0 52%, var(--ember) 100%);
 }

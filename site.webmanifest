@@ -1,12 +1,12 @@
 {
-  "name": "ZOLEZZI Consulting",
-  "short_name": "ZOLEZZI",
-  "description": "Tres estudios de mercado: viabilidad de negocio en zona, análisis de competencia y estudio de pricing.",
+  "name": "Zolezzi Solutions",
+  "short_name": "Zolezzi",
+  "description": "Representación comercial y market entry en el Perú para tecnología empresarial internacional.",
   "lang": "es",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F1F5F7",
-  "theme_color": "#0A1720",
+  "background_color": "#070B14",
+  "theme_color": "#070B14",
   "icons": [
     { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/assets/img/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
