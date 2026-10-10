@@ -207,7 +207,7 @@ correcto, pero rompe cualquier diagnóstico que intente cargar una página en un
 
 `_headers` cachea `/assets/css/*` y `/assets/js/*` como `immutable` durante un año. El
 generador los enlaza con `?v=N` desde la constante **`V` de `src/layout.js`**: se sube ahí
-una sola vez y las ocho páginas quedan actualizadas. Va por `v=8`.
+una sola vez y las ocho páginas quedan actualizadas. Va por `v=25`. **El número nunca se reutiliza**: del 1 al 24 ya se sirvieron en producción con hojas anteriores, y reutilizar uno daría CSS viejo con HTML nuevo.
 
 Durante el desarrollo esto muerde: si editas el CSS y recargas sin subir `V`, el navegador
 sigue sirviendo el anterior y parece que tu cambio no hace nada.

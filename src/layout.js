@@ -30,7 +30,13 @@ const INSTAGRAM = 'https://www.instagram.com/zolezziconsulting/';
    llevan hash en el nombre, así que esto es lo único que fuerza a un
    visitante recurrente a bajarse el CSS nuevo. SUBIRLO EN CADA CAMBIO
    de styles.css, tokens.css o main.js. */
-const V = 8;
+/* OJO AL NÚMERO. No es un contador que empiece en 1: las versiones
+   1 a 24 ya se sirvieron en producción con hojas de estilo
+   anteriores, y `_headers` las cachea como immutable durante un año.
+   Reutilizar una provocaría que un visitante recurrente recibiera el
+   CSS viejo con el HTML nuevo. SIEMPRE por encima del máximo ya
+   publicado. */
+const V = 25;
 
 /* URL completa de WhatsApp con el mensaje precargado. Se arma aquí
    y no en el navegador para que el enlace funcione sin JavaScript. */
