@@ -17,3 +17,11 @@
 
 /README.md    /  301
 /.gitignore   /  301
+
+# Los fuentes del generador. Viven en la raíz del repositorio, así que
+# sin esto Cloudflare los serviría en el dominio: /build.js y
+# /src/i18n/es.js devolverían el código tal cual. No es material
+# secreto —el repositorio es público— pero el dominio comercial no es
+# sitio para servir el andamiaje.
+/build.js     /  301
+/src/*        /  301

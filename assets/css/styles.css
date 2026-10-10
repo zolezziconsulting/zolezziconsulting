@@ -93,14 +93,14 @@
 
 /* ── Ámbito global: la noche ────────────────────────────────────
    Reasigna los alias y todo lo de dentro se invierte solo. */
-.night {
-  --canvas:   var(--night);
-  --canvas-2: var(--night-2);
-  --fg:       var(--on-night);
-  --fg-2:     var(--on-night-2);
-  --fg-3:     var(--on-night-3);
-  --rule:     var(--line-night);
-  --rule-str: var(--line-night-str);
+.deep {
+  --canvas:   var(--deep);
+  --canvas-2: var(--deep-2);
+  --fg:       var(--on-deep);
+  --fg-2:     var(--on-deep-2);
+  --fg-3:     var(--on-deep-3);
+  --rule:     var(--line-deep);
+  --rule-str: var(--line-deep-str);
   --accent:   var(--signal-soft);
   --accent-fill: var(--signal);
   --accent-on-fill: #FFFFFF;
@@ -112,16 +112,17 @@
 /* Ámbito local acentuado. Mismo lienzo claro, pero el acento pasa a
    ámbar: es el lado del comprador peruano. */
 .local {
-  --accent: var(--ember);
-  --accent-fill: var(--ember);
-  /* Tinta OSCURA sobre el relleno ámbar: en blanco daría 4.13 y no
-     pasa. Es la regla 3 de tokens.css. */
-  --accent-on-fill: var(--night);
+  /* Como TINTA sobre claro va --teal-ink: --teal se queda en 3.13 y
+     no pasa. Como RELLENO sí va --teal, y encima la tinta es OSCURA
+     (5.18:1); la blanca daría 3.39. Reglas 3 y 4 de tokens.css. */
+  --accent: var(--teal-ink);
+  --accent-fill: var(--teal);
+  --accent-on-fill: var(--deep);
 }
-.night.local {
-  --accent: var(--ember-soft);
-  --accent-fill: var(--ember-glow);
-  --accent-on-fill: var(--night);
+.deep.local {
+  --accent: var(--teal-soft);
+  --accent-fill: var(--teal);
+  --accent-on-fill: var(--deep);
 }
 
 /* ── Reset ──────────────────────────────────────────────────────── */
@@ -404,7 +405,7 @@ html:not(.js) .door::before { opacity: 1; transform: none; }
   gap: 1.5rem;
 }
 /* Sólida a partir de 60px de scroll. El color lo toma del ámbito en
-   el que esté: `is-night` la pone en noche sobre los bloques
+   el que esté: `is-deep` la pone en azul profundo sobre los bloques
    oscuros, y lo gobierna main.js midiendo qué hay bajo la cabecera. */
 .hdr.is-stuck {
   background: color-mix(in srgb, var(--bone) 88%, transparent);
@@ -412,28 +413,28 @@ html:not(.js) .door::before { opacity: 1; transform: none; }
   -webkit-backdrop-filter: saturate(180%) blur(16px);
   box-shadow: 0 1px 0 var(--line);
 }
-.hdr.is-night {
-  --fg: var(--on-night);
-  --fg-2: var(--on-night-2);
-  --fg-3: var(--on-night-3);
-  --rule: var(--line-night);
-  --rule-str: var(--line-night-str);
+.hdr.is-deep {
+  --fg: var(--on-deep);
+  --fg-2: var(--on-deep-2);
+  --fg-3: var(--on-deep-3);
+  --rule: var(--line-deep);
+  --rule-str: var(--line-deep-str);
   --accent: var(--signal-soft);
-  color: var(--on-night);
+  color: var(--on-deep);
 }
-.hdr.is-stuck.is-night {
-  background: color-mix(in srgb, var(--night) 88%, transparent);
-  box-shadow: 0 1px 0 var(--line-night);
+.hdr.is-stuck.is-deep {
+  background: color-mix(in srgb, var(--deep) 88%, transparent);
+  box-shadow: 0 1px 0 var(--line-deep);
 }
 /* Respaldo sin JS: la portada y las dos páginas de público abren
    SIEMPRE sobre un hero en noche. Si main.js no llega a ejecutarse,
-   nadie pone `is-night` y el logotipo quedaría en tinta oscura sobre
+   nadie pone `is-deep` y el logotipo quedaría en tinta oscura sobre
    fondo oscuro. */
 html:not(.js) .hdr {
-  --fg: var(--on-night);
-  --fg-2: var(--on-night-2);
-  --fg-3: var(--on-night-3);
-  color: var(--on-night);
+  --fg: var(--on-deep);
+  --fg-2: var(--on-deep-2);
+  --fg-3: var(--on-deep-3);
+  color: var(--on-deep);
 }
 
 /* Barra de progreso de lectura. */
@@ -487,6 +488,33 @@ html:not(.js) .hdr {
 .nav__link.is-here { color: var(--fg); }
 .nav__link.is-here::after { transform: none; transform-origin: left; }
 
+/* ── Selector de idioma ─────────────────────────────────────────
+   Son DOS ENLACES reales a la misma página en el otro idioma, no un
+   desplegable con JavaScript: funciona sin scripts, lo sigue un
+   rastreador y coincide con el `hreflang` de la cabeza. El idioma
+   activo va en negrita dentro del propio enlace, así que no hace
+   falta un segundo elemento para indicarlo. */
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .4rem .625rem;
+  border: 1px solid var(--rule);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--fg-2);
+  white-space: nowrap;
+  transition: border-color .25s var(--ease), color .25s var(--ease);
+}
+.lang:hover { border-color: var(--accent); color: var(--fg); }
+.lang svg { width: .875rem; height: .875rem; flex: none; }
+.lang b { color: var(--fg); font-weight: 600; }
+/* En el pie del cajón el selector va suelto, sin recuadro: ahí
+   compite con dos enlaces de texto y el marco lo haría destacar más
+   que ellos sin motivo. */
+.drawer__foot .lang { border: 0; padding: 0; }
+
 .hdr__end { display: flex; align-items: center; gap: .875rem; }
 .hdr__end .btn { padding: .625rem 1.125rem; font-size: .875rem; }
 
@@ -515,8 +543,8 @@ html:not(.js) .hdr {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: var(--night);
-  color: var(--on-night);
+  background: var(--deep);
+  color: var(--on-deep);
   padding: calc(var(--hdr) + 2.5rem) var(--gutter) 2.5rem;
   display: flex;
   flex-direction: column;
@@ -540,12 +568,12 @@ html:not(.js) .hdr {
   align-items: baseline;
   gap: 1rem;
   padding: 1.125rem 0;
-  border-top: 1px solid var(--line-night);
+  border-top: 1px solid var(--line-deep);
   font-family: var(--display);
   font-size: clamp(1.5rem, 7vw, 2.25rem);
   font-weight: 700;
   letter-spacing: -.03em;
-  color: var(--on-night);
+  color: var(--on-deep);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity .45s var(--ease-o), transform .45s var(--ease-o);
@@ -561,7 +589,7 @@ html:not(.js) .hdr {
   font-size: .6875rem;
   font-weight: 600;
   letter-spacing: .16em;
-  color: var(--on-night-3);
+  color: var(--on-deep-3);
   font-variant-numeric: tabular-nums;
 }
 .drawer__foot {
@@ -569,9 +597,9 @@ html:not(.js) .hdr {
   flex-wrap: wrap;
   gap: 1rem 1.75rem;
   padding-top: 1.75rem;
-  border-top: 1px solid var(--line-night);
+  border-top: 1px solid var(--line-deep);
   font-size: .875rem;
-  color: var(--on-night-2);
+  color: var(--on-deep-2);
 }
 
 /* ── Hero ───────────────────────────────────────────────────────
@@ -602,7 +630,7 @@ html:not(.js) .hdr {
   transform: none;
   width: min(48rem, 100%);
   background:
-    radial-gradient(closest-side, rgb(var(--c-glow) / .16), rgb(var(--c-glow) / .04) 58%, transparent 76%);
+    radial-gradient(closest-side, rgb(var(--c-tealsf) / .16), rgb(var(--c-tealsf) / .04) 58%, transparent 76%);
 }
 .hero__in { position: relative; z-index: 1; }
 /* Sin `max-width` en ch. Estos titulares llevan sus saltos de línea
@@ -659,13 +687,13 @@ html:not(.js) .hdr {
   transition: background-color .35s var(--ease);
 }
 .door--global {
-  background: var(--night-2);
-  color: var(--on-night);
-  --fg: var(--on-night);
-  --fg-2: var(--on-night-2);
-  --fg-3: var(--on-night-3);
+  background: var(--deep-2);
+  color: var(--on-deep);
+  --fg: var(--on-deep);
+  --fg-2: var(--on-deep-2);
+  --fg-3: var(--on-deep-3);
   --accent: var(--signal-soft);
-  --rule: var(--line-night);
+  --rule: var(--line-deep);
 }
 .door--local {
   background: var(--surface);
@@ -673,10 +701,10 @@ html:not(.js) .hdr {
   --fg: var(--ink);
   --fg-2: var(--ink-2);
   --fg-3: var(--ink-3);
-  --accent: var(--ember);
+  --accent: var(--teal-ink);
   --rule: var(--line);
 }
-.door--global:hover { background: var(--night-3); }
+.door--global:hover { background: var(--deep-3); }
 .door--local:hover { background: var(--bone); }
 /* Filete de ámbito en el borde superior: azul arriba a la izquierda,
    ámbar arriba a la derecha. Es la lectura de un vistazo de qué
@@ -771,7 +799,7 @@ html:not(.js) .hdr {
   font-variant-numeric: tabular-nums;
 }
 .flow__i:nth-child(1) .flow__dot { box-shadow: inset 0 0 0 1.5px var(--signal); color: var(--accent); }
-.flow__i:nth-child(5) .flow__dot { box-shadow: inset 0 0 0 1.5px var(--ember-glow); color: var(--ember-soft); }
+.flow__i:nth-child(5) .flow__dot { box-shadow: inset 0 0 0 1.5px var(--teal); color: var(--teal-soft); }
 .flow__t {
   margin-top: 1rem;
   font-size: .9375rem;
@@ -949,12 +977,15 @@ html:not(.js) .hdr {
 /* El desplegable nativo pinta su lista con el color del sistema. En
    ámbito oscuro hay que devolverle un fondo o las opciones salen
    blancas sobre blanco en Windows. */
-.night .f select option { background: var(--night-2); color: var(--on-night); }
+.deep .f select option { background: var(--deep-2); color: var(--on-deep); }
 .f input::placeholder,
 .f textarea::placeholder { color: var(--fg-3); }
 .f input:hover, .f textarea:hover, .f select:hover { border-color: var(--fg-3); }
 .f input:focus, .f textarea:focus, .f select:focus { outline: none; border-color: var(--accent); }
-.f.is-bad input, .f.is-bad textarea, .f.is-bad select { border-color: var(--ember); border-bottom-width: 2px; }
+/* La paleta no tiene rojo y no se le añade uno solo para esto: el
+   error se marca con tinta fuerte y doble grosor, que además no
+   depende de distinguir colores. El mensaje de texto lo explica. */
+.f.is-bad input, .f.is-bad textarea, .f.is-bad select { border-color: var(--fg); border-bottom-width: 2px; }
 
 .err { position: absolute; bottom: .35rem; left: 0; font-size: .8125rem; color: var(--fg-2); }
 /* Trampa antirrobots. Fuera de pantalla y con tabindex -1: ningún
@@ -977,7 +1008,7 @@ html:not(.js) .hdr {
   border-left: 3px solid var(--accent);
   background: var(--canvas-2);
 }
-.form__msg--bad { border-left-color: var(--ember); }
+.form__msg--bad { border-left-color: var(--fg); }
 button[aria-busy="true"] { opacity: .6; pointer-events: none; }
 
 /* ── Contacto ───────────────────────────────────────────────────── */

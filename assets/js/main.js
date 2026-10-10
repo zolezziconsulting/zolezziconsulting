@@ -3,26 +3,20 @@
    ----------------------------------------------------------------
    Sin dependencias. Un solo manejador de scroll, limitado con rAF:
    la cabecera, la barra de progreso y la inversión sobre los bloques
-   de noche comparten el mismo frame.
+   de azul profundo comparten el mismo frame.
 
-   El mismo archivo sirve a las tres páginas. Todo lo que pueda no
-   existir en una de ellas se comprueba antes de usarlo.
+   El mismo archivo sirve a las OCHO páginas —cuatro rutas por dos
+   idiomas—. Todo lo que pueda no existir en una de ellas se
+   comprueba antes de usarlo, y ningún texto visible vive aquí: los
+   que hacen falta viajan en atributos del marcado, puestos por el
+   generador en el idioma de cada página.
+
+   Los enlaces de WhatsApp tampoco se tocan desde aquí: el generador
+   los escribe con su URL completa y el mensaje precargado, así que
+   funcionan aunque este archivo no llegue a ejecutarse nunca.
    ================================================================ */
 (function () {
   'use strict';
-
-  /* ── WhatsApp ────────────────────────────────────────────────
-     El mensaje viaja precargado en el enlace: quien pulsa llega a la
-     conversación con el texto escrito y solo tiene que darle a
-     enviar. Vive aquí y no en el marcado para no repetirlo en las
-     tres páginas y que acaben desincronizándose. */
-  var WA_NUM = '51941519053';
-  var WA_MSG = 'Hola, quisiera información sobre sus servicios.';
-  var WA = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(WA_MSG);
-
-  Array.prototype.forEach.call(document.querySelectorAll('[data-wa]'), function (a) {
-    a.href = WA;
-  });
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var clamp = function (n) { return n < 0 ? 0 : n > 1 ? 1 : n; };
@@ -32,7 +26,7 @@
   var bar = document.getElementById('hdr-bar');
   // Los bloques de ámbito oscuro. Incluye el pie: la cabecera también
   // tiene que invertirse cuando se llega al final de la página.
-  var darks = document.querySelectorAll('.night');
+  var darks = document.querySelectorAll('.deep');
   var ticking = false;
 
   function frame() {
@@ -55,7 +49,7 @@
     }
 
     hdr.classList.toggle('is-stuck', y > 60);
-    hdr.classList.toggle('is-night', inv);
+    hdr.classList.toggle('is-deep', inv);
     if (bar) {
       bar.style.setProperty('--p', scrollable > 0 ? clamp(y / scrollable).toFixed(4) : '0');
     }
@@ -78,7 +72,8 @@
   if (burger && drawer) {
     var setDrawer = function (open) {
       burger.setAttribute('aria-expanded', String(open));
-      burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      burger.setAttribute('aria-label',
+        document.body.getAttribute(open ? 'data-menu-close' : 'data-menu-open') || '');
       document.body.style.overflow = open ? 'hidden' : '';
       if (open) {
         drawer.hidden = false;
@@ -163,7 +158,14 @@
     var sending = false;
     // La etiqueta original del botón, guardada para restaurarla al
     // terminar el envío sin tenerla escrita dos veces en el archivo.
-    var label = submitT ? submitT.textContent : 'Enviar';
+    var label = submitT ? submitT.textContent : "";
+
+    /* Los textos del formulario viajan en atributos data- del propio
+       aviso, puestos por el generador en el idioma de la página. Si
+       estuvieran escritos aquí, la versión inglesa mostraría avisos
+       en español en cuanto algo fallara, que es justo el momento en
+       que peor sienta. */
+    var txt = function (clave) { return msg.getAttribute("data-" + clave) || ""; };
 
     var fieldError = function (input, show) {
       var wrap = input.closest('.f');
@@ -207,7 +209,7 @@
       });
 
       if (invalid) {
-        say('Revise los campos marcados antes de enviar.', true);
+        say(txt("revisar"), true);
         invalid.focus();
         return;
       }
@@ -216,7 +218,7 @@
       msg.hidden = true;
       submit.disabled = true;
       submit.setAttribute('aria-busy', 'true');
-      submitT.textContent = 'Enviando…';
+      submitT.textContent = txt("enviando");
 
       fetch(form.action, {
         method: 'POST',
@@ -226,10 +228,10 @@
         .then(function (res) {
           if (!res.ok) throw new Error(String(res.status));
           form.reset();
-          say('Gracias. Hemos recibido su mensaje y le responderemos en un día hábil.');
+          say(txt("ok"));
         })
         .catch(function () {
-          say('No pudimos enviar su mensaje. Vuelva a intentarlo o escríbanos por WhatsApp.', true);
+          say(txt("error"), true);
         })
         .then(function () {
           sending = false;

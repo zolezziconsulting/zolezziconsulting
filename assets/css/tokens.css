@@ -1,5 +1,5 @@
 /* ================================================================
-   ZOLEZZI SOLUTIONS — Identidad «Doble Puerta»
+   ZOLEZZI SOLUTIONS — Identidad «Doble Puerta», clave clara
    ----------------------------------------------------------------
    ÚNICA fuente de verdad del color. Ningún componente declara un
    color literal: si hace falta uno nuevo, se añade aquí.
@@ -8,90 +8,93 @@
    bilateral —tecnología internacional de un lado, mercado peruano
    del otro— y el color dice de qué lado está cada cosa:
 
-     · ÁMBITO GLOBAL   fondo noche + azul señal.  Frío, profundo.
-                       Es el lado del fabricante de tecnología.
-     · ÁMBITO LOCAL    fondo hueso + ámbar.       Cálido, claro.
-                       Es el lado del comprador peruano.
+     · ÁMBITO GLOBAL   azul profundo + azul señal. Es el lado del
+                       proveedor tecnológico internacional.
+     · ÁMBITO LOCAL    hueso + turquesa. Es el lado de la empresa
+                       peruana.
      · LA COSTURA      donde ambos se tocan. Es el negocio.
 
-   Si algún día se usa el ámbar para hablar de tecnología global o
-   el azul para hablar del mercado local, el sistema deja de
-   significar y pasa a ser decoración.
+   DOMINANTE CLARO. El hueso manda en superficie; el azul profundo
+   se reserva al hero y a los bloques de ámbito global, donde su
+   peso significa algo. Fue un cambio deliberado respecto de la
+   primera versión, que era dominante oscura: la marca tiene que
+   leerse como internacional y sobria, no como un producto de
+   ciberseguridad.
 
-   TODOS los pares de este archivo están medidos contra la WCAG con
-   el comprobador del scratchpad. Las tres reglas que NO se pueden
-   romper están marcadas abajo; en la versión anterior de este sitio
-   se rompieron y hubo texto a 1.03:1 en producción.
+   TODOS los pares están medidos contra la WCAG, no estimados. Las
+   cuatro reglas marcadas abajo no se pueden romper.
    ================================================================ */
 :root {
-  /* ── Ámbito global: la noche ─────────────────────────────────
-     Tres profundidades. --night es el lienzo; --night-2 las
-     superficies elevadas sobre él; --night-3 las que van encima de
-     esas. No hay una cuarta: a partir de ahí el escalón deja de
-     percibirse y solo añade confusión. */
-  --night:    #070B14;
-  --night-2:  #0F1626;
-  --night-3:  #16203A;
+  /* ── Ámbito global: el azul profundo ─────────────────────────
+     Azul marino, NO negro: el negro casi puro leía como producto de
+     seguridad y la marca no quiere quedar encasillada ahí. */
+  --deep:    #071A2E;
+  --deep-2:  #0C2440;
+  --deep-3:  #133052;
 
-  /* Tinta sobre noche. 16.60 / 8.87 / 5.62 : 1 */
-  --on-night:   #E8ECF2;
-  --on-night-2: #A3AFC2;
-  --on-night-3: #7C8AA0;
+  /* Tinta sobre azul profundo. 15.17 / 8.1 / 5.4 : 1 */
+  --on-deep:   #E9EFF6;
+  --on-deep-2: #A9BBD0;
+  --on-deep-3: #7E93AE;
 
-  /* Filetes sobre noche. El decorativo es deliberadamente tenue;
-     el fuerte es para bordes de campo de formulario, que sí tienen
-     que verse para poder operar el control. */
-  --line-night:     #1C2740;
-  --line-night-str: #54658C;
+  /* Filetes sobre azul. El decorativo es tenue a propósito; el
+     fuerte es para bordes de campo, que tienen que verse para poder
+     operar el control. */
+  --line-deep:     #17304F;
+  /* 3.19:1 sobre el azul profundo. No se puede bajar de ahí: es el
+     borde de los campos de formulario y la WCAG exige 3:1 al
+     contorno que identifica un control. #4A638A se quedaba en 2.88. */
+  --line-deep-str: #506A92;
 
   /* ── Ámbito local: el hueso ──────────────────────────────────
      El fondo de página NUNCA es blanco puro: el blanco queda para
      las tarjetas, que es lo que les da elevación sin sombras. */
-  --bone:     #F4F3EF;
+  --bone:     #F6F6F3;
   --surface:  #FFFFFF;
-  --line:     #DEDCD5;
-  --line-str: #C8C5BB;
+  --line:     #E0DFD8;
+  --line-str: #C7C5BB;
 
-  /* Tinta sobre hueso. 17.07 / 5.75 / 4.64 : 1 */
+  /* Tinta sobre hueso. 17.4 / 5.8 / 4.7 : 1 */
   --ink:   #0A1020;
   --ink-2: #55606F;
   --ink-3: #656E7C;
 
   /* ── Azul señal · tecnología global ──────────────────────────
      REGLA 1. Sobre un relleno de --signal la tinta va BLANCA
-     (5.17:1). En noche daría 3.81 y no pasa.
+     (5.17:1); la oscura daría 3.81.
      REGLA 2. Como TEXTO sobre fondo claro se usa --signal-ink
-     (6.39:1), no --signal, que se queda en 4.66 y no deja margen.
-     Sobre noche, el que lee es --signal-soft (8.42:1). */
+     (6.55:1), no --signal, que se queda en 4.78 sin margen.
+     Sobre el azul profundo el que lee es --signal-soft (7.51:1). */
   --signal:      #2F5BFF;
   --signal-ink:  #1D46DC;
   --signal-soft: #8AA6FF;
 
-  /* ── Ámbar · mercado peruano ─────────────────────────────────
-     REGLA 3. Sobre un relleno de --ember la tinta va OSCURA
-     (4.76:1); en blanco se queda en 4.13.
-     --ember pasa 3.72:1 sobre hueso, así que sirve como elemento
-     gráfico portador de significado. --ember-glow es MÁS brillante
-     y solo vale sobre noche: sobre hueso cae a 2.57 y es el error
-     que cometió la paleta anterior con su turquesa. */
-  --ember:      #DC4C08;
-  --ember-glow: #FF6A2C;
-  --ember-soft: #FFA173;
+  /* ── Turquesa · mercado peruano ──────────────────────────────
+     REGLA 3. Sobre un relleno de --teal la tinta va OSCURA
+     (5.18:1); la blanca se queda en 3.39 y NO pasa. Es el error
+     más fácil de cometer con un turquesa.
+     REGLA 4. Como texto sobre claro se usa --teal-ink (5.13:1).
+     --teal, más luminoso, solo vale como relleno o como elemento
+     gráfico: de tinta sobre hueso da 3.13.
+     Sobre el azul profundo lee --teal-soft (10.39:1). */
+  --teal:      #0E9AA7;
+  --teal-ink:  #0C7380;
+  --teal-soft: #5FD8E4;
 
   /* Tripletes RGB de los mismos valores, para poder darles alfa
      con rgb(var(--c-signal) / .12). No son colores nuevos. */
-  --c-night:  7 11 20;
+  --c-deep:   7 26 46;
   --c-ink:    10 16 32;
   --c-signal: 47 91 255;
-  --c-ember:  220 76 8;
-  --c-glow:   255 106 44;
-  --c-light:  232 236 242;
+  --c-teal:   14 154 167;
+  --c-tealsf: 95 216 228;
+  --c-light:  233 239 246;
 
   /* ── La costura ──────────────────────────────────────────────
-     El único degradado del sistema, y tiene un solo significado:
-     el punto donde la tecnología global se convierte en negocio
-     local. Se usa en el raíl del diagrama de entrada al mercado,
-     en el filete de la costura y en el trazo diagonal del
+     El único degradado del sistema, y con un solo significado: el
+     punto donde la tecnología global se convierte en negocio local.
+     Va del azul al turquesa. Se usa en el raíl del diagrama de
+     colaboración, en la barra de progreso y en la diagonal del
      logotipo. En ningún otro sitio. */
-  --seam: linear-gradient(90deg, var(--signal) 0%, #7B4FB0 52%, var(--ember) 100%);
+  --seam: linear-gradient(90deg, var(--signal) 0%, #1C86C4 52%, var(--teal) 100%);
 }

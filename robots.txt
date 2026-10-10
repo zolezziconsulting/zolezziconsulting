@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# El andamiaje del generador no se indexa. _redirects ya lo tapa con
+# un 301, pero declararlo aquí ahorra el rastreo.
+Disallow: /src/
+Disallow: /build.js
+
 Sitemap: https://zolezziconsulting.com/sitemap.xml
